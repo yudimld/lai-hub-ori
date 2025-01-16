@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use MongoDB\Client as MongoDBClient;
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\ObjectId;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 // email
 use App\Mail\Edc\CreateSPKMail;
@@ -231,16 +234,73 @@ class EdcController extends Controller
     }
     
     // tabel list spk
-    public function listSpk()
+    public function listSpk(Request $request)
     {
         session(['active_menu' => 'edc']);
-    
-        // Panggil data dari model
+        
+        // Ambil data SPK dari database tanpa filter
         $spkList = Edc::getAllSpks();
-  
+        // dd($spkList); // Periksa apakah field 'progress' ada dan berisi nilai yang valid
+
+        // Menampilkan tampilan awal
         return view('edc.list-spk', ['spkList' => $spkList]);
     }
-
+    
+    public function filterSpk(Request $request)
+    {
+        try {
+            logger()->info('Request filter SPK', $request->all());
+    
+            // Validasi input: start_date dan end_date harus diisi
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+    
+            if (!$startDate || !$endDate) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Both start date and end date are required.'
+                ], 400);
+            }
+    
+            // Query ke database menggunakan filter tanggal
+            $query = Edc::where('requestDate', '>=', $startDate)
+                ->where('requestDate', '<=', $endDate);
+    
+            // Ambil data dan map ke format yang sesuai
+            $filteredData = $query->get()->map(function ($spk) {
+                return [
+                    'id'            => (string) ($spk->_id ?? '-'),
+                    'spkNumber'     => $spk->spkNumber ?? '-',
+                    'requestDate'   => $spk->requestDate ? $spk->requestDate->format('Y-m-d') : '-',
+                    'subject'       => $spk->subject ?? '-',
+                    'createdBy'     => $spk->createdBy ?? '-',
+                    'status'        => $spk->status ?? 'Open',
+                    'priority'      => $spk->priority ?? '-',
+                    'category'      => $spk->category ?? '-',
+                    'assignee'      => $spk->assignee ?? 'Unassigned',
+                    'start_date'    => $spk->start_date ? $spk->start_date->format('Y-m-d') : '-',
+                    'deadline_date' => $spk->deadline_date ? $spk->deadline_date->format('Y-m-d') : '-',
+                    'jenis_biaya'   => $spk->jenis_biaya ?? '-',
+                    'jenis_spk'     => $spk->jenis_spk ?? '-',
+                    'updatedAt'     => $spk->updatedAt ? $spk->updatedAt->format('Y-m-d H:i:s') : 'Not Available',
+                ];
+            });
+    
+            logger()->info('Filtered Data:', $filteredData->toArray());
+    
+            // Berikan respons sukses dengan data yang difilter
+            return response()->json(['success' => true, 'data' => $filteredData]);
+        } catch (\Exception $e) {
+            // Tangani error dan log pesan error
+            logger()->error('Error filtering SPK', ['error' => $e->getMessage()]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while filtering data. Please try again.'
+            ], 500);
+        }
+    }
+    
     // form generate spknumber
     public function createSpk()
     {
@@ -550,6 +610,7 @@ class EdcController extends Controller
             'deadline_date' => 'nullable|date',
             'jenis_biaya' => 'nullable|string|max:255',
             'jenis_spk' => 'nullable|string|max:255',
+            'persentase' => 'nullable|integer|min:0|max:100', 
         ]);
 
         // Update data
@@ -560,6 +621,7 @@ class EdcController extends Controller
             'deadline_date' => $request->deadline_date,
             'jenis_biaya' => $request->jenis_biaya,
             'jenis_spk' => $request->jenis_spk,
+            'persentase' => $request->persentase,
         ]);
 
         return response()->json(['success' => true, 'message' => 'SPK updated successfully']);

@@ -90,6 +90,8 @@
 </style>
 
 
+
+
 <body>
 	<div class="wrapper">
 		<!-- Header -->
@@ -227,6 +229,7 @@
 	<!-- Sweet Alert -->
 	<script src="{{ asset('atlantis/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- Atlantis JS -->
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
 

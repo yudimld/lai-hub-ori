@@ -327,6 +327,7 @@
                                                                         data-deadline-date="{{ $spk->deadline_date ?? '' }}"
                                                                         data-jenis-biaya="{{ $spk->jenis_biaya ?? '' }}"
                                                                         data-jenis-spk="{{ $spk->jenis_spk ?? '' }}"
+                                                                        data-persentase="{{ $spk->persentase }}"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#editSpkModal">
                                                                         <i class="fa fa-edit"> Edit</i>
@@ -397,6 +398,14 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
+
+                                                                    <div class="row mb-3">
+                                                                        <!-- Input untuk Persentase -->
+                                                                        <div class="col-md-6">
+                                                                            <label for="editPersentase" class="form-label">Persentase (%)</label>
+                                                                            <input type="number" id="editPersentase" name="editPersentase" class="form-control" min="0" max="100" placeholder="0-100">
+                                                                        </div>
+                                                                    </div>
                                                                 </form>
                                                             </div>
 
@@ -447,61 +456,7 @@
 	<!-- Atlantis JS -->
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
 
-    <!-- <script>
-        $(document).ready(function () {
-            // Initialize DataTable
-            $('#assign-spk-table').DataTable({
-                order: [[3, 'desc']] // Urutkan kolom pertama (indeks 0) secara descending
-            });
-
-            // Event delegation for dynamically generated buttons
-            $(document).on('click', '.show-details-button', function () {
-                const spkId = $(this).data('id');
-                $('#spkDetailsContent').html('<p class="text-center">Loading...</p>');
-                $('#updateSpkButton').data('id', spkId);
-
-                // Fetch SPK details via AJAX
-                $.ajax({
-                    url: `/api/spk-details/${spkId}`,
-                    method: 'GET',
-                    success: function (response) {
-                        let htmlContent = `
-                            <p><strong>SPK Number:</strong> ${response.spkNumber}</p>
-                            <p><strong>Request Date:</strong> ${response.requestDate}</p>
-                            <p><strong>Subject:</strong> ${response.subject}</p>
-                            <p><strong>Created By:</strong> ${response.createdBy}</p>
-                            <p><strong>Description:</strong> ${response.deskripsi}</p>
-                            <p><strong>Attachments:</strong></p>
-                            <ul>`;
-                        
-                        if (response.attachments && response.attachments.length > 0) {
-                            response.attachments.forEach(attachment => {
-                                htmlContent += `
-                                    <li>
-                                        <a href="/storage/${attachment.path}" target="_blank">${attachment.originalName}</a>
-                                    </li>`;
-                            });
-                        } else {
-                            htmlContent += '<li>No Attachments</li>';
-                        }
-                        
-                        htmlContent += '</ul>';
-                        $('#spkDetailsContent').html(htmlContent);
-                    },
-                    error: function () {
-                        $('#spkDetailsContent').html('<p class="text-center text-danger">Failed to load details. Please try again.</p>');
-                    }
-                });
-            });
-
-            // Update SPK logic
-            $('#updateSpkButton').on('click', function () {
-                const spkId = $(this).data('id');
-                alert(`Update SPK ID: ${spkId}`);
-                // Add your update logic here
-            });
-        });
-    </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- JS detail button show -->
     <script>
@@ -535,16 +490,6 @@
             }
             $('#attachmentsList').html(attachmentsHtml);
 
-            // Debugging log untuk memastikan data dimuat dengan benar (Opsional)
-            console.log({
-                spkId,
-                spkNumber,
-                requestDate,
-                subject,
-                createdBy,
-                deskripsi,
-                attachments
-            });
         });
 
         // Event submit untuk form assign SPK
@@ -862,7 +807,9 @@
     <!-- request closed table -->
     <script>
         $(document).ready(function () {
-            $('#assign-table').DataTable(); // Inisialisasi DataTable
+            $('#assign-table').DataTable({
+                "processing": true,
+            }); // Inisialisasi DataTable
             order: [[4, 'desc']]; // Urutkan kolom pertama (indeks 0) secara descending
 
             // Event listener untuk tombol Ceklis
@@ -947,6 +894,7 @@
                 const deadlineDate = $(this).data('deadline-date');
                 const jenisBiaya = $(this).data('jenis-biaya');
                 const jenisSpk = $(this).data('jenis-spk');
+                const persentase = $(this).data('persentase');
 
                 // Isi modal dengan data SPK
                 $('#editSpkId').val(spkId);
@@ -956,6 +904,7 @@
                 $('#editDeadlineDate').val(deadlineDate);
                 $('#editJenisBiaya').val(jenisBiaya);
                 $('#editJenisSpk').val(jenisSpk);
+                $('#editPersentase').val(persentase);
             });
 
             // Event untuk menyimpan perubahan
@@ -968,6 +917,7 @@
                     deadline_date: $('#editDeadlineDate').val(),
                     jenis_biaya: $('#editJenisBiaya').val(),
                     jenis_spk: $('#editJenisSpk').val(),
+                    persentase: $('#editPersentase').val(),
                 };
 
                 // Tampilkan konfirmasi SweetAlert sebelum melanjutkan

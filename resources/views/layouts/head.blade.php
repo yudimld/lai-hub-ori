@@ -20,7 +20,7 @@
 	<!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('atlantis/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('atlantis/css/atlantis.min.css') }}">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
 
     <!-- datatables -->
     <!-- <link rel="stylesheet" href="{{ asset('atlantis/js/plugin/datatables/datatables.min.css') }}"> -->

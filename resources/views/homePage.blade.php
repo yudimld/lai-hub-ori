@@ -8,6 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ asset('atlantis/css/fonts.min.css') }}">
     <link rel="icon" href="{{ asset('atlantis/img/icon/lai.ico') }}" type="image/x-icon"/>
+    <!-- Link CSS Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+ 
 
     <style>
         #userInfoButton i {
@@ -37,18 +41,51 @@
             <span>LAI PORTAL</span>
         </div>
         <div class="actions">
-            <button class="profile d-flex align-items-center" id="userInfoButton">
-                <i class="fas fa-user mr-2"></i> <!-- Ikon user Font Awesome -->
-                {{ Auth::user()->name ?? 'Guest' }} - {{ Auth::user()->id_card ?? 'ID Not Available' }}
+            <button class="profile d-flex align-items-center" id="userInfoButton" data-toggle="modal" data-target="#changePasswordModal">
+                <i class="fas fa-user mr-2"></i> {{ Auth::user()->name ?? 'Guest' }} - {{ Auth::user()->id_card ?? 'ID Not Available' }}
             </button>
-
 
             <form id="logout-form-header" method="POST" action="{{ route('logout') }}" style="display: none;">
                 @csrf
             </form>
             <button type="button" class="logout" id="logout-button-header">
-                <i class="fas fa-sign-out-alt"></i> <!-- Ikon Logout -->
+                <i class="fas fa-sign-out-alt"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- Modal Ganti Password -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #266CA9">
+                    <h5 class="modal-title" id="changePasswordModalLabel" style="color: #ffffff">Change Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('profile.change-password') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmNewPassword" name="new_password_confirmation" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-round">Change Password</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -155,6 +192,13 @@
     <div class="footer">
         ©2024, made with <i class="fa fa-heart heart text-danger"></i> by Engineering Development Center LAI
     </div>
+    
+</body>
+</html>
+
+   <!-- Link JS Bootstrap (termasuk jQuery) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // Ambil elemen-elemen yang dibutuhkan
@@ -312,8 +356,8 @@
                     </div>
                     <a href="{{ route('ppic.eticket') }}" style="text-decoration: none;">
                         <div class="card" data-name="eticket" id="ppic-eticket-card">
-                            <img src="/home-page/images/eticket.png" alt="E-Ticket">
-                            <span>E-Ticket</span>
+                            <img src="/home-page/images/eticket.png" alt="SPK">
+                            <span>SPK</span>
                         </div>
                     </a>
                 `;
@@ -338,8 +382,8 @@
                         <span>Monitoring</span>
                     </div>
                     <div class="card" data-name="eticket">
-                        <img src="/home-page/images/eticket.png" alt="E-Ticket">
-                        <span>E-Ticket</span>
+                        <img src="/home-page/images/eticket.png" alt="SPK">
+                        <span>SPK</span>
                     </div>
                 `;
                 applyCardStyles(gridContainer);
@@ -362,10 +406,12 @@
                         <img src="/home-page/images/monitoring.png" alt="Monitoring">
                         <span>Monitoring</span>
                     </div>
-                    <div class="card" data-name="eticket">
-                        <img src="/home-page/images/eticket.png" alt="E-Ticket">
-                        <span>E-Ticket</span>
-                    </div>
+                    <a href="{{ route('delivery.spk') }}" style="text-decoration: none;">
+                        <div class="card" data-name="eticket">
+                            <img src="/home-page/images/eticket.png" alt="SPK">
+                            <span>SPK</span>
+                        </div>
+                    </a>
                 `;
                 applyCardStyles(gridContainer);
                 performSearch();
@@ -480,7 +526,81 @@
             });
         </script>
     @endif
-   
 
-</body>
-</html>
+    <!-- SweetAlert for password change -->
+    @if(session('password_change_success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Password Changed',
+                text: '{{ session('password_change_success') }}',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+
+    <!-- SweetAlert untuk error umum -->
+    @if(session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+<!-- confirm ganti password -->
+    <script>
+        document.getElementById('confirmChangePassword').addEventListener('click', function (e) {
+            e.preventDefault(); // Mencegah pengiriman form default
+
+            // Ambil nilai input
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
+
+            // Validasi input
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Form',
+                    text: 'Please fill out all fields before submitting.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Password Mismatch',
+                    text: 'New password and confirmation do not match.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Tampilkan SweetAlert untuk konfirmasi
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to change your password?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit form jika dikonfirmasi
+                    document.getElementById('changePasswordForm').submit();
+                }
+            });
+        });
+
+    </script>
+
+
+
+

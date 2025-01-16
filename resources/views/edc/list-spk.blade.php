@@ -141,6 +141,7 @@
                                                 <tr>
                                                     <th>Detail</th>
                                                     <th>Status</th>
+                                                    <th style="width: 150px;">Progress</th>
                                                     <th>SPK Number</th>
                                                     <th>Request Date</th>
                                                     <th>Subject</th>
@@ -155,7 +156,7 @@
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="tableSpkBody">
                                                 @if (!empty($spkList))
                                                     @foreach ($spkList as $spk)
                                                         <tr>
@@ -192,6 +193,25 @@
                                                                     {{ $spk['status'] }}
                                                                 </span>
                                                             </td>
+                                                            <td>
+                                                                <div style="display: flex; align-items: center;">
+                                                                    <!-- Progress Bar -->
+                                                                    <div class="progress" style="overflow: hidden; flex-grow: 1; margin-right: 10px;">
+                                                                        <div 
+                                                                            class="progress-bar bg-info" 
+                                                                            role="progressbar" 
+                                                                            style="width: {{ $spk['persentase'] ?? 0 }}%; font-weight: bold; font-size: 14px; line-height: 30px; color: #fff; transition: width 0.4s ease-in-out;"
+                                                                            aria-valuenow="{{ $spk['persentase'] ?? 0 }}"
+                                                                            aria-valuemin="0" 
+                                                                            aria-valuemax="100">
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- Persentase di Sebelah Kanan -->
+                                                                    <span style="font-weight: bold; font-size: 14px; white-space: nowrap;">
+                                                                        {{ $spk['persentase'] ?? 0 }}%
+                                                                    </span>
+                                                                </div>
+                                                            </td> 
                                                             <td>{{ $spk['spkNumber'] }}</td>
                                                             <td>{{ $spk['requestDate'] }}</td>
                                                             <td>{{ $spk['subject'] }}</td>
@@ -222,7 +242,7 @@
                                                                     data-start-date="{{ $spk['start_date'] ?? '-' }}"
                                                                     data-deadline-date="{{ $spk['deadline_date'] ?? '-' }}"
                                                                     data-jenis-biaya="{{ $spk['jenis_biaya'] ?? '-' }}"
-                                                                    data-jenis-spk="{{ $spk['jenis_spk'] ?? '-' }}"
+                                                                    data-jenis-spk="{{ $spk['jenis_spk'] ?? '-' }}"                                                                    
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#editSpkModal"
                                                                     data-toggle="tooltip"
@@ -434,6 +454,7 @@
 
 	<!-- Datatables -->
 	<script src="{{ asset('atlantis/js/plugin/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 	<!-- Bootstrap Notify -->
 	<script src="{{ asset('atlantis/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
@@ -444,33 +465,22 @@
 	<!-- Atlantis JS -->
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
 
+
+
     <!-- Custom Script -->
     <script>
         $(document).ready(function () {
-            // Inisialisasi DataTables
+            // Inisialisasi DataTables tanpa mendefinisikan kolom secara eksplisit
             var table = $('#dummy-data-table').DataTable({
                 scrollX: true,
+                processing: true,
                 pageLength: 10,
                 order: [[1, 'desc']],
                 language: {
                     emptyTable: "No data available in table",
-                    zeroRecords: "No matching records found"
-                }
+                    zeroRecords: "No matching records found",
+                },
             });
-
-            // Fungsi untuk refresh tabel tanpa AJAX
-            function refreshTableWithoutAjax() {
-                table.destroy(); // Hancurkan tabel
-                $('#dummy-data-table').DataTable({
-                    scrollX: true,
-                    pageLength: 10,
-                    order: [[3, 'desc']],
-                    language: {
-                        emptyTable: "No data available in table",
-                        zeroRecords: "No matching records found"
-                    }
-                });
-            }
 
             // Event saat tombol show details ditekan
             $(document).on('click', '.show-details-button', function () {
@@ -619,6 +629,7 @@
             });
         });
     </script>
+
 
     <!-- js detail modal -->
     <script>
@@ -1101,12 +1112,6 @@
             @endif
         });
     </script>
-
-    
-
-
-
-
 
     
 </body>

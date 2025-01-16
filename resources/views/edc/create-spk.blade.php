@@ -112,6 +112,7 @@
 	<script src="{{ asset('atlantis/js/core/popper.min.js') }}"></script>
 	<script src="{{ asset('atlantis/js/core/bootstrap.min.js') }}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<!-- jQuery UI -->
 	<script src="{{ asset('atlantis/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
 	<script src="{{ asset('atlantis//js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>

@@ -12,7 +12,7 @@
 
     <div class="header">
         <div class="img-wrapper">
-            <img src="{{ asset('get-started/images/laihub-removebg.png') }}" alt="LAI.HUB Logo">
+            <img src="{{ asset('get-started/images/about.png') }}" alt="LAI.HUB Logo">
         </div>
     </div>
 

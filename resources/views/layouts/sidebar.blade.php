@@ -50,115 +50,175 @@
                 @endif
 
                 <!-- Menu untuk Sales Marketing CSR -->
-                @if (session('active_menu') === 'salesmarketing')
-                    <li class="nav-item {{ Request::is('salesmarketing/csr/opportunity') ? 'active' : '' }}">
-                        <a href="{{ route('csr.opportunity') }}" aria-expanded="false">
-                            <i class="fas fa-indent"></i>
-                            <p>Opportunity</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
-                        <a href="{{ route('csr.so-number') }}" aria-expanded="false">
-                            <i class="fas fa-warehouse"></i>
-                            <p>SO Number</p>
-                        </a>
-                    </li>
+                @if (Request::is('salesmarketing/csr*'))
+                    <!-- Menu untuk manager_csr -->
+                    @if (Auth::user()->role === 'manager_csr')
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/opportunity') ? 'active' : '' }}">
+                            <a href="{{ route('csr.opportunity') }}">
+                                <i class="fas fa-indent"></i>
+                                <p>Opportunity</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
+                            <a href="{{ route('csr.so-number') }}">
+                                <i class="fas fa-warehouse"></i>
+                                <p>SO Number</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Menu untuk spv_csr -->
+                    @if (Auth::user()->role === 'spv_csr')
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/opportunity') ? 'active' : '' }}">
+                            <a href="{{ route('csr.opportunity') }}">
+                                <i class="fas fa-indent"></i>
+                                <p>Opportunity</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
+                            <a href="{{ route('csr.so-number') }}">
+                                <i class="fas fa-warehouse"></i>
+                                <p>SO Number</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Menu untuk staff_csr -->
+                    @if (Auth::user()->role === 'staff_csr')
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/opportunity') ? 'active' : '' }}">
+                            <a href="{{ route('csr.opportunity') }}">
+                                <i class="fas fa-indent"></i>
+                                <p>Opportunity</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
+                            <a href="{{ route('csr.so-number') }}">
+                                <i class="fas fa-warehouse"></i>
+                                <p>SO Number</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Menu untuk staff_edc -->
+                    @if (Auth::user()->role === 'staff_edc')
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/opportunity') ? 'active' : '' }}">
+                            <a href="{{ route('csr.opportunity') }}">
+                                <i class="fas fa-indent"></i>
+                                <p>Opportunity</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
+                            <a href="{{ route('csr.so-number') }}">
+                                <i class="fas fa-warehouse"></i>
+                                <p>SO Number</p>
+                            </a>
+                        </li>
+                    @endif
                 @endif
 
-                <!-- Link Dinamis untuk PPIC - E-Ticket -->
-                @if (Request::is('ppic-eticket') || Request::is('ppic-eticket/*'))
-                    <li class="nav-item {{ Request::is('ppic-eticket/data') ? 'active' : '' }}">
-                        <a href="{{ route('ppic.eticket.data') }}">
-                            <i class="fas fa-list"></i>
-                            <p>Data E-Ticket</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('ppic-eticket/create') ? 'active' : '' }}">
-                        <a href="{{ route('ppic.eticket.create') }}">
-                            <i class="fas fa-plus"></i>
-                            <p>Create E-Ticket</p>
-                        </a>
-                    </li>
+
+                <!-- Menu untuk PPIC -->
+                @if (Request::is('ppic-eticket*'))
+                    <!-- Menu untuk manager_logistik -->
+                    @if (Auth::user()->role === 'manager_logistik')
+                        <li class="nav-item {{ Request::is('ppic-eticket') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.eticket') }}">
+                                <i class="fas fa-list"></i>
+                                <p>Data SPK CSR</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('ppic-eticket/ppic/requests') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create SPK</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Menu untuk spv_ppic -->
+                    @if (Auth::user()->role === 'spv_ppic')
+                        <li class="nav-item {{ Request::is('ppic-eticket') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.eticket') }}">
+                                <i class="fas fa-list"></i>
+                                <p>Data SPK CSR</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('ppic-eticket/ppic/requests') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create SPK</p>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Menu untuk staff_ppic -->
+                    @if (Auth::user()->role === 'staff_edc')
+                        <li class="nav-item {{ Request::is('ppic-eticket') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.eticket') }}">
+                                <i class="fas fa-list"></i>
+                                <p>Data SPK CSR</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('ppic-eticket/ppic/requests') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create SPK</p>
+                            </a>
+                        </li>
+                    @endif
                 @endif
 
-                <!-- Menu EDC -->
-                <!-- {{-- Menu untuk manager_edc --}} -->
-                <!-- @if (Auth::user()->role === 'manager_edc')
-                    <li class="nav-item {{ Request::is('edc') ? 'active' : '' }}">
-                        <a href="{{ route('edc.dashboard') }}">
-                            <i class="fas fa-home"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/assign-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.assign-spk') }}">
-                            <i class="fas fa-user"></i>
-                            <p>Assign SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/list-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.list-spk') }}">
-                            <i class="fas fa-list"></i>
-                            <p>List SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/create-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.create-spk') }}">
-                            <i class="fas fa-plus"></i>
-                            <p>Create SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/approval-reject') ? 'active' : '' }}">
-                        <a href="{{ route('edc.approval-reject') }}">
-                            <i class="fas fa-ban"></i>
-                            <p>Approval Reject</p>
-                        </a>
-                    </li>
-                @endif -->
+                <!-- Menu untuk Delivery -->
+                @if (Request::is('delivery-spk*'))
+                    <!-- Menu untuk manager_logistik -->
+                    @if (Auth::user()->role === 'manager_edc')
+                        <li class="nav-item {{ Request::is('delivery-spk') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.spk') }}">
+                                <i class="fas fa-truck"></i>
+                                <p>Data Delivery</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('delivery-spk/requests') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Delivery</p>
+                            </a>
+                        </li>
+                    @endif
 
-                <!-- {{-- Menu untuk staff_edc --}} -->
-                <!-- @if (Auth::user()->role === 'staff_edc')
-                    <li class="nav-item {{ Request::is('edc') ? 'active' : '' }}">
-                        <a href="{{ route('edc.dashboard') }}">
-                            <i class="fas fa-home"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/assign-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.assign-spk') }}">
-                            <i class="fas fa-user"></i>
-                            <p>Assign SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/list-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.list-spk') }}">
-                            <i class="fas fa-list"></i>
-                            <p>List SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/create-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.create-spk') }}">
-                            <i class="fas fa-plus"></i>
-                            <p>Create SPK</p>
-                        </a>
-                    </li>
-                @endif -->
+                    <!-- Menu untuk spv_logistik -->
+                    @if (Auth::user()->role === 'spv_logistik')
+                        <li class="nav-item {{ Request::is('delivery-spk') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.spk') }}">
+                                <i class="fas fa-truck"></i>
+                                <p>Data Delivery</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('delivery-spk/requests') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Delivery</p>
+                            </a>
+                        </li>
+                    @endif
 
-                <!-- {{-- Menu untuk role selain manager_edc dan staff_edc --}} -->
-                <!-- @if (Auth::user()->role !== 'manager_edc' && Auth::user()->role !== 'staff_edc')
-                    <li class="nav-item {{ Request::is('edc/list-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.list-spk') }}">
-                            <i class="fas fa-list"></i>
-                            <p>List SPK</p>
-                        </a>
-                    </li>
-                    <li class="nav-item {{ Request::is('edc/create-spk') ? 'active' : '' }}">
-                        <a href="{{ route('edc.create-spk') }}">
-                            <i class="fas fa-plus"></i>
-                            <p>Create SPK</p>
-                        </a>
-                    </li>
-                @endif -->
+                    <!-- Menu untuk staff_logistik -->
+                    @if (Auth::user()->role === 'staff_edc')
+                        <li class="nav-item {{ Request::is('delivery-spk') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.spk') }}">
+                                <i class="fas fa-truck"></i>
+                                <p>Data Delivery</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('delivery-spk/requests') ? 'active' : '' }}">
+                            <a href="{{ route('delivery.requests') }}">
+                                <i class="fas fa-plus"></i>
+                                <p>Create Delivery</p>
+                            </a>
+                        </li>
+                    @endif
+                @endif
+
 
                 <!-- Menu EDC -->
                 @if (Request::is('edc*'))

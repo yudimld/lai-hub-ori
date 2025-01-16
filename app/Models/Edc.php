@@ -38,6 +38,7 @@ class Edc extends Model
         'jenis_biaya',
         'jenis_spk',
         'reason',
+        'persentase',
     ];
 
     protected $casts = [
@@ -49,15 +50,6 @@ class Edc extends Model
         'updatedAt'      => 'datetime',
     ];
 
-    public static function getAggregatedStatusCounts()
-    {
-        return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
-            return $collection->aggregate([
-                ['$match' => ['status' => ['$ne' => null]]],
-                ['$group' => ['_id' => '$status', 'count' => ['$sum' => 1]]]
-            ]);
-        });
-    }
 
     public static function getCategoryCounts()
     {
@@ -73,6 +65,16 @@ class Edc extends Model
         return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
             return $collection->aggregate([
                 ['$group' => ['_id' => '$assignee', 'count' => ['$sum' => 1]]]
+            ]);
+        });
+    }
+
+    public static function getAggregatedStatusCounts()
+    {
+        return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
+            return $collection->aggregate([
+                ['$match' => ['status' => ['$ne' => null]]],
+                ['$group' => ['_id' => '$status', 'count' => ['$sum' => 1]]]
             ]);
         });
     }
@@ -127,94 +129,135 @@ class Edc extends Model
     // halaman list SPK
     // public static function getAllSpks()
     // {
-    //     return DB::connection('mongodb')->table('edc')->get()->map(function ($spk) {
-               
-    //         // Tentukan status berdasarkan kondisi saat ini
-    //         $status = $spk->status ?? 'Open'; // Default status 'Open'
-            
-    //         if ($status === 'Open') {
-    //             // Jika status saat ini 'Open', cek apakah semua field sudah lengkap
-    //             $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
-    //                           !empty($spk->assignee) &&
-    //                           !empty($spk->priority) &&
-    //                           !empty($spk->category) &&
-    //                           !empty($spk->start_date) &&
-    //                           !empty($spk->deadline_date) &&
-    //                           !empty($spk->jenis_biaya) &&
-    //                           !empty($spk->jenis_spk);
-    
-    //             if ($isComplete) {
-    //                 $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
+    //     return DB::connection('mongodb')->table('edc')->get()
+    //         ->filter(function ($spk) {
+    //             // Filter data dengan status 'Request to Reject'
+    //             return ($spk->status ?? 'Open') !== 'Request to Reject';
+    //         })
+    //         ->map(function ($spk) {
+    //             // Tentukan status berdasarkan kondisi saat ini
+    //             $status = $spk->status ?? 'Open'; // Default status 'Open'
+                
+    //             if ($status === 'Open') {
+    //                 // Jika status saat ini 'Open', cek apakah semua field sudah lengkap
+    //                 $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
+    //                             !empty($spk->assignee) &&
+    //                             !empty($spk->priority) &&
+    //                             !empty($spk->category) &&
+    //                             !empty($spk->start_date) &&
+    //                             !empty($spk->deadline_date) &&
+    //                             !empty($spk->jenis_biaya) &&
+    //                             !empty($spk->jenis_spk);
+        
+    //                 if ($isComplete) {
+    //                     $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
+    //                 }
     //             }
-    //         }
-    
-    //         return [
-    //             'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
-    //             'spkNumber'     => $spk->spkNumber ?? '-',
-    //             'requestDate'   => $spk->requestDate ?? '-',
-    //             'subject'       => $spk->subject ?? '-',
-    //             'createdBy'     => $spk->createdBy ?? '-',
-    //             'status'        => $status, // Status berdasarkan kondisi
-    //             'priority'      => $spk->priority ?? '-',
-    //             'category'      => $spk->category ?? '-',
-    //             'assignee'      => $spk->assignee ?? 'Unassigned',
-    //             'start_date'    => $spk->start_date ?? '-',
-    //             'deadline_date' => $spk->deadline_date ?? '-',
-    //             'jenis_biaya'   => $spk->jenis_biaya ?? '-',
-    //             'jenis_spk'     => $spk->jenis_spk ?? '-',
-    //             'description'   => $spk->deskripsi ?? 'No Description Available', // Tambahkan description
-    //             'attachments' => isset($spk->attachments) ? (is_string($spk->attachments) ? json_decode($spk->attachments, true) : $spk->attachments) : [],
 
-    //         ];
-    //     })->toArray();
+    //             // Hitung progress
+    //             $fields = ['assignee', 'priority', 'category', 'start_date', 'deadline_date', 'jenis_biaya', 'jenis_spk'];
+    //             $filledFields = 0;
+    //             foreach ($fields as $field) {
+    //                 if (!empty($spk->$field)) {
+    //                     $filledFields++;
+    //                 }
+    //             }
+    //             $progress = round(($filledFields / count($fields)) * 100);
+            
+    //             return [
+    //                 'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
+    //                 'spkNumber'     => $spk->spkNumber ?? '-',
+    //                 'requestDate'   => $spk->requestDate ?? '-',
+    //                 'subject'       => $spk->subject ?? '-',
+    //                 'createdBy'     => $spk->createdBy ?? '-',
+    //                 'status'        => $status, // Status berdasarkan kondisi
+    //                 'priority'      => $spk->priority ?? '-',
+    //                 'category'      => $spk->category ?? '-',
+    //                 'assignee'      => $spk->assignee ?? 'Unassigned',
+    //                 'start_date'    => $spk->start_date ?? '-',
+    //                 'deadline_date' => $spk->deadline_date ?? '-',
+    //                 'jenis_biaya'   => $spk->jenis_biaya ?? '-',
+    //                 'jenis_spk'     => $spk->jenis_spk ?? '-',
+    //                 'description'   => $spk->deskripsi ?? 'No Description Available', // Tambahkan description
+    //                 'attachments'   => isset($spk->attachments) ? (is_string($spk->attachments) ? json_decode($spk->attachments, true) : $spk->attachments) : [],
+    //                 'progress'      => $progress,
+    //             ];
+    //         })->toArray();
     // }
     public static function getAllSpks()
-{
-    return DB::connection('mongodb')->table('edc')->get()
-        ->filter(function ($spk) {
-            // Filter data dengan status 'Request to Reject'
-            return ($spk->status ?? 'Open') !== 'Request to Reject';
-        })
-        ->map(function ($spk) {
-            // Tentukan status berdasarkan kondisi saat ini
-            $status = $spk->status ?? 'Open'; // Default status 'Open'
-            
-            if ($status === 'Open') {
-                // Jika status saat ini 'Open', cek apakah semua field sudah lengkap
-                $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
-                              !empty($spk->assignee) &&
-                              !empty($spk->priority) &&
-                              !empty($spk->category) &&
-                              !empty($spk->start_date) &&
-                              !empty($spk->deadline_date) &&
-                              !empty($spk->jenis_biaya) &&
-                              !empty($spk->jenis_spk);
-    
-                if ($isComplete) {
-                    $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
+    {
+        return DB::connection('mongodb')->table('edc')->get()
+            ->filter(function ($spk) {
+                // Filter data dengan status 'Request to Reject'
+                return ($spk->status ?? 'Open') !== 'Request to Reject';
+            })
+            ->map(function ($spk) {
+                // Tentukan status berdasarkan kondisi saat ini
+                $status = $spk->status ?? 'Open'; // Default status 'Open'
+                
+                if ($status === 'Open') {
+                    // Cek kelengkapan field untuk status 'Open'
+                    $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
+                                !empty($spk->assignee) &&
+                                !empty($spk->priority) &&
+                                !empty($spk->category) &&
+                                !empty($spk->start_date) &&
+                                !empty($spk->deadline_date) &&
+                                !empty($spk->jenis_biaya) &&
+                                !empty($spk->jenis_spk);
+                    
+                    if ($isComplete) {
+                        $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
+                    }
                 }
-            }
-    
-            return [
-                'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
-                'spkNumber'     => $spk->spkNumber ?? '-',
-                'requestDate'   => $spk->requestDate ?? '-',
-                'subject'       => $spk->subject ?? '-',
-                'createdBy'     => $spk->createdBy ?? '-',
-                'status'        => $status, // Status berdasarkan kondisi
-                'priority'      => $spk->priority ?? '-',
-                'category'      => $spk->category ?? '-',
-                'assignee'      => $spk->assignee ?? 'Unassigned',
-                'start_date'    => $spk->start_date ?? '-',
-                'deadline_date' => $spk->deadline_date ?? '-',
-                'jenis_biaya'   => $spk->jenis_biaya ?? '-',
-                'jenis_spk'     => $spk->jenis_spk ?? '-',
-                'description'   => $spk->deskripsi ?? 'No Description Available', // Tambahkan description
-                'attachments'   => isset($spk->attachments) ? (is_string($spk->attachments) ? json_decode($spk->attachments, true) : $spk->attachments) : [],
-            ];
-        })->toArray();
-}
 
+                // Hitung nilai persentase (contoh logika)
+                $persentase = 0; // Default nilai
+                if (isset($spk->persentase)) {
+                    // Menggunakan floatval untuk memastikan nilai progress dalam bentuk numerik
+                    $persentase = min(100, max(0, floatval($spk->persentase)));
+                }
+                
+                // Decode attachments jika perlu
+                $attachments = [];
+                if (isset($spk->attachments)) {
+                    if (is_string($spk->attachments)) {
+                        $attachments = json_decode($spk->attachments, true) ?? [];
+                    } elseif (is_array($spk->attachments)) {
+                        $attachments = $spk->attachments;
+                    }
+                }
+
+                return [
+                    'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
+                    'spkNumber'     => $spk->spkNumber ?? '-',
+                    'requestDate'   => $spk->requestDate ?? '-',
+                    'subject'       => $spk->subject ?? '-',
+                    'createdBy'     => $spk->createdBy ?? '-',
+                    'status'        => $status, // Status berdasarkan kondisi
+                    'priority'      => $spk->priority ?? '-',
+                    'category'      => $spk->category ?? '-',
+                    'assignee'      => $spk->assignee ?? 'Unassigned',
+                    'start_date'    => $spk->start_date ?? '-',
+                    'deadline_date' => $spk->deadline_date ?? '-',
+                    'jenis_biaya'   => $spk->jenis_biaya ?? '-',
+                    'jenis_spk'     => $spk->jenis_spk ?? '-',
+                    'description'   => $spk->deskripsi ?? 'No Description Available',
+                    'attachments'   => $attachments,
+                    'persentase'    => $persentase,
+                ];
+            })->toArray();
+    }
+
+    // Tambahkan validasi di model Edc untuk memastikan bahwa nilai updatedAt selalu bertipe string atau datetime sebelum digunakan
+    public function getUpdatedAtAttribute($value)
+    {
+        // Pastikan updatedAt selalu bertipe string atau null
+        if (is_array($value)) {
+            return isset($value[0]) ? $value[0] : null;
+        }
+        return $value;
+    }
 
     // halaman create SPK
     public function storeSpk(Request $request)

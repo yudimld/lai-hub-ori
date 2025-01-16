@@ -25,4 +25,27 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed', // Pastikan new_password_confirmation ada
+        ]);
+
+        // Verifikasi current password
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            // Jika password tidak cocok, tampilkan error
+            return back()->with('error', 'Current password is incorrect.');
+        }
+
+        // Update password
+        Auth::user()->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        // Kirim pesan sukses
+        Session::flash('success', 'Your password has been changed successfully.');
+        return back();
+    }
 }
