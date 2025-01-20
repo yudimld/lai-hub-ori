@@ -285,6 +285,37 @@
                                 </div>
                             </div>
 
+                            <!-- Modal untuk Revision Date -->
+                            <div class="modal fade" id="revisionModal" tabindex="-1" role="dialog" aria-labelledby="revisionModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <h5 class="modal-title" id="revisionModalLabel" style="flex: 1; text-align: center;">Set Revision Date</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form id="revisionForm">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="revisionDate">Revision Date</label>
+                                                    <input type="date" id="revisionDate" class="form-control" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="revisionReason">Reason</label>
+                                                    <textarea id="revisionReason" class="form-control" rows="4" placeholder="Provide a reason for the revision" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary btn-round">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
 			    </div>
@@ -322,269 +353,6 @@
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
 
     <!-- tabel dan detail -->
-	<!-- <script>
-        $(document).ready(function () {
-            $('#ppic-data-table').DataTable({
-                ajax: {
-                    url: '/ppic-eticket/ppic/requests', // API endpoint
-                    dataSrc: '', // Data berasal dari root JSON
-                },
-                columns: [
-                    {
-                        data: null,
-                        defaultContent: '<button class="btn btn-link btn-info btn-lg" data-toggle="modal" data-target="#detailModalPpic"><i class="fa fa-eye"></i></button>',
-                        orderable: false,
-                    },
-                    {
-                        data: 'status',
-                        render: function (data) {
-                            // Menampilkan badge status
-                            if (data === 'open') return '<span class="badge badge-danger">Open</span>';
-                            if (data === 'assigned') return '<span class="badge badge-warning">Assigned</span>';
-                            if (data === 'preparing') return '<span class="badge badge-success">Preparing</span>';
-                            if (data === 'reject') return '<span class="badge badge-secondary">Reject</span>';
-                            return '<span class="badge badge-info">Unknown</span>';
-                        },
-                    },
-                    { data: 'no_po' },
-                    { 
-                        data: 'created_at',
-                        render: function (data) {
-                            return data ? new Date(data).toISOString().split('T')[0] : 'N/A';
-                        },
-                    },
-                    { data: 'incoterm' },
-                    { data: 'customer' },
-                    { data: 'material' },
-                    { data: 'nama_barang_asli' },
-                    {
-                        data: 'status',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            if (data === 'open') {
-                                return `
-                                    <button class="btn btn-success btn-round accept-icon btn-sm" style="margin-right: 10px;">
-                                        <i class="fa fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-default btn-round btn-sm" style="margin-right: 10px;">
-                                        <i class="fa fa-calendar"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-round not-accept-icon btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                `;
-                            } else {
-                                return `
-                                    <button class="btn btn-default btn-round revision-date-btn btn-sm" data-po="${row.no_po}">
-                                        <i class="fa fa-calendar"></i> Revision Date
-                                    </button>
-                                `;
-                            }
-                        },
-                    },
-                ],
-                pageLength: 10,
-                responsive: true,
-            });
-
-            // Event untuk tombol detail
-            $('#ppic-data-table').on('click', 'button', function () {
-                var table = $('#ppic-data-table').DataTable();
-                var data = table.row($(this).parents('tr')).data();
-
-                // Isi data ke dalam modal
-                $('#modalNoPo').val(data.no_po);
-                $('#modalIncoterm').val(data.incoterm);
-                $('#modalCustomer').val(data.customer);
-                $('#modalMaterial').val(data.material);
-                $('#modalNamaBarangAsli').val(data.nama_barang_asli);
-                $('#modalNamaBarangJual').val(data.nama_barang_jual);
-                $('#modalQty').val(data.qty);
-                $('#modalUom').val(data.uom);
-                $('#modalAlamatKirim').val(data.alamat_kirim);
-                $('#modalKemasan').val(data.kemasan);
-                $('#modalGudangPengambilan').val(data.gudang_pengambilan);
-                $('#modalTanggalTiba').val(data.tanggal_tiba);
-
-                // Tampilkan modal
-                $('#detailModalPpic').modal('show');
-            });
-
-            $('#detailModalPpic').on('hidden.bs.modal', function () {
-                $('.modal-backdrop').remove();
-            });
-
-            // Event untuk ikon Accept
-            $('#ppic-data-table').on('click', '.accept-icon', function () {
-                var table = $('#ppic-data-table').DataTable();
-                var data = table.row($(this).parents('tr')).data();
-
-                // SweetAlert konfirmasi
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to accept this request?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, accept it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Kirim permintaan ke server untuk mengubah status
-                        $.ajax({
-                            url: '/ppic-eticket/update-status-ok',
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), // Tambahkan token CSRF
-                            },
-                            data: {
-                                no_po: data.no_po, // Kirim data no_po
-                            },
-                            success: function (response) {
-                                // SweetAlert sukses
-                                Swal.fire({
-                                    title: 'Accepted!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    table.ajax.reload(); // Reload data tabel
-                                });
-                            },
-                            error: function (xhr) {
-                                // SweetAlert error
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: xhr.responseJSON.message || 'Something went wrong. Please try again.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-
-            // Event untuk tombol Revision Date
-            $('#ppic-data-table').on('click', '.revision-date-btn', function () {
-                const poNo = $(this).data('po');
-
-                // Tampilkan modal untuk memilih tanggal
-                Swal.fire({
-                    title: 'Set Revision Date',
-                    html: `
-                        <input type="date" id="revisionDateInput" class="form-control" />
-                    `,
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                    cancelButtonText: 'Cancel',
-                    preConfirm: () => {
-                        const date = document.getElementById('revisionDateInput').value;
-                        if (!date) {
-                            Swal.showValidationMessage('Please select a date.');
-                        }
-                        return date;
-                    },
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const revisionDate = result.value;
-
-                        // Kirim data ke server untuk menyimpan revision date
-                        $.ajax({
-                            url: '/ppic-eticket/ppic/revision-date',
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            },
-                            data: {
-                                no_po: poNo,
-                                revision_date: revisionDate,
-                            },
-                            success: function (response) {
-                                Swal.fire('Success!', 'Revision date updated.', 'success');
-                                $('#ppic-data-table').DataTable().ajax.reload();
-                            },
-                            error: function (xhr) {
-                                console.error(xhr.responseText);
-                                Swal.fire('Error!', 'Failed to update revision date.', 'error');
-                            },
-                        });
-                    }
-                });
-            });
-
-            // Event untuk ikon Not Accept
-            $(document).ready(function () {
-                $('#ppic-data-table').on('click', '.not-accept-icon', function () {
-                    var table = $('#ppic-data-table').DataTable();
-                    var data = table.row($(this).parents('tr')).data();
-
-                    // Set No. PO ke modal
-                    $('#hiddenPoNo').val(data.no_po);
-
-                    // Tampilkan modal Reason
-                    $('#reasonModal').modal('show');
-                });
-
-                // Event untuk submit form Reason
-                $('#reasonForm').on('submit', function (e) {
-                    e.preventDefault(); // Cegah form dari reload halaman
-
-                    var reason = $('#reasonInput').val();
-                    var poNo = $('#hiddenPoNo').val();
-
-                    if (!reason.trim()) {
-                        Swal.fire('Error!', 'Please provide a valid reason.', 'error');
-                        return;
-                    }
-
-                    // SweetAlert konfirmasi
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: `Submit reason for PO ${poNo}?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, submit it!',
-                        cancelButtonText: 'Cancel',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Kirim data ke server (AJAX POST)
-                            $.ajax({
-                                url: '/ppic-eticket/ppic/not-accept', // URL sesuai dengan route:list
-                                method: 'POST',
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr('content'),
-                                    no_po: poNo,
-                                    reason: reason,
-                                },
-                                success: function (response) {
-                                    // SweetAlert sukses
-                                    Swal.fire({
-                                        title: 'Submitted!',
-                                        text: 'Reason successfully submitted.',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK',
-                                    }).then(() => {
-                                        $('#reasonModal').modal('hide');
-                                        $('#ppic-data-table').DataTable().ajax.reload(null, false);
-                                    });
-                                },
-                                error: function (xhr) {
-                                    console.error(xhr.responseText);
-                                    // SweetAlert error
-                                    Swal.fire('Error!', 'Failed to submit reason. Please try again.', 'error');
-                                },
-                            });
-                        }
-                    });
-                });
-            });
-
-        });
-    </script> -->
     <script>
         $(document).ready(function () {
             const table = $('#ppic-data-table').DataTable({
@@ -632,7 +400,7 @@
                                     <button class="btn btn-success btn-round accept-icon btn-sm" style="margin-right: 10px;">
                                         <i class="fa fa-check"></i>
                                     </button>
-                                    <button class="btn btn-default btn-round revision-date-btn btn-sm" style="margin-right: 10px;" data-po="${row.no_po}">
+                                    <button class="btn btn-default btn-round revision-date-btn btn-sm" style="margin-right: 10px;" data-id="${row.id}">
                                         <i class="fa fa-calendar"></i>
                                     </button>
                                     <button class="btn btn-danger btn-round not-accept-icon btn-sm">
@@ -744,41 +512,81 @@
                 });
             });
 
-
             // Event untuk tombol Revision Date
             $('#ppic-data-table').on('click', '.revision-date-btn', function () {
-                const poNo = $(this).data('po');
+                // Ambil ID dari tombol tanpa konversi
+                const id = $(this).data('id'); 
 
+                if (!id) {
+                    Swal.fire('Error!', 'Invalid ID value.', 'error');
+                    return;
+                }
+
+                // Simpan ID di form
+                $('#revisionForm').data('id', id);
+
+                // Tampilkan modal Revision Date
+                $('#revisionModal').modal('show');
+            });
+
+            // Event untuk submit form Revision
+            $('#revisionForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // Ambil ID dari form (sudah dikonversi ke integer sebelumnya)
+                const id = $(this).data('id');
+                const revisionDate = $('#revisionDate').val();
+                const reason_revision = $('#revisionReason').val();
+
+                // Debug: Periksa data yang akan dikirim
+                console.log('Data being sent:', {
+                    id: id,
+                    revision_date: revisionDate,
+                    reason_revision: reason_revision,
+                });
+
+                // Validasi: Pastikan tanggal dan alasan diisi
+                if (!revisionDate || !reason_revision.trim()) {
+                    Swal.fire('Error!', 'Both revision date and reason are required.', 'error');
+                    return;
+                }
+
+                // Konfirmasi sebelum mengirim data
                 Swal.fire({
-                    title: 'Set Revision Date',
-                    html: `<input type="date" id="revisionDateInput" class="form-control" />`,
+                    title: 'Are you sure?',
+                    text: `Set revision date for this record?`,
+                    icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Save',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save it!',
                     cancelButtonText: 'Cancel',
-                    preConfirm: () => {
-                        const date = document.getElementById('revisionDateInput').value;
-                        if (!date) {
-                            Swal.showValidationMessage('Please select a date.');
-                        }
-                        return date;
-                    },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const revisionDate = result.value;
-
+                        // Kirim data ke server dengan AJAX
                         $.ajax({
                             url: '/ppic-eticket/ppic/revision-date',
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                             },
-                            data: { no_po: poNo, revision_date: revisionDate },
+                            data: {
+                                id: id, // Kirim ID ke server
+                                revision_date: revisionDate, // Kirim tanggal revisi
+                                reason_revision: reason_revision, // Kirim alasan revisi
+                            },
                             success: function (response) {
-                                Swal.fire('Success!', 'Revision date updated.', 'success');
-                                table.ajax.reload();
+                                Swal.fire('Success!', 'Revision date updated successfully.', 'success').then(() => {
+                                    $('#revisionModal').modal('hide'); // Tutup modal
+                                    $('#revisionForm')[0].reset(); // Reset form
+                                    $('#ppic-data-table').DataTable().ajax.reload(); // Reload DataTable
+                                    
+                                });
                             },
                             error: function (xhr) {
-                                Swal.fire('Error!', 'Failed to update revision date.', 'error');
+                                console.error('Error response:', xhr); // Debug: periksa response error
+                                const response = xhr.responseJSON;
+                                Swal.fire('Error!', response?.message || 'Failed to update revision date.', 'error');
                             },
                         });
                     }

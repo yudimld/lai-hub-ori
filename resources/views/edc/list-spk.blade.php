@@ -103,7 +103,7 @@
 						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
 							<div>
 								<h2 class="text-white pb-2 fw-bold">List SPK EDC</h2>
-								<h5 class="text-white op-7 mb-2">List data antrian project EDC</h5>
+								<h5 class="text-white op-7 mb-2">List of EDC project data</h5>
 							</div>
 						</div>
 					</div>
@@ -151,8 +151,8 @@
                                                     <th>Category</th>
                                                     <th>Start Date</th>
                                                     <th>Deadline Date</th>
-                                                    <th>Jenis Biaya</th>
-                                                    <th>Jenis SPK</th>
+                                                    <th>Amount of Fee</th>
+                                                    <th>SPK type</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -251,7 +251,6 @@
                                                                 </button>
 
                                                                 <!-- Tombol Delete -->
-                                                                <!-- Tombol Delete -->
                                                                 <button 
                                                                     class="btn btn-link btn-danger delete-button" 
                                                                     data-toggle="tooltip"
@@ -326,11 +325,11 @@
                                                             </div>
                                                             <div class="row mb-3">
                                                                 <div class="col-md-6 d-flex align-items-center">
-                                                                    <strong style="width: 40%;">Jenis Biaya</strong>
+                                                                    <strong style="width: 40%;">Amount of Fee</strong>
                                                                     <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalJenisBiaya">-</p>
                                                                 </div>
                                                                 <div class="col-md-6 d-flex align-items-center">
-                                                                    <strong style="width: 40%;">Jenis SPK</strong>
+                                                                    <strong style="width: 40%;">SPK Type</strong>
                                                                     <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalJenisSpk">-</p>
                                                                 </div>
                                                             </div>
@@ -402,7 +401,7 @@
 
                                                             <!-- Deskripsi Pekerjaan -->
                                                             <div class="mb-3">
-                                                                <label for="modalDescription" class="form-label">Deskripsi Pekerjaan</label>
+                                                                <label for="modalDescription" class="form-label">Work Description</label>
                                                                 <textarea id="modalDescription" name="description" class="form-control" rows="3"></textarea>
                                                             </div>
 

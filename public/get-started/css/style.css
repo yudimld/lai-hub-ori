@@ -6,7 +6,7 @@ body {
 
 .header {
     background: url('../images/bg.png') no-repeat center center/cover; /* Menempatkan gambar bg di bawah */
-    height: 380px;
+    height: 340px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,6 +20,7 @@ body {
     border-bottom-right-radius: 27px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    font-size: 4rem;
 }
 
 .img-wrapper {

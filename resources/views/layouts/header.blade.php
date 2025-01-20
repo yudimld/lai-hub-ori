@@ -15,7 +15,7 @@
     <!-- Logo Header -->
     <div class="logo-header" style="background-color: #ADE1FB;">        
         <a href="{{ url('/homePage') }}" class="logo">
-            <img src="{{ asset('home-page/images/LogoLai.png') }}"  style="max-height: 30px;" class="navbar-brand">
+            <img src="{{ asset('home-page/images/LogoLAI.png') }}"  style="max-height: 30px;" class="navbar-brand">
         </a>
         <button id="toggleSidebar" class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="#sidebar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon">

@@ -34,6 +34,7 @@ class Opportunity extends Model
         'agree_loading_date', 
         'agree_arriving_date', 
         'sales_order_type', 
+        'reason_revision',
     ];
 
         /**

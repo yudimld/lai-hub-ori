@@ -31,7 +31,7 @@
                         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
                             <div>
                                 <h2 class="text-white pb-2 fw-bold">Assign SPK EDC</h2>
-                                <h5 class="text-white op-7 mb-2">List data untuk assign project EDC</h5>
+                                <h5 class="text-white op-7 mb-2">List data for assigning EDC projects</h5>
                             </div>
                         </div>
                     </div>
@@ -197,7 +197,7 @@
                                                                  <!-- Jenis Biaya -->
                                                                  <div class="row mb-3">
                                                                     <div class="col-md-6">
-                                                                        <label for="jenisBiaya" class="form-label">Jenis Biaya</label>
+                                                                        <label for="jenisBiaya" class="form-label">Amount of Fee</label>
                                                                             <select id="jenisBiaya" name="jenisBiaya" class="form-control">
                                                                                 <option value="< 5 juta" selected>< 5 Juta</option>
                                                                                 <option value="> 5 juta">> 5 Juta</option>
@@ -205,7 +205,7 @@
                                                                     </div>
                                                                 <!-- Jenis SPK -->
                                                                     <div class="col-md-6">
-                                                                        <label for="jenisSpk" class="form-label">Jenis Spk</label>
+                                                                        <label for="jenisSpk" class="form-label">SPK Type</label>
                                                                         <select id="jenisSpk" name="jenisSpk" class="form-control">
                                                                             <option value="Plant" selected>Plant</option>
                                                                             <option value="Non-Plant">Non-Plant</option>
@@ -383,7 +383,7 @@
                                                                     <div class="row mb-3">
                                                                         <!-- Jenis Biaya -->
                                                                         <div class="col-md-6">
-                                                                            <label for="editJenisBiaya" class="form-label">Jenis Biaya</label>
+                                                                            <label for="editJenisBiaya" class="form-label">Amount of Fee</label>
                                                                                 <select id="editJenisBiaya" name="editJenisBiaya" class="form-control">
                                                                                     <option value="< 5 juta" selected>< 5 Juta</option>
                                                                                     <option value="> 5 juta">> 5 Juta</option>
@@ -391,7 +391,7 @@
                                                                         </div>
                                                                         <!-- Jenis SPK -->
                                                                         <div class="col-md-6">
-                                                                            <label for="editJenisSpk" class="form-label">Jenis Spk</label>
+                                                                            <label for="editJenisSpk" class="form-label">SPK Type</label>
                                                                             <select id="editJenisSpk" name="editJenisSpk" class="form-control">
                                                                                 <option value="Plant" selected>Plant</option>
                                                                                 <option value="Non-Plant">Non-Plant</option>
@@ -402,7 +402,7 @@
                                                                     <div class="row mb-3">
                                                                         <!-- Input untuk Persentase -->
                                                                         <div class="col-md-6">
-                                                                            <label for="editPersentase" class="form-label">Persentase (%)</label>
+                                                                            <label for="editPersentase" class="form-label">Progress (%)</label>
                                                                             <input type="number" id="editPersentase" name="editPersentase" class="form-control" min="0" max="100" placeholder="0-100">
                                                                         </div>
                                                                     </div>

@@ -11,9 +11,7 @@
 <body>
 
     <div class="header">
-        <div class="img-wrapper">
-            <img src="{{ asset('get-started/images/about.png') }}" alt="LAI.HUB Logo">
-        </div>
+        <h3>LAI.HUB</h3>
     </div>
 
 

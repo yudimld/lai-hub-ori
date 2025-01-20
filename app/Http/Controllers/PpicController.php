@@ -120,26 +120,31 @@ class PpicController extends Controller
     
     public function updateRevisionDate(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'no_po' => 'required|string',
+            'id' => 'required|string',
             'revision_date' => 'required|date',
+            'reason_revision' => 'required|string',
         ]);
-
-        // Cari dokumen berdasarkan no_po
-        $opportunity = Opportunity::where('no_po', $request->no_po)->first();
-
+    
+        // Cari dokumen berdasarkan id
+        $opportunity = Opportunity::find($request->id);
+    
         if (!$opportunity) {
             return response()->json(['message' => 'Opportunity not found.'], 404);
         }
-
-        // Update revision date
+    
+        // Update revision date dan reason_revision
         $opportunity->update([
             'revision_date' => $request->revision_date,
+            'reason_revision' => $request->reason_revision,
+            'status' => 'revision', // Ubah status menjadi revision
             'updated_at' => now(),
         ]);
-
+    
         return response()->json(['message' => 'Revision date updated successfully.']);
     }
+    
+    
+    
 
 }

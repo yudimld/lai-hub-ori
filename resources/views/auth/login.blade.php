@@ -15,7 +15,7 @@
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
-                <input type="hidden" name="_token" value="CSRF_TOKEN_HERE">
+                
                 <!-- Email Address -->
                 <div class="form-group">
                     <x-input-label for="username" :value="__('Username')" />

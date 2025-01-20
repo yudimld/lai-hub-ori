@@ -141,6 +141,11 @@ class SalesMarketingController extends Controller
                     'reason' => $item->reason ?? 'N/A',
                     'created_at' => $item->created_at->format('Y-m-d'), // Tanggal request
                     'update_at' => $item->updated_at ? $item->updated_at->format('Y-m-d') : 'N/A', // Tanggal response
+                    'agree_arriving_date' => $item->agree_arriving_date ?? 'N/A',
+                    'agree_loading_date' => $item->agree_loading_date ?? 'N/A',
+                    'sales_order_type' => $item->sales_order_type ?? 'N/A',
+                    'revision_date' => $item->revision_date ?? 'N/A', // Tambahkan revision_date
+                    'reason_revision' => $item->reason_revision ?? 'N/A',
                 ];
             });
     
@@ -157,6 +162,33 @@ class SalesMarketingController extends Controller
             return response()->json(['error' => 'Data not found'], 404);
         }
     }
+
+    // update status revision to open 
+    public function updateStatus(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'id' => 'required|string', // ID dokumen
+            'status' => 'required|string', // Status baru
+        ]);
+    
+        // Cari dokumen berdasarkan ID
+        $opportunity = Opportunity::where('id', $request->id)->first();
+    
+        if (!$opportunity) {
+            return response()->json(['message' => 'Opportunity not found.'], 404);
+        }
+    
+        // Perbarui status
+        $opportunity->update([
+            'status' => $request->status,
+            'updated_at' => now(),
+        ]);
+    
+        return response()->json(['message' => 'Status updated successfully.']);
+    }
+    
+
 
     // edit
     public function updateProducts(Request $request, $id)

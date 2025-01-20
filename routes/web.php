@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/delivery/status', [SalesMarketingController::class, 'showDeliveryStatus'])->name('delivery.status');
         Route::delete('/delivery/delete/{id}', [SalesMarketingController::class, 'deleteDelivery'])->name('delivery.delete');
         Route::post('/delivery/upload-file/{id}', [SalesMarketingController::class, 'uploadFile'])->name('delivery.upload-file');
-        
+        Route::post('/ppic-eticket/update-status', [SalesMarketingController::class, 'updateStatus'])->name('ppic.update-status');
 
         // save to draft
         Route::post('/save-to-draft', [SalesMarketingController::class, 'saveToDraft']);
@@ -78,6 +78,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PpicController::class, 'index'])->name('ppic.eticket'); // Halaman utama
         Route::get('/ppic/requests', [PpicController::class, 'showPpicData'])->name('ppic.requests'); // API data SPK
         Route::post('/update-status-preparing', [PpicController::class, 'updateStatusToPreparing'])->name('ppic.update-status-preparing');
+        Route::post('/ppic/revision-date', [PpicController::class, 'updateRevisionDate'])->name('revision-date');
+        
+
         Route::post('/ppic/not-accept', [PpicController::class, 'notAcceptReason'])->name('ppic.not-accept');
         Route::post('/opportunity/{id}/update-products', [SalesMarketingController::class, 'updateProducts']);
         Route::delete('/opportunity/{id}', [SalesMarketingController::class, 'deleteOpportunity']);

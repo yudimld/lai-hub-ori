@@ -157,7 +157,7 @@
                                 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                                 <h5 class="modal-title" id="detailModalLabel" style="flex: 1; text-align: center;" >Detail Opportunity</h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -300,8 +300,8 @@
                                 <div class="modal fade" id="detailModalStatus" tabindex="-1" role="dialog" aria-labelledby="detailModalStatusLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title" id="detailModalStatusLabel">Detail Opportunity</h5>
+                                            <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                <h5 class="modal-title" style="flex: 1; text-align: center;" id="detailModalStatusLabel">Detail Opportunity</h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -375,17 +375,50 @@
                                                         </ul>
                                                     </div>
                                                 </div>
+                                                <!-- Tambahkan jarak dan judul -->
+                                                <div class="row mb-4 mt-4">
+                                                    <div class="col-md-12 text-center">
+                                                        <h2 style="font-size: 1.5rem; font-weight: bold;">Feedback PPIC</h4>
+                                                        <hr>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row mb-3" id="ppicFeedbackSection">
+                                                    <div class="col-md-6">
+                                                        <label><strong>Agree Arriving Date:</strong></label>
+                                                        <input type="text" class="form-control bg-light" id="modalStatusAgreeArrivingDate" readonly>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label><strong>Agree Loading Date:</strong></label>
+                                                        <input type="text" class="form-control bg-light" id="modalStatusAgreeLoadingDate" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mt-3">
+                                                        <label><strong>Sales Order Type:</strong></label>
+                                                        <input type="text" class="form-control bg-light" id="modalStatusSalesOrderType" readonly>
+                                                    </div>
+                                                </div>
                                                 <div class="row mb-3" id="reasonInputRow" style="display: none;">
                                                     <div class="col-md-12">
                                                         <label><strong>Reason:</strong></label>
                                                         <textarea class="form-control bg-light" id="modalStatusReason" readonly rows="3"></textarea>
                                                     </div>
                                                 </div>
-
-
+                                                <div class="row mb-3" id="revisionSection" style="display: none;">
+                                                    <div class="col-md-6">
+                                                        <label><strong>Revision Date:</strong></label>
+                                                        <input type="text" class="form-control bg-light" id="modalStatusRevisionDate" readonly>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label><strong>Reason Revision:</strong></label>
+                                                        <textarea class="form-control bg-light" id="modalStatusReasonRevision" readonly rows="3"></textarea>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary btn-round" id="btnCustomerAccept" style="display: none;">
+                                                    Customer Accept
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -395,8 +428,8 @@
                                 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Opportunity</h5>
+                                            <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                <h5 class="modal-title" style="flex: 1; text-align: center;" id="editModalLabel">Edit Opportunity</h5>
                                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -618,7 +651,6 @@
 
     <!-- button request to ppic -->
     <script>
-        
         $('#requestToPpicButton').on('click', function () {
             Swal.fire({
                 title: 'Are you sure?',
@@ -695,7 +727,6 @@
 
     </script>
 
-
     <!-- table status request to ppic -->
     <script>
         $(document).ready(function () {
@@ -713,10 +744,10 @@
                             if (!data) return '<span class="badge badge-info">Unknown</span>';
                             if (data.toLowerCase() === 'draft') return '<span class="badge badge-secondary">Draft</span>';
                             if (data.toLowerCase() === 'open') return '<span class="badge badge-danger">Open</span>';
-                            if (data.toLowerCase() === 'revision') return '<span class="badge badge-warning">Revision Date</span>';
+                            if (data.toLowerCase() === 'revision') return '<span class="badge badge-info">Revision Date</span>';
                             if (data.toLowerCase() === 'preparing') return '<span class="badge badge-warning">Preparing</span>';
                             if (data.toLowerCase() === 'reject') return '<span class="badge badge-dark">Reject</span>';
-                            return '<span class="badge badge-info">Unknown</span>';
+                            return '<span class="badge badge-default">Unknown</span>';
                         },
                     },
                     { data: 'no_po' },
@@ -733,20 +764,28 @@
                     {
                         data: null,
                         defaultContent:
-                            '<button class="btn btn-link btn-info btn-lg" data-toggle="modal" data-target="#detailModalStatus"><i class="fa fa-eye"></i></button>',
+                            '<button class="btn btn-link btn-info btn-lg btn-status-detail" data-toggle="modal" data-target="#detailModalStatus"><i class="fa fa-eye"></i></button>',
                         orderable: false,
                     },
                     {
                         data: null,
                         render: function (data, type, row) {
-                            return `
-                                <button class="btn btn-info btn-link btn-edit" data-id="${row.id}" data-toggle="modal" data-target="#editModal">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-link btn-delete" data-id="${row.id}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            `;
+                            // Periksa jika status adalah "open" atau "draft"
+                            if (row.status && (row.status.toLowerCase() === 'open' || row.status.toLowerCase() === 'draft')) {
+                                return `
+                                    <button class="btn btn-info btn-link btn-edit" data-id="${row.id}" data-toggle="modal" data-target="#editModal">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-link btn-delete" data-id="${row.id}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                `;
+                            } else {
+                                // Jika status bukan "open" atau "draft", hanya tampilkan tombol delete
+                                return `
+                                  
+                                `;
+                            }
                         },
                         orderable: false,
                     },
@@ -757,10 +796,10 @@
             });
 
             // Event klik tombol untuk detail data
-            $('#status-request-table').on('click', 'button', function () {
+            $('#status-request-table').on('click', '.btn-status-detail', function () {
                 var rowData = statusTable.row($(this).parents('tr')).data();
 
-                // Isi data ke modal
+                // Isi data umum ke modal
                 $('#modalStatusNoPo').val(rowData.no_po);
                 $('#modalStatusIncoterm').val(rowData.incoterm);
                 $('#modalStatusCustomer').val(rowData.customer);
@@ -774,9 +813,37 @@
                 $('#modalStatusGudangPengambilan').val(rowData.gudang_pengambilan);
                 $('#modalStatusTanggalTiba').val(rowData.tanggal_tiba);
 
+                // Logika untuk Revision Date dan Reason Revision
+                if (rowData.revision_date && rowData.reason_revision && 
+                    rowData.revision_date !== 'N/A' && rowData.reason_revision !== 'N/A') {
+                    $('#modalStatusRevisionDate').val(rowData.revision_date);
+                    $('#modalStatusReasonRevision').val(rowData.reason_revision);
+                    $('#revisionSection').show(); // Tampilkan form jika data tersedia
+                } else {
+                    $('#revisionSection').hide(); // Sembunyikan form jika data tidak tersedia
+                }
+
+                // Logika untuk menampilkan tombol Customer Accept
+                if (rowData.status && rowData.status.toLowerCase() === 'revision') {
+                    $('#btnCustomerAccept').show(); // Tampilkan tombol Customer Accept
+                } else {
+                    $('#btnCustomerAccept').hide(); // Sembunyikan tombol Customer Accept
+                }
+
+                // Logika untuk data tambahan
+                if (rowData.status && rowData.status.toLowerCase() === 'preparing') {
+                    $('#modalStatusAgreeArrivingDate').val(rowData.agree_arriving_date).parent().show();
+                    $('#modalStatusAgreeLoadingDate').val(rowData.agree_loading_date).parent().show();
+                    $('#modalStatusSalesOrderType').val(rowData.sales_order_type).parent().show();
+                } else {
+                    $('#modalStatusAgreeArrivingDate').val('').parent().hide();
+                    $('#modalStatusAgreeLoadingDate').val('').parent().hide();
+                    $('#modalStatusSalesOrderType').val('').parent().hide();
+                }
+
                 // Render daftar produk ke dalam modal
-                const productList = $('#modalProductList'); // Elemen daftar produk di modal
-                productList.empty(); // Kosongkan daftar produk sebelumnya
+                const productList = $('#modalProductList');
+                productList.empty();
                 if (rowData.products && rowData.products.length > 0) {
                     rowData.products.forEach(product => {
                         productList.append(`<li class="list-group-item">${product}</li>`);
@@ -787,7 +854,7 @@
 
                 // Tampilkan/hidden textarea untuk alasan reject
                 if (rowData.status && rowData.status.toLowerCase() === 'reject') {
-                    $('#modalStatusReason').val(rowData.reason || ''); // Alasan jika ada
+                    $('#modalStatusReason').val(rowData.reason || '');
                     $('#reasonInputRow').show();
                 } else {
                     $('#reasonInputRow').hide();
@@ -795,7 +862,47 @@
 
                 // Tampilkan modal detail
                 $('#detailModalStatus').modal('show');
+
+                // Event untuk Customer Accept
+                $('#btnCustomerAccept').off('click').on('click', function () {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `This will change the status to Open.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, accept!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Kirim permintaan AJAX untuk mengubah status menjadi open
+                            $.ajax({
+                                url: '/salesmarketing/csr/ppic-eticket/update-status',
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                                },
+                                data: {
+                                    id: rowData.id, // Kirim ID ke server
+                                    status: 'open', // Ubah status menjadi open
+                                },
+                                success: function (response) {
+                                    Swal.fire('Success!', 'Status changed to Open.', 'success').then(() => {
+                                        $('#detailModalStatus').modal('hide'); // Tutup modal
+                                        $('#status-request-table').DataTable().ajax.reload(); // Reload DataTable
+                                    });
+                                },
+                                error: function (xhr) {
+                                    console.error('Error response:', xhr);
+                                    const response = xhr.responseJSON;
+                                    Swal.fire('Error!', response?.message || 'Failed to update status.', 'error');
+                                },
+                            });
+                        }
+                    });
+                });
             });
+
 
 
             // Event pada tombol "Request to PPIC"

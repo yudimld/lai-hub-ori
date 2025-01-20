@@ -90,7 +90,7 @@
     </div>
 
     <div class="content">
-        <img src="{{ asset('home-page/images/LogoLai.png') }}" alt="Lautan Air Indonesia">
+        <img src="{{ asset('home-page/images/LogoLAI.png') }}" alt="Lautan Air Indonesia">
 
         <div class="search-container">
                 <!-- Tombol Home -->
