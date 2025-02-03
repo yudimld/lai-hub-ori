@@ -107,6 +107,10 @@
                 <button id="mes-button" class="hidden">
                     MES
                 </button>
+                <!-- TombolCMMS -->
+                <button id="cmms-button" class="hidden">
+                    CMMS
+                </button>
 
                 <!-- Tombol Supply Chain -->
                 <button id="supplychain-button" class="hidden">
@@ -205,6 +209,7 @@
         const homeButton = document.getElementById('home-button');
         const plantButton = document.getElementById('plant-button');
         const mesButton = document.getElementById('mes-button');
+        const cmmsButton = document.getElementById('cmms-button');
         const supplyChainButton = document.getElementById('supplychain-button');
         const warehouseButton = document.getElementById('warehouse-button');
         const deliveryButton = document.getElementById('delivery-button');
@@ -212,10 +217,10 @@
         const gridContainer = document.getElementById('grid-container');
         const searchBar = document.getElementById('search-bar');
         const initialGridHTML = gridContainer.innerHTML; // Simpan HTML awal untuk kembali ke homepage
-
+ 
         // Fungsi untuk menyembunyikan semua tombol
         function hideAllButtons() {
-            const allButtons = [homeButton, plantButton, mesButton, supplyChainButton, warehouseButton, deliveryButton, salesMarketingButton];
+            const allButtons = [homeButton, plantButton, mesButton, cmmsButton, supplyChainButton, warehouseButton, deliveryButton, salesMarketingButton];
             allButtons.forEach(button => button.classList.add('hidden'));
         }
 
@@ -268,8 +273,8 @@
                         <img src="/home-page/images/mes.png" alt="MES">
                         <span>MES</span>
                     </div>
-                    <div class="card" data-name="cmms">
-                        <img src="/home-page/images/cmms.png" alt="CMMS">
+                    <div class="card" id="cmms-card" data-name="cmms">
+                        <img src="{{ asset('home-page/images/cmms.png') }}" alt="CMMS">
                         <span>CMMS</span>
                     </div>
                     <div class="card" data-name="ums">
@@ -293,24 +298,108 @@
             showButtons(homeButton, mesButton);
 
             gridContainer.innerHTML = `
-                <div class="card" data-name="mesdashboard">
+                <div class="card" data-name="mesdashboard" id="mesdashboard-card">
                     <img src="/home-page/images/dashboard.png" alt="Dashboard">
                     <span>Dashboard</span>
                 </div>
-                <a href="{{ route('mes.spk.list') }}" style="text-decoration: none;">
-                    <div class="card" data-name="spk">
-                        <img src="{{ asset('home-page/images/spk.png') }}" alt="SPK">
-                        <span>SPK</span>
+                
+                <div class="card" data-name="spk">
+                    <img src="{{ asset('home-page/images/spk.png') }}" alt="SPK">
+                    <span>SPK</span>
+                </div>
+                <a href="{{ route('mes-menu.batchmanagement.planning') }}" style="text-decoration: none;">
+                    <div class="card" data-name="batch">
+                        <img src="/home-page/images/batchmanagement.png" alt="Batch Management">
+                        <span>Batch Management</span>
                     </div>
                 </a>
-                <div class="card" data-name="batch">
-                    <img src="/home-page/images/batchmanagement.png" alt="Batch Management">
-                    <span>Batch Management</span>
-                </div>
+
             `;
             applyCardStyles(gridContainer);
             performSearch();
         }
+        });
+
+        // Event listener untuk card "CMMS"
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('#cmms-card')) {  // Pastikan id card "cmms-card"
+                hideAllButtons();  // Fungsi untuk menyembunyikan semua tombol
+                showButtons(homeButton, cmmsButton);  // Fungsi untuk menampilkan tombol yang relevan
+
+                // Mengubah isi grid-container menjadi card CMMS yang benar
+                gridContainer.innerHTML = `
+                    <div class="card" data-name="cmmsdashboard" id="cmmsdashboard-card">
+                        <img src="/home-page/images/dashboard.png" alt="Dashboard">
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="card" data-name="maintenance">
+                        <img src="{{ asset('home-page/images/maintenance.png') }}" alt="Maintenance">
+                        <span>Maintenance</span>
+                    </div>
+                    <div class="card" data-name="workorder">
+                        <img src="/home-page/images/workorder.png" alt="Work Order">
+                        <span>Work Order</span>
+                    </div>
+                `;
+                applyCardStyles(gridContainer);  // Fungsi untuk menerapkan gaya kartu
+                performSearch();  // Fungsi untuk melakukan pencarian, jika diperlukan
+            }
+        });
+
+        // Event listener untuk card "Dashboard MES"
+        gridContainer.addEventListener('click', (event) => {
+            if (event.target.closest('#mesdashboard-card')) { // Sekarang bisa pakai ID
+                hideAllButtons();
+                showButtons(homeButton, mesButton);
+
+                gridContainer.innerHTML = `
+                    <div class="card" id="liquid-card" data-name="liquid">
+                        <img src="/home-page/images/liquid.png" alt="Liquid">
+                        <span>Liquid</span>
+                    </div>
+                    <a href="{{ route('monitoring.powder-plant') }}" style="text-decoration: none;">
+                        <div class="card" id="powder-card" data-name="powder">
+                            <img src="/home-page/images/powder.png" alt="Powder">
+                            <span>Powder</span>
+                        </div>
+                    </a>
+                    <div class="card" id="specialty-card" data-name="specialty">
+                        <img src="/home-page/images/specialty.png" alt="Specialty">
+                        <span>Specialty</span>
+                    </div>
+                `;
+
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
+        });
+
+        // Event listener untuk card "Dashboard CMMS"
+        gridContainer.addEventListener('click', (event) => {
+            if (event.target.closest('#cmmsdashboard-card')) {
+                hideAllButtons();
+                showButtons(homeButton, cmmsButton);
+
+                gridContainer.innerHTML = `
+                    <div class="card" id="cmms-liquid-card" data-name="liquid">
+                        <img src="/home-page/images/liquid.png" alt="Liquid">
+                        <span>Liquid</span>
+                    </div>
+                    <a href="{{ route('cmms-menu.dashboard.powder') }}" style="text-decoration: none;">
+                        <div class="card" id="cmms-powder-card" data-name="powder">
+                            <img src="/home-page/images/powder.png" alt="Powder">
+                            <span>Powder</span>
+                        </div>
+                    </a>
+                    <div class="card" id="cmms-specialty-card" data-name="specialty">
+                        <img src="/home-page/images/specialty.png" alt="Specialty">
+                        <span>Specialty</span>
+                    </div>
+                `;
+
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
         });
 
 
@@ -350,10 +439,12 @@
                         <img src="/home-page/images/dashboard.png" alt="Dashboard">
                         <span>Dashboard</span>
                     </div>
-                    <div class="card" data-name="monitoring">
-                        <img src="/home-page/images/monitoring.png" alt="Monitoring">
-                        <span>Monitoring</span>
-                    </div>
+                    <a href="{{ route('ppic.monitoring-spk') }}" style="text-decoration: none;">
+                        <div class="card" data-name="monitoring">
+                            <img src="/home-page/images/monitoring.png" alt="Monitoring">
+                            <span>Monitoring</span>
+                        </div>
+                    </a>
                     <a href="{{ route('ppic.eticket') }}" style="text-decoration: none;">
                         <div class="card" data-name="eticket" id="ppic-eticket-card">
                             <img src="/home-page/images/eticket.png" alt="SPK">
@@ -466,8 +557,6 @@
             performSearch();
         });
 
-        
-
         // Event listener untuk tombol Home
         homeButton.addEventListener('click', () => {
             hideAllButtons();
@@ -550,7 +639,7 @@
             });
         </script>
     @endif
-<!-- confirm ganti password -->
+    <!-- confirm ganti password -->
     <script>
         document.getElementById('confirmChangePassword').addEventListener('click', function (e) {
             e.preventDefault(); // Mencegah pengiriman form default

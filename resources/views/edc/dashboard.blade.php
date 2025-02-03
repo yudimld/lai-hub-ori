@@ -111,35 +111,81 @@
 									</div>
 										
 									<div class="row">
-										<!-- Pie Chart -->
+										<!-- Bagian kiri: SPK Priority per Assignee -->
 										<div class="col-md-6">
 											<div class="card">
 												<div class="card-header">
-													<div class="card-title">Project Category Percentage</div>
+													<div class="card-title">SPK Priority per Assignee</div>
 												</div>
 												<div class="card-body">
 													<div class="chart-container">
-														<canvas id="pieChart" style="width: 100%; height: 300px;"></canvas>
+														<canvas id="priorityBarChart" style="width: 100%; height: 300px;"></canvas>
 													</div>
+													
 												</div>
 											</div>
 										</div>
 
-										<!-- Bar Chart -->
+										<!-- Bagian kanan: Total Amount of Fee per Assignee -->
 										<div class="col-md-6">
 											<div class="card">
 												<div class="card-header">
-													<div class="card-title">Total Tickets per Assignee</div>
+													<h5>Total Cost Project per Assignee</h5>
 												</div>
 												<div class="card-body">
-													<div class="chart-container">
-														<canvas id="barChart" style="width: 100%; height: 300px;"></canvas>
-													</div>
+													@foreach ($assigneeNames as $index => $name)
+														<div class="mb-3">
+															<div class="d-flex justify-content-between">
+																<span>{{ $name }}</span>
+																<span>{{ number_format($assigneeFees[$index], 0, ',', '.') }} IDR</span>
+															</div>
+															<div class="progress">
+																<div class="progress-bar bg-primary" role="progressbar"
+																	style="width: {{ ($assigneeFees[$index] / max($assigneeFees)) * 100 }}%;"
+																	aria-valuenow="{{ $assigneeFees[$index] }}" aria-valuemin="0"
+																	aria-valuemax="{{ max($assigneeFees) }}">
+																</div>
+															</div>
+														</div>
+													@endforeach
+
+												</div>
+											</div>
+											<div class="card mt-3">
+												<div class="card-header">
+													<h5>Total SPK per Assignee</h5>
+												</div>
+												<div class="card-body">
+													@php
+														$totalSPK = array_sum(array_values($totalSPKByAssignee));
+													@endphp
+
+													@foreach ($totalSPKByAssignee as $assignee => $count)
+														<div class="mb-3">
+															<div class="d-flex justify-content-between">
+																<span>{{ $assignee }}</span>
+																<span>{{ $count }} SPK</span>
+															</div>
+															<div class="progress">
+																<div 
+																	class="progress-bar bg-primary" 
+																	role="progressbar" 
+																	style="width: {{ ($totalSPK > 0) ? ($count / $totalSPK) * 100 : 0 }}%;" 
+																	aria-valuenow="{{ $count }}" 
+																	aria-valuemin="0" 
+																	aria-valuemax="{{ $totalSPK }}">
+																	{{ round(($totalSPK > 0) ? ($count / $totalSPK) * 100 : 0, 2) }}%
+																</div>
+															</div>
+														</div>
+													@endforeach
 												</div>
 											</div>
 										</div>
 									</div>
-                            </div>
+
+								</div>
+							</div>
                         </div>
                     </div>
 			    </div>
@@ -185,106 +231,46 @@
 	<!-- Atlantis JS -->
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
 
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			var pieChartCtx = document.getElementById('pieChart').getContext('2d');
 
-			// Data untuk Pie Chart
-			var pieData = {
-				labels: @json($categories), // Label kategori
-				datasets: [{
-					data: @json($percentages), // Persentase kategori
-					backgroundColor: ['#72b4eb', '#113367'], // Warna segmen
-					hoverBackgroundColor: ['#0056b3', '#c82333'] // Warna hover
-				}]
+	<!-- chart spk priority -->
+	<script>
+    	document.addEventListener("DOMContentLoaded", function () {
+			var ctx = document.getElementById('priorityBarChart').getContext('2d');
+
+			// Data untuk bar chart
+			var priorityData = {
+				labels: @json($assignees), // Nama assignees
+				datasets: [
+					{
+						label: 'Major Projects',
+						data: @json($majorChartData), // Data proyek major
+						backgroundColor: 'rgba(255, 99, 132, 0.6)',
+						borderColor: 'rgba(255, 99, 132, 1)',
+						borderWidth: 1
+					},
+					{
+						label: 'Minor Projects',
+						data: @json($minorChartData), // Data proyek minor
+						backgroundColor: 'rgba(54, 162, 235, 0.6)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1
+					}
+				]
 			};
 
-			// Opsi untuk Pie Chart
-			var pieOptions = {
+			// Opsi untuk bar chart
+			var priorityOptions = {
 				responsive: true,
 				maintainAspectRatio: false,
 				plugins: {
 					legend: {
 						display: true,
-						position: 'bottom', // Legend di bawah chart
-						labels: {
-							font: {
-								size: 12 // Ukuran font legend
-							},
-							boxWidth: 20, // Lebar kotak warna di legend
-							padding: 15 // Padding antar item legend
-						}
-					},
-					tooltip: {
-						callbacks: {
-							label: function (context) {
-								const label = context.label || '';
-								const value = context.raw || 0;
-								return `${label}: ${value}%`; // Format tooltip
-							}
-						}
-					},
-					datalabels: {
-						color: '#fff', // Warna teks persentase
-						formatter: function (value) {
-							return value + '%'; // Format teks persentase di dalam chart
-						},
-						font: {
-							size: 14,
-							weight: 'bold'
-						},
-						anchor: 'center',
-						align: 'center'
-					}
-				}
-			};
-
-			// Buat Pie Chart
-			new Chart(pieChartCtx, {
-				type: 'pie',
-				data: pieData,
-				options: pieOptions,
-				plugins: [ChartDataLabels] // Aktifkan plugin datalabels
-			});
-		});
-	</script>
-
-
-
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			var barChartCtx = document.getElementById('barChart').getContext('2d');
-
-			// Data untuk Bar Chart
-			var barData = {
-				labels: @json($assignees), // Nama assignees
-				datasets: [{
-					label: 'Total Tickets', // Label data
-					data: @json($ticketCounts), // Jumlah ticket per assignee
-					backgroundColor: '#007bff', // Warna bar
-					hoverBackgroundColor: '#0056b3' // Warna bar saat hover
-				}]
-			};
-
-			// Opsi untuk Bar Chart
-			var barOptions = {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						display: true, // Tampilkan legend
-						position: 'top', // Legend di atas chart
-						labels: {
-							font: {
-								size: 12
-							},
-							padding: 10
-						}
+						position: 'top',
 					},
 					tooltip: {
 						callbacks: {
 							label: function (tooltipItem) {
-								return `Total Tickets: ${tooltipItem.raw}`; // Format tooltip
+								return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
 							}
 						}
 					}
@@ -293,36 +279,151 @@
 					x: {
 						title: {
 							display: true,
-							text: 'Assignees', // Label sumbu X
-							font: {
-								size: 14
-							}
-						},
-						ticks: {
-							autoSkip: false // Tidak lewati label jika banyak
+							text: 'Assignees',
 						}
 					},
 					y: {
+					beginAtZero: true,
+					title: {
+						display: true,
+						text: 'Number of Projects',
+					},
+					ticks: {
+						stepSize: 1, // Menampilkan hanya bilangan bulat
+						callback: function(value) {
+							return Math.floor(value); // Memastikan hanya bilangan bulat ditampilkan
+						}
+					}
+					}
+				}
+			};
+
+			// Buat chart
+			new Chart(ctx, {
+				type: 'bar',
+				data: priorityData,
+				options: priorityOptions
+			});
+		});
+	</script>
+
+	<!-- horizontal chart total spk -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var totalSPKCtx = document.getElementById('totalSPKChart').getContext('2d');
+
+			var totalSPKData = {
+				labels: @json(array_keys($totalSPKByAssignee)), // Nama assignees
+				datasets: [{
+					label: 'Total SPK',
+					data: @json(array_values($totalSPKByAssignee)), // Jumlah SPK per assignee
+					backgroundColor: '#007bff',
+					hoverBackgroundColor: '#0056b3'
+				}]
+			};
+
+			var totalSPKOptions = {
+				responsive: true,
+				maintainAspectRatio: false,
+				indexAxis: 'y', // Membuat chart horizontal
+				scales: {
+					x: {
 						beginAtZero: true,
 						title: {
 							display: true,
-							text: 'Total Tickets', // Label sumbu Y
-							font: {
-								size: 14
+							text: 'Number of SPK',
+						}
+					},
+					y: {
+						title: {
+							display: true,
+							text: 'Assignees',
+						}
+					}
+				},
+				plugins: {
+					legend: {
+						display: false // Sembunyikan legenda
+					},
+					tooltip: {
+						callbacks: {
+							label: function (tooltipItem) {
+								return `Total SPK: ${tooltipItem.raw}`;
 							}
 						}
 					}
 				}
 			};
 
-			// Buat Bar Chart
-			new Chart(barChartCtx, {
+			// Buat Horizontal Bar Chart
+			new Chart(totalSPKCtx, {
 				type: 'bar',
-				data: barData,
-				options: barOptions
+				data: totalSPKData,
+				options: totalSPKOptions
 			});
 		});
 	</script>
+
+	<!-- bar chart kompetisi amount of fee -->
+	<script>
+    	document.addEventListener("DOMContentLoaded", function () {
+			const ctx = document.getElementById('horizontalBarChart').getContext('2d');
+
+			const data = {
+				labels: @json($assigneeNames), // Nama assignee
+				datasets: [{
+					label: 'Total Amount of Fee (IDR)',
+					data: @json($totalFees), // Total fee
+					backgroundColor: 'rgba(75, 192, 192, 0.6)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			};
+
+			const options = {
+				responsive: true,
+				maintainAspectRatio: false,
+				indexAxis: 'y', // Horizontal bar
+				scales: {
+					x: {
+						beginAtZero: true,
+						title: {
+							display: true,
+							text: 'Total Amount of Fee (IDR)',
+							font: { size: 14 }
+						}
+					},
+					y: {
+						title: {
+							display: true,
+							text: 'Assignees',
+							font: { size: 14 }
+						}
+					}
+				},
+				plugins: {
+					legend: {
+						display: true,
+						position: 'top'
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								return `Total Fee: IDR ${context.raw.toLocaleString()}`;
+							}
+						}
+					}
+				}
+			};
+
+			new Chart(ctx, {
+				type: 'bar',
+				data: data,
+					options: options
+				});
+		});
+	</script>
+
 
 
 

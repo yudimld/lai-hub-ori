@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Opportunity;
+
 use Illuminate\Support\Facades\Session;
 use MongoDB\Client as MongoDBClient;
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\ObjectId;
 use Carbon\Carbon;
+
+use App\Models\Opportunity;
+use App\Models\PpicSpk;
 
 class PpicController extends Controller
 {
@@ -40,7 +43,9 @@ class PpicController extends Controller
                 'tanggal_tiba',
                 'gudang_pengambilan',
                 'created_at',
-                'products'
+                'products',
+                'reason_revision',
+                'revision_date'
             ]);
     
         return response()->json($opportunities);
@@ -143,6 +148,50 @@ class PpicController extends Controller
     
         return response()->json(['message' => 'Revision date updated successfully.']);
     }
+
+    // fungsi CreateSPK
+    public function createSpkIndex()
+    {
+        session(['active_menu' => 'ppic']);
+        return view('supplychain.ppic.eticket.create');
+    }
+
+    // step1
+    public function store(Request $request)
+    {
+        $request->validate([
+            'material_number' => 'required|string|max:255',
+            'order_type' => 'required|string|max:255',
+            'production_plant' => 'required|string|max:255',
+        ]);
+    
+        try {
+            PpicSpk::create([
+                'material_number' => $request->material_number,
+                'order_type' => $request->order_type,
+                'production_plant' => $request->production_plant,
+            ]);
+    
+            return response()->json(['success' => true, 'message' => 'SPK created successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to create SPK.'], 500);
+        }
+    }
+
+    // card monitoring
+    public function monitoringSpk()
+    {
+        return view('supplychain.ppic.monitoring.monitoring-spk');
+    }
+
+    // master data menu
+    public function masterData() {
+        return view('supplychain.ppic.eticket.master-data');
+    }
+    
+    
+
+    
     
     
     

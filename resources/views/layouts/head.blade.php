@@ -21,10 +21,6 @@
     <link rel="stylesheet" href="{{ asset('atlantis/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('atlantis/css/atlantis.min.css') }}">
 	
-
-    <!-- datatables -->
-    <!-- <link rel="stylesheet" href="{{ asset('atlantis/js/plugin/datatables/datatables.min.css') }}"> -->
-	
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 

@@ -133,84 +133,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Modal Detail -->
-                                <!-- <div class="modal fade" id="detailModalPpic" tabindex="-1" role="dialog" aria-labelledby="detailModalPpicLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title" id="detailModalPpicLabel">Detail Opportunity</h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>No. PO:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalNoPo" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Incoterm:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalIncoterm" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Customer:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalCustomer" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Material:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalMaterial" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Asli:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalNamaBarangAsli" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Jual:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalNamaBarangJual" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Quantity:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalQty" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Unit of Measure:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalUom" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Alamat Kirim:</strong></label>
-                                                        <textarea class="form-control bg-light" id="modalAlamatKirim" readonly rows="3"></textarea>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Kemasan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalKemasan" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Gudang Pengambilan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalGudangPengambilan" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Tanggal Tiba:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalTanggalTiba" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-round btn-sm" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </div>
 
                             <!-- Modal Reason -->
@@ -349,6 +271,130 @@
                                 </div>
                             </div>
 
+                            <!-- Modal Deliver -->
+                            <div class="modal fade" id="deliverModal" tabindex="-1" role="dialog" aria-labelledby="deliverModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-warning text-white">
+                                            <h5 class="modal-title" id="deliverModalLabel">Set Delivery and Arriving Date</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form id="deliverForm">
+                                            <div class="modal-body">
+                                                <!-- Revision Notes -->
+                                                <div id="revisionNotes" style="display: none; margin-bottom: 15px;">
+                                                    <div class="alert alert-info">
+                                                        <strong>Revision Details:</strong><br>
+                                                        <span id="revisionDateNote">Revision Date: -</span><br>
+                                                        <span id="reasonNote">Reason: -</span>
+                                                    </div>
+                                                </div>
+                                                <!-- Delivery Date -->
+                                                <div class="form-group">
+                                                    <label for="deliveryDateInput">Delivery Date</label>
+                                                    <input type="date" class="form-control" id="deliveryDateInput" name="delivery_date" required>
+                                                </div>
+                                                <!-- Arriving Date -->
+                                                <div class="form-group">
+                                                    <label for="arrivingDateInput">Arriving Date</label>
+                                                    <input type="date" class="form-control" id="arrivingDateInput" name="arriving_date" required>
+                                                </div>
+                                                <input type="hidden" id="hiddenPoNumber" name="po_number">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-success btn-round">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Revision Date -->
+                            <div class="modal fade" id="revisionModal" tabindex="-1" role="dialog" aria-labelledby="revisionModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title" id="revisionModalLabel">Revision Details</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form id="revisionForm">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="revisionDateInput">Revision Date</label>
+                                                    <input type="date" class="form-control" id="revisionDateInput" name="revision_date" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="revisionReasonInput">Reason</label>
+                                                    <textarea class="form-control" id="revisionReasonInput" name="reason_revision" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-warning btn-round">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Reject -->
+                            <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="rejectModalLabel">Reject Delivery</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form id="rejectForm">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="rejectReasonInput">Reason for Rejection</label>
+                                                    <textarea class="form-control" id="rejectReasonInput" name="reason" rows="4" required></textarea>
+                                                </div>
+                                                <input type="hidden" id="rejectPoNumber" name="po_number"> <!-- Hidden field for PO Number -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-round btn-sm" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-danger btn-round btn-sm">Reject</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Arriving -->
+                            <div class="modal fade" id="attachmentModal" tabindex="-1" role="dialog" aria-labelledby="attachmentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-success text-white">
+                                            <h5 class="modal-title" id="attachmentModalLabel">Upload Attachment</h5>
+                                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form id="attachmentForm" enctype="multipart/form-data">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="attachmentInput">Select Attachment File</label>
+                                                    <input type="file" class="form-control" id="attachmentInput" name="file" required>
+                                                </div>
+                                                <input type="hidden" id="hiddenPoNumberAttachment" name="po_number"> <!-- Field untuk PO Number -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-round btn-sm" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-success btn-round btn-sm">Upload</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -411,10 +457,11 @@
                         render: function (data) {
                             if (!data) return '<span class="badge badge-info">Unknown</span>';
                             if (data.toLowerCase() === 'open') return '<span class="badge badge-danger">Open</span>';
-                            if (data.toLowerCase() === 'assigned') return '<span class="badge badge-warning">Assigned</span>';
-                            if (data.toLowerCase() === 'delivery') return '<span class="badge badge-success">Delivery</span>';
-                            if (data.toLowerCase() === 'close') return '<span class="badge badge-secondary">Close</span>';
-                            return '<span class="badge badge-info">Unknown</span>';
+                            if (data.toLowerCase() === 'deliver') return '<span class="badge badge-warning">Deliver</span>';
+                            if (data.toLowerCase() === 'revision') return '<span class="badge badge-default">Revision Date</span>'; // hitam
+                            if (data.toLowerCase() === 'arriving') return '<span class="badge badge-success">Arriving</span>';
+                            if (data.toLowerCase() === 'rejected') return '<span class="badge badge-secondary">Reject</span>';
+                            return '<span class="badge badge-secondary">Unknown</span>';
                         },
                     },
                     { data: 'po_number' },
@@ -429,19 +476,29 @@
                             // Render tombol berdasarkan status
                             if (row.status.toLowerCase() === 'open') {
                                 return `
-                                    <button class="btn btn-success btn-sm accept-icon" title="Accept">
-                                        <i class="fa fa-check"></i>
+                                    <button class="btn btn-warning btn-round btn-sm deliver-btn" title="Deliver">
+                                        <i class="fa fa-truck"></i> 
+                                    </button>
+                                    <button class="btn btn-dark btn-round btn-sm revision-btn" 
+                                                    title="Revision"
+                                                    data-revision-date="${row.revision_date || ''}"
+                                                    data-reason="${row.reason || ''}">
+                                                    <i class="fa fa-calendar"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-round btn-sm reject-btn" title="Reject">
+                                        <i class="fa fa-times"></i> 
                                     </button>`;
-                            } else if (row.status.toLowerCase() === 'delivery') {
+                            } else if (row.status.toLowerCase() === 'deliver') {
                                 return `
-                                    <button class="btn btn-primary btn-sm close-icon" title="Close">
-                                        <i class="fa fa-times-circle"></i>
+                                    <button class="btn btn-success btn-round btn-sm close-icon" title="Close">
+                                        <i class="fa fa-plane-arrival"></i>
                                     </button>`;
                             }
                             return ''; // Tidak ada tombol jika status bukan 'open' atau 'delivery'
                         },
                         orderable: false
                     }
+
                 ]
             });
 
@@ -474,25 +531,64 @@
                 }
             });
 
+        });
+    </script>
 
-            // Event untuk ikon Accept (Status Open)
-            $('#delivery-data-table').on('click', '.accept-icon', function () {
-                var table = $('#delivery-data-table').DataTable();
-                var data = table.row($(this).parents('tr')).data();
+    <!-- tombol deliver -->
+    <script>
+        $(document).ready(function () {
+            // Event untuk tombol Deliver
+            $('#delivery-data-table').on('click', '.deliver-btn', function () {
+                // Ambil data dari baris terkait
+                var data = $('#delivery-data-table').DataTable().row($(this).parents('tr')).data();
 
-                // SweetAlert konfirmasi
+                // Isi hidden input dengan nomor PO
+                $('#hiddenPoNumber').val(data.po_number);
+
+                // Reset form
+                $('#deliveryDateInput').val('');
+                $('#arrivingDateInput').val('');
+
+                // Tampilkan Revision Notes hanya jika data tersedia
+                if (data.revision_date || data.reason) {
+                    $('#revisionNotes').show();
+                    $('#revisionDateNote').text(`Revision Date: ${data.revision_date || '-'}`);
+                    $('#reasonNote').text(`Reason: ${data.reason || '-'}`);
+                } else {
+                    $('#revisionNotes').hide();
+                }
+
+                // Tampilkan modal
+                $('#deliverModal').modal('show');
+            });
+
+            // Event Submit Form Deliver
+            $('#deliverForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // Ambil data dari form
+                var poNumber = $('#hiddenPoNumber').val();
+                var deliveryDate = $('#deliveryDateInput').val();
+                var arrivingDate = $('#arrivingDateInput').val();
+
+                // Validasi input
+                if (!deliveryDate || !arrivingDate) {
+                    Swal.fire('Error!', 'Delivery Date and Arriving Date are required!', 'error');
+                    return;
+                }
+
+                // Konfirmasi sebelum submit
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: 'Do you want to accept this delivery?',
+                    text: `Set delivery and arriving dates for PO: ${poNumber}?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, accept it!',
-                    cancelButtonText: 'Cancel'
+                    confirmButtonText: 'Yes, submit it!',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Kirim permintaan ke server untuk mengubah status
+                        // Kirim permintaan ke server
                         $.ajax({
                             url: '{{ route("delivery.update-status-delivery") }}',
                             method: 'POST',
@@ -500,92 +596,268 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                             },
                             data: {
-                                po_number: data.po_number,
+                                po_number: poNumber,
+                                delivery_date: deliveryDate,
+                                arriving_date: arrivingDate,
                             },
                             success: function (response) {
-                                Swal.fire({
-                                    title: 'Accepted!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    table.ajax.reload(); // Reload tabel
+                                Swal.fire('Success!', response.message, 'success').then(() => {
+                                    // Reload DataTable setelah berhasil
+                                    $('#delivery-data-table').DataTable().ajax.reload(null, false);
+                                    // Tutup modal
+                                    $('#deliverModal').modal('hide');
                                 });
                             },
                             error: function (xhr) {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: xhr.responseJSON.message || 'Something went wrong. Please try again.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
+                                Swal.fire('Error!', xhr.responseJSON?.message || 'Failed to update status.', 'error');
+                            },
                         });
                     }
                 });
             });
+        });
+    </script>
 
-            // Event untuk ikon Close (Status Delivery)
-            $('#delivery-data-table').on('click', '.close-icon', function () {
-                var table = $('#delivery-data-table').DataTable();
-                var data = table.row($(this).parents('tr')).data();
 
-                // SweetAlert dengan input alasan
+    <!-- button revision date -->
+    <script>
+        $(document).ready(function () {
+            // Event untuk tombol Revision
+            $('#delivery-data-table').on('click', '.revision-btn', function () {
+                const data = $('#delivery-data-table').DataTable().row($(this).parents('tr')).data();
+
+                if (!data) {
+                    Swal.fire('Error!', 'Failed to retrieve data for revision.', 'error');
+                    return;
+                }
+
+                // Isi form dengan data jika ada
+                $('#revisionDateInput').val(data.revision_date || '');
+                $('#revisionReasonInput').val(data.reason_revision || ''); // Ubah ke reason_revision
+
+                $('#revisionModal').data('row-data', data);
+                $('#revisionModal').modal('show');
+            });
+
+            // Event Submit Form Revision
+            $('#revisionForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const revisionDate = $('#revisionDateInput').val();
+                const reason_revision = $('#revisionReasonInput').val(); // Ubah ke reason_revision
+
+                if (!revisionDate || !reason_revision) {
+                    Swal.fire('Error!', 'Revision Date and Reason are required!', 'error');
+                    return;
+                }
+
+                const rowData = $('#revisionModal').data('row-data');
+
+                if (!rowData || !rowData.id) {
+                    Swal.fire('Error!', 'Invalid data for submission.', 'error');
+                    return;
+                }
+
                 Swal.fire({
-                    title: 'Provide a Reason',
-                    text: `Why do you want to close delivery for PO: ${data.po_number}?`,
-                    input: 'textarea', // Tipe input textarea
-                    inputLabel: 'Reason for Closing',
-                    inputPlaceholder: 'Enter your reason here...',
-                    inputAttributes: {
-                        'aria-label': 'Enter your reason here' // Aksesibilitas
-                    },
+                    title: 'Are you sure?',
+                    text: 'You are about to set revision details.',
+                    icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Submit',
-                    cancelButtonText: 'Cancel',
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'You need to provide a reason!'; // Validasi input kosong
-                        }
-                    }
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, submit it!',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Jika alasan dikonfirmasi, kirim data ke server
                         $.ajax({
-                            url: '{{ route("delivery.close") }}', // Endpoint untuk close delivery
+                            url: `/delivery-spk/revision/${rowData.id}`,
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                             },
                             data: {
-                                po_number: data.po_number, // Nomor PO
-                                reason: result.value,      // Alasan dari input
+                                revision_date: revisionDate,
+                                reason_revision: reason_revision, // Ubah ke reason_revision
                             },
                             success: function (response) {
-                                Swal.fire({
-                                    title: 'Closed!',
-                                    text: response.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    table.ajax.reload(null, false); // Reload tabel tanpa reset pagination
+                                Swal.fire('Success!', response.message, 'success').then(() => {
+                                    $('#delivery-data-table').DataTable().ajax.reload(null, false);
+                                    $('#revisionModal').modal('hide');
                                 });
                             },
                             error: function (xhr) {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: xhr.responseJSON.message || 'Failed to close the delivery. Please try again.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
+                                const errorMessage = xhr.responseJSON?.message || 'Failed to update revision.';
+                                Swal.fire('Error!', errorMessage, 'error');
+                            },
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- button reject -->
+    <script>
+        $(document).ready(function () {
+            // Event klik untuk tombol Reject
+            $('#delivery-data-table').on('click', '.reject-btn', function () {
+                // Ambil data baris terkait
+                var data = $('#delivery-data-table').DataTable().row($(this).parents('tr')).data();
+
+                // Pastikan data tersedia
+                if (!data) {
+                    Swal.fire('Error!', 'Failed to retrieve data for rejection.', 'error');
+                    return;
+                }
+
+                // Isi hidden input dengan nomor PO
+                $('#rejectPoNumber').val(data.po_number);
+
+                // Kosongkan alasan sebelumnya (jika ada)
+                $('#rejectReasonInput').val('');
+
+                // Tampilkan modal Reject
+                $('#rejectModal').modal('show');
+            });
+
+            // Event Submit Form Reject
+            $('#rejectForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // Ambil data dari form
+                var poNumber = $('#rejectPoNumber').val();
+                var reason = $('#rejectReasonInput').val();
+
+                // Validasi input
+                if (!reason) {
+                    Swal.fire('Error!', 'Reason for rejection is required!', 'error');
+                    return;
+                }
+
+                // Konfirmasi sebelum submit
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Reject delivery for PO: ${poNumber}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, reject it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Kirim permintaan ke server
+                        $.ajax({
+                            url: `/delivery-spk/reject/${poNumber}`, // Endpoint untuk Reject
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            data: { reason: reason },
+                            success: function (response) {
+                                Swal.fire('Rejected!', response.message, 'success').then(() => {
+                                    // Reload DataTable setelah berhasil
+                                    $('#delivery-data-table').DataTable().ajax.reload(null, false);
+                                    // Tutup modal
+                                    $('#rejectModal').modal('hide');
                                 });
-                            }
+                            },
+                            error: function (xhr) {
+                                Swal.fire('Error!', xhr.responseJSON?.message || 'Failed to reject delivery.', 'error');
+                            },
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- button arriving -->
+    <script>
+        $(document).ready(function () {
+            // Event untuk tombol Upload Attachment
+            $('#delivery-data-table').on('click', '.close-icon', function () {
+                // Ambil data dari baris terkait
+                var data = $('#delivery-data-table').DataTable().row($(this).parents('tr')).data();
+
+                // Pastikan data tersedia
+                if (!data) {
+                    Swal.fire('Error!', 'Failed to retrieve data for attachment upload.', 'error');
+                    return;
+                }
+
+                // Isi hidden input dengan nomor PO
+                $('#hiddenPoNumberAttachment').val(data.po_number);
+
+                // Reset form
+                $('#attachmentInput').val('');
+
+                // Tampilkan modal attachment
+                $('#attachmentModal').modal('show');
+            });
+
+            // Event Submit Form Attachment
+            $('#attachmentForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // Ambil data form
+                var formData = new FormData(this);
+                var poNumber = $('#hiddenPoNumberAttachment').val();
+
+                // Debug file input
+                console.log('File Input:', $('#attachmentInput').val());
+                console.log('FormData:', formData.get('file'));
+
+                // Validasi input file
+                if (!formData.get('file')) {
+                    Swal.fire('Error!', 'File is required!', 'error');
+                    return;
+                }
+
+                // Konfirmasi sebelum submit
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Upload attachment for PO: ${poNumber}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, upload it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Kirim permintaan ke server
+                        $.ajax({
+                            url: `/delivery-spk/upload-attachment/${poNumber}`,
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                Swal.fire('Success!', response.message, 'success').then(() => {
+                                    // Reload DataTable setelah berhasil
+                                    $('#delivery-data-table').DataTable().ajax.reload(null, false);
+                                    // Tutup modal
+                                    $('#attachmentModal').modal('hide');
+                                });
+                            },
+                            error: function (xhr) {
+                                Swal.fire('Error!', xhr.responseJSON?.message || 'Failed to upload attachment.', 'error');
+                            },
                         });
                     }
                 });
             });
 
+
         });
     </script>
+
+
+
+
+
+
 
 </body>
 </html>

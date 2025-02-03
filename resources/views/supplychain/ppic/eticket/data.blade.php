@@ -141,7 +141,24 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+                                           
                                             <div class="modal-body">
+                                                 <!-- Tambahkan Customer Accept dan Revision Date -->
+                                                 <div class="row mb-3" id="revisionInfoSection">
+                                                    <div class="col-md-12 text-center">
+                                                        <h2 style="font-size: 1.5rem; font-weight: bold;">Customer Accept for Revision Date</h4>
+                                                    </div>                                                
+                                                    
+                                                    <div class="col-md-6">
+                                                        <label><strong>Revision Date:</strong></label>
+                                                        <input type="text" class="form-control bg-light" id="modalRevisionDate" readonly>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label><strong>Reason for Revision:</strong></label>
+                                                        <textarea class="form-control bg-light" id="modalReasonRevision" readonly rows="3"></textarea>
+                                                    </div>
+                                                </div>
+                                                
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
                                                         <label><strong>No. PO:</strong></label>
@@ -403,9 +420,7 @@
                                     <button class="btn btn-default btn-round revision-date-btn btn-sm" style="margin-right: 10px;" data-id="${row.id}">
                                         <i class="fa fa-calendar"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-round not-accept-icon btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
+                                    
                                 `;
                             } else {
                                 return `
@@ -437,6 +452,16 @@
                 $('#modalGudangPengambilan').val(data.gudang_pengambilan);
                 $('#modalTanggalTiba').val(data.tanggal_tiba);
 
+                // Logika untuk menampilkan atau menyembunyikan Customer Accept dan Revision Date
+                if (data.revision_date && data.reason_revision) {
+                    $('#modalRevisionDate').val(data.revision_date);
+                    $('#modalReasonRevision').val(data.reason_revision);
+                    $('#revisionInfoSection').removeClass('d-none'); // Tampilkan elemen
+                } else {
+                    $('#modalRevisionDate').val('');
+                    $('#modalReasonRevision').val('');
+                    $('#revisionInfoSection').addClass('d-none'); // Sembunyikan elemen
+                }
                 // Render daftar produk ke dalam modal
                 const productList = $('#modalProductList'); // Elemen daftar produk di modal
                 productList.empty(); // Kosongkan daftar produk sebelumnya

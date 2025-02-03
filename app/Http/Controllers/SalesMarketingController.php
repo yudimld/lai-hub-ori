@@ -19,7 +19,7 @@ use App\Models\Delivery;
 
 class SalesMarketingController extends Controller
 {
-    // Set session dan tampilkan halaman Opportunity
+    // Menut Opportunity
     public function opportunity()
     {
         session(['active_menu' => 'salesmarketing']);
@@ -112,14 +112,24 @@ class SalesMarketingController extends Controller
             ], 500);
         }
     }
+
+    // END
     
+
+    // mENU STATUS OPPORTUNITY
+    public function statusRequestPpic()
+    {
+        session(['active_menu' => 'salesmarketing']); // Set menu aktif sesuai halaman
+        return view('salesmarketing.csr.status-request-ppic'); // Tampilkan view untuk halaman ini
+    }
+
     // read data dengan status
     public function getStatusRequestData()
     {
         session(['active_menu' => 'salesmarketing']);
         // Ambil data dari tabel opportunity dengan status 
         $data = Opportunity::whereNotNull('status')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(function ($item) {
                 return [
@@ -188,8 +198,6 @@ class SalesMarketingController extends Controller
         return response()->json(['message' => 'Status updated successfully.']);
     }
     
-
-
     // edit
     public function updateProducts(Request $request, $id)
     {
@@ -238,7 +246,7 @@ class SalesMarketingController extends Controller
             return response()->json(['error' => 'Failed to delete opportunity'], 500);
         }
     }
-    // END OPPORTUNITY
+    // END STATUS OPPORTUNITY
 
     // SO NUMBER 
     public function showSoNumberPage()
@@ -327,6 +335,57 @@ class SalesMarketingController extends Controller
     }
 
     // menyimpan data ke db delivery
+    // public function requestToDelivery(Request $request)
+    // {
+    //     try {
+    //         // Validasi input data
+    //         $validatedData = $request->validate([
+    //             'po_number' => 'required|string',
+    //             'so_number' => 'required|string',
+    //             'tanggal_tiba' => 'required|date',
+    //             'customer' => 'required|string',
+    //             'material' => 'required|string',
+    //             'nama_barang_asli' => 'required|string',
+    //             'nama_barang_jual' => 'required|string',
+    //             'qty' => 'required|numeric',
+    //             'uom' => 'required|string',
+    //             'alamat_kirim' => 'required|string',
+    //             'kemasan' => 'required|string',
+    //             'gudang_pengambilan' => 'required|string',
+    //             'file' => 'nullable|file|max:3072|mimes:jpg,jpeg,bmp,png,xls,xlsx,doc,docx,pdf,txt,ppt,pptx',
+    //         ], [
+    //             'file.max' => 'Ukuran file tidak boleh lebih dari 3MB.',
+    //             'file.mimes' => 'Format file tidak didukung.',
+    //         ]);
+
+    //         // Konversi tanggal_tiba ke ISODate menggunakan Carbon
+    //         $validatedData['tanggal_tiba'] = Carbon::parse($validatedData['tanggal_tiba'])->toDateTimeString();
+
+    //         // Handle file upload jika ada file
+    //         if ($request->hasFile('file')) {
+    //             $file = $request->file('file');
+    //             $filePath = $file->store('uploads', 'public');
+    //             $validatedData['file_path'] = $filePath;
+    //             $validatedData['file_name'] = $file->getClientOriginalName();
+
+    //             Log::info('File diterima:', [
+    //                 'original_name' => $file->getClientOriginalName(),
+    //                 'path' => $filePath
+    //             ]);
+    //         }
+
+    //         // Menambahkan status dengan nilai 'open'
+    //         $validatedData['status'] = 'open';
+
+    //         // Menyimpan data ke MongoDB menggunakan model Delivery
+    //         $delivery = Delivery::create($validatedData);
+
+    //         return response()->json(['message' => 'Request berhasil terkirim ke Delivery.'], 200);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error saat menyimpan data:', ['error' => $e->getMessage()]);
+    //         return response()->json(['error' => 'Failed to send request.', 'details' => $e->getMessage()], 500);
+    //     }
+    // }
     public function requestToDelivery(Request $request)
     {
         try {
@@ -345,63 +404,107 @@ class SalesMarketingController extends Controller
                 'kemasan' => 'required|string',
                 'gudang_pengambilan' => 'required|string',
                 'file' => 'nullable|file|max:3072|mimes:jpg,jpeg,bmp,png,xls,xlsx,doc,docx,pdf,txt,ppt,pptx',
+            ], [
+                'file.max' => 'Ukuran file tidak boleh lebih dari 3MB.',
+                'file.mimes' => 'Format file tidak didukung.',
             ]);
 
             // Konversi tanggal_tiba ke ISODate menggunakan Carbon
             $validatedData['tanggal_tiba'] = Carbon::parse($validatedData['tanggal_tiba'])->toDateTimeString();
 
-
             // Handle file upload jika ada file
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                $filePath = $file->store('uploads', 'public'); // Simpan file di storage/public/uploads
-                $validatedData['file_path'] = $filePath; // Tambahkan path file ke data
-                $validatedData['file_name'] = $file->getClientOriginalName(); // Nama file asli
+                $filePath = $file->store('delivery', 'public'); // Simpan file di folder "delivery" di storage
+                $validatedData['file_pendukung_delivery'] = $filePath; // Simpan path file ke kolom "file_pendukung_delivery"
+                $validatedData['file_name_delivery'] = $file->getClientOriginalName(); // Nama asli file
+
+                // Log untuk debugging
+                Log::info('File diterima:', [
+                    'original_name' => $file->getClientOriginalName(),
+                    'path' => $filePath
+                ]);
             }
-    
+
             // Menambahkan status dengan nilai 'open'
             $validatedData['status'] = 'open';
-    
+
             // Menyimpan data ke MongoDB menggunakan model Delivery
             $delivery = Delivery::create($validatedData);
-    
+
             return response()->json(['message' => 'Request berhasil terkirim ke Delivery.'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to send request.'], 500);
+            // Log error jika terjadi masalah
+            Log::error('Error saat menyimpan data:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to send request.', 'details' => $e->getMessage()], 500);
         }
     }
 
-    // read data dengan status 
+    // END SO NUMBER
+
+    // MENU STATUS ON DELIVERY
     public function showDeliveryStatus()
     {
-            $deliveries = Delivery::orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'po_number' => $item->po_number,
-                    'so_number' => $item->so_number,
-                    'tanggal_tiba' => $item->tanggal_tiba,
-                    'customer' => $item->customer,
-                    'nama_barang_jual' => $item->nama_barang_jual,
-                    'status' => ucfirst($item->status),
-                    'material' => $item->material ?? 'N/A',
-                    'nama_barang_asli' => $item->nama_barang_asli ?? 'N/A',
-                    'qty' => $item->qty,
-                    'uom' => $item->uom ?? 'N/A',
-                    'alamat_kirim' => $item->alamat_kirim,
-                    'kemasan' => $item->kemasan ?? 'N/A',
-                    'gudang_pengambilan' => $item->gudang_pengambilan ?? 'N/A',
-                    'file_name' => $item->file_name ?? null, // Nama file asli
-                    'file_path' => $item->file_path ? asset('storage/' . $item->file_path) : null, // URL file
-                    'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : 'N/A',
-                    'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : 'N/A',
-                ];
-            });
-        
-        return response()->json(['data' => $deliveries]);
-        
+        if (request()->ajax()) {
+            try {
+                $deliveries = Delivery::whereNotNull('status')
+                    ->orderBy('updated_at', 'desc')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'id' => $item->id,
+                            'po_number' => $item->po_number,
+                            'so_number' => $item->so_number,
+                            'tanggal_tiba' => $item->tanggal_tiba,
+                            'delivery_date' => $item->delivery_date 
+                                ? Carbon::parse($item->delivery_date)->format('Y-m-d') 
+                                : null, 
+                            'arriving_date' => $item->arriving_date 
+                                ? Carbon::parse($item->arriving_date)->format('Y-m-d') 
+                                : null,
+                            'revision_date' => $item->revision_date 
+                                ? Carbon::parse($item->revision_date)->format('Y-m-d') 
+                                : null,
+                            'reason' => $item->reason ?? 'N/A',
+                            'customer' => $item->customer,
+                            'nama_barang_jual' => $item->nama_barang_jual,
+                            'status' => ucfirst($item->status ?? 'unknown'),
+                            'material' => $item->material ?? 'N/A',
+                            'nama_barang_asli' => $item->nama_barang_asli ?? 'N/A',
+                            'qty' => $item->qty,
+                            'uom' => $item->uom ?? 'N/A',
+                            'alamat_kirim' => $item->alamat_kirim,
+                            'kemasan' => $item->kemasan ?? 'N/A',
+                            'gudang_pengambilan' => $item->gudang_pengambilan ?? 'N/A',
+                            'file_name' => $item->file_name ?? null,
+                            'file_name_delivery' => $item->file_name_delivery ?? null,
+                            'file_path' => $item->file_path ? asset('storage/' . $item->file_path) : null,
+                            'file_arriving' => $item->file_arriving 
+                                ? asset('storage/' . $item->file_arriving) 
+                                : null,
+
+                            'updated_at' => $item->updated_at ? $item->updated_at->format('Y-m-d H:i:s') : 'N/A',
+                            'created_at' => $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : 'N/A',
+                            'reason_reject' => $item->reason_reject ?? 'N/A',
+                            'reason_revision' => $item->reason_revision ?? 'N/A',
+                            'file_pendukung_delivery' => $item->file_pendukung_delivery 
+                                ? asset('storage/' . $item->file_pendukung_delivery) 
+                                : 'No supporting file',
+                        ];
+                    });
+
+                return response()->json(['data' => $deliveries]);
+
+            } catch (\Exception $e) {
+                // Log error dan respons
+                \Log::error('AJAX Error: ' . $e->getMessage());
+                return response()->json(['error' => 'Failed to fetch data'], 500);
+            }
+        }
+    
+        // Render halaman HTML jika bukan permintaan AJAX
+        session(['active_menu' => 'salesmarketing']);
+        return view('salesmarketing.csr.status-delivery');
     }
 
     // deleted tabel delivery
@@ -422,6 +525,30 @@ class SalesMarketingController extends Controller
         }
     }
 
+    // edit delivery data
+    public function getDeliveryDetail($id)
+    {
+        try {
+            // Cari data delivery berdasarkan ID
+            $delivery = Delivery::findOrFail($id);
+
+            // Kirimkan data sebagai respons JSON
+            return response()->json([
+                'status' => 'success',
+                'delivery' => $delivery,
+            ], 200);
+        } catch (\Exception $e) {
+            // Jika terjadi kesalahan
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found or an error occurred.',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
+    }
+
+    // END STATUS ON DELIVERY
+
     public function uploadFile(Request $request, $id)
     {
         try {
@@ -430,34 +557,39 @@ class SalesMarketingController extends Controller
     
             // Periksa apakah ada file yang diunggah
             if ($request->hasFile('file')) {
-                // Proses file yang diunggah
                 $file = $request->file('file');
-                $filePath = $file->store('uploads', 'public'); // Simpan file di folder 'uploads' di storage
-                $delivery->file_path = $filePath;
-                $delivery->file_name = $file->getClientOriginalName(); // Simpan nama asli file
+    
+                // Simpan file ke folder 'delivery' di storage
+                $filePath = $file->store('delivery', 'public');
+    
+                // Simpan file path dan nama file ke database
+                $delivery->file_pendukung_delivery = $filePath; // Kolom file_pendukung_delivery
+                $delivery->file_name_delivery = $file->getClientOriginalName(); // Nama asli file
                 $delivery->save();
+    
+                // Buat URL untuk file yang diunggah
+                $fileUrl = asset('storage/' . $filePath);
+    
+                // Logging untuk debugging
+                Log::info('File uploaded:', [
+                    'file_url' => $fileUrl,
+                    'file_name' => $file->getClientOriginalName(),
+                ]);
+    
+                return response()->json([
+                    'message' => 'File uploaded successfully.',
+                    'file_url' => $fileUrl,
+                    'file_name' => $file->getClientOriginalName(),
+                ], 200);
             }
     
-            return response()->json(['message' => 'File uploaded successfully.'], 200);
+            return response()->json(['message' => 'No file uploaded.'], 400);
         } catch (\Exception $e) {
+            // Log error untuk debugging
+            Log::error('Error saat upload file:', ['error' => $e->getMessage()]);
             return response()->json(['message' => 'Failed to upload file.', 'error' => $e->getMessage()], 500);
         }
     }
-
-    
-    
-    
-    
-        
-    
-    
-    
-    
-    
-    
-    
-    
-     
     
     
 }

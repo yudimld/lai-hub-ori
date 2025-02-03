@@ -163,7 +163,7 @@ body::before {
     margin-left: 2px; 
 }
 
-#mes-button {
+#mes-button, #cmms-button {
     all: unset;
     padding: 10px 15px;
     font-size: 20px;

@@ -11,6 +11,13 @@ use App\Http\Controllers\MesSpkController;
 use App\Http\Controllers\EdcController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\MesBatchManagementController;
+
+
+use App\Http\Controllers\GrafanaController;
+
+
+
 
 // Email
 use App\Mail\Edc\CreateSPKMail;
@@ -31,6 +38,7 @@ Route::put('/admin/users/{id}', [AdminController::class, 'update'])->name('admin
 Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('admin.users.destroy');
 
 
+
 Route::get('/', function () {
     return view('get_started');
 });
@@ -42,53 +50,66 @@ Route::middleware('auth')->group(function () {
         return view('homePage');
     });
 
-    // Grouping untuk Sales Marketing CSR
-    Route::prefix('salesmarketing/csr')
-    ->name('csr.')
-    ->middleware('check.role:manager_csr,spv_csr,staff_csr,staff_edc,manager_edc')
-    ->group(function () {
-        // Rute untuk halaman utama dan fitur CSR
-        Route::get('/opportunity', [SalesMarketingController::class, 'opportunity'])->name('opportunity');
-        Route::get('/so-number', [SalesMarketingController::class, 'showSoNumberPage'])->name('so-number');
-        Route::post('/request-to-delivery', [SalesMarketingController::class, 'requestToDelivery'])->name('request-to-delivery');
-        Route::get('/delivery/status', [SalesMarketingController::class, 'showDeliveryStatus'])->name('delivery.status');
-        Route::delete('/delivery/delete/{id}', [SalesMarketingController::class, 'deleteDelivery'])->name('delivery.delete');
-        Route::post('/delivery/upload-file/{id}', [SalesMarketingController::class, 'uploadFile'])->name('delivery.upload-file');
-        Route::post('/ppic-eticket/update-status', [SalesMarketingController::class, 'updateStatus'])->name('ppic.update-status');
-
-        // save to draft
-        Route::post('/save-to-draft', [SalesMarketingController::class, 'saveToDraft']);
-
-        // Rute API untuk request ke PPIC
-        Route::post('/request-to-ppic', [SalesMarketingController::class, 'storePpicRequest']);
-        Route::get('/api/status-request-data', [SalesMarketingController::class, 'getStatusRequestData']);
-
-        // api edit dan delete di opportunity
-        Route::put('/api/opportunity/{id}', [SalesMarketingController::class, 'updateProducts']);
-        Route::delete('/api/opportunity/{id}', [SalesMarketingController::class, 'deleteOpportunity']);
-        Route::get('/api/opportunity/{id}', [SalesMarketingController::class, 'getOpportunityById']);
-
+    Route::prefix('mes/monitoring')->name('monitoring.')->group(function () {
+        Route::get('/powder-plant', [GrafanaController::class, 'powderPlant'])->name('powder-plant');
 
     });
+    
 
-
-
-    // Menu PPIC
-    Route::prefix('ppic-eticket')->group(function () {
-        Route::get('/', [PpicController::class, 'index'])->name('ppic.eticket'); // Halaman utama
-        Route::get('/ppic/requests', [PpicController::class, 'showPpicData'])->name('ppic.requests'); // API data SPK
-        Route::post('/update-status-preparing', [PpicController::class, 'updateStatusToPreparing'])->name('ppic.update-status-preparing');
-        Route::post('/ppic/revision-date', [PpicController::class, 'updateRevisionDate'])->name('revision-date');
+    // Grouping untuk Sales Marketing CSR
+    Route::prefix('salesmarketing/csr')->name('csr.')->middleware('check.role:manager_csr,spv_csr,staff_csr,staff_edc,manager_edc')->group(function () {
+        // Halaman Opportunity
+        Route::get('/opportunity', [SalesMarketingController::class, 'opportunity'])->name('opportunity');
+        Route::post('/request-to-ppic', [SalesMarketingController::class, 'storePpicRequest']);
+        Route::post('/save-to-draft', [SalesMarketingController::class, 'saveToDraft']);
+        // end
         
-
-        Route::post('/ppic/not-accept', [PpicController::class, 'notAcceptReason'])->name('ppic.not-accept');
+        // Halaman Status Opportunity
+        Route::get('/status-request-ppic', [SalesMarketingController::class, 'statusRequestPpic'])->name('status-request-ppic');
+        Route::get('/api/status-request-data', [SalesMarketingController::class, 'getStatusRequestData']);
+        Route::post('/ppic-eticket/update-status', [SalesMarketingController::class, 'updateStatus'])->name('ppic.update-status');
         Route::post('/opportunity/{id}/update-products', [SalesMarketingController::class, 'updateProducts']);
         Route::delete('/opportunity/{id}', [SalesMarketingController::class, 'deleteOpportunity']);
+        // Edit dan Delete Opportunity (dari Status Request PPIC)
+        Route::put('/api/status-request-ppic/{id}', [SalesMarketingController::class, 'updateProducts']);
+        Route::delete('/api/status-request-ppic/{id}', [SalesMarketingController::class, 'deleteOpportunity']);
+        Route::get('/api/status-request-ppic/{id}', [SalesMarketingController::class, 'getOpportunityById']);
+        // end
 
+        // Halaman So-Number
+        Route::get('/so-number', [SalesMarketingController::class, 'showSoNumberPage'])->name('so-number');
+        Route::post('/request-to-delivery', [SalesMarketingController::class, 'requestToDelivery'])->name('request-to-delivery');
+
+
+        // Halaman Status Delivery
+        Route::get('/status-delivery', [SalesMarketingController::class, 'showDeliveryStatus'])->name('status-delivery');
+        Route::delete('/delivery/delete/{id}', [SalesMarketingController::class, 'deleteDelivery'])->name('delivery.delete');
+        Route::post('/delivery/upload-file/{id}', [SalesMarketingController::class, 'uploadFile'])->name('delivery.upload-file');
 
     });
 
-    // Menu Delivery
+    // Menu card PPIC
+    Route::prefix('ppic-eticket')->name('ppic.')->group(function () {
+        Route::get('/', [PpicController::class, 'index'])->name('eticket'); // Halaman utama
+        // List data of SPK
+        Route::get('/ppic/requests', [PpicController::class, 'showPpicData'])->name('requests'); // API data SPK
+        Route::post('/update-status-preparing', [PpicController::class, 'updateStatusToPreparing'])->name('update-status-preparing');
+        Route::post('/ppic/revision-date', [PpicController::class, 'updateRevisionDate'])->name('revision-date');
+        Route::post('/ppic/not-accept', [PpicController::class, 'notAcceptReason'])->name('not-accept');
+
+        // Create SPK to Production
+        Route::get('/create-spk', [PpicController::class, 'createSpkIndex'])->name('create-spk');
+        Route::post('/store', [PpicController::class, 'store'])->name('store-spk');
+
+        // Masterdata 
+        Route::get('/master-data', [PpicController::class, 'masterData'])->name('master-data');
+        
+        // card monitoring
+        Route::get('/monitoring-spk', [PpicController::class, 'monitoringSpk'])->name('monitoring-spk');
+
+    });
+
+    // Menu card Delivery
     Route::prefix('delivery-spk')->group(function () {
         Route::get('/', [DeliveryController::class, 'index'])->name('delivery.spk'); // Halaman utama SPK Delivery
         Route::get('/requests', [DeliveryController::class, 'getAllDeliveries'])->name('delivery.requests'); // API data Delivery
@@ -96,14 +117,48 @@ Route::middleware('auth')->group(function () {
         Route::post('/close-delivery', [DeliveryController::class, 'closeDelivery'])->name('delivery.close');
         Route::post('/{id}/update-products', [DeliveryController::class, 'updateProducts']); // Update produk tertentu
         Route::delete('/{id}', [DeliveryController::class, 'deleteDelivery']); // Hapus data Delivery
-    });
-    
-    // menu MES SPK
-    Route::prefix('mes-spk')->name('mes.spk.')->group(function () {
-        Route::get('/', [MesSpkController::class, 'index'])->name('list'); // Route list SPK
-        Route::get('/create', [MesSpkController::class, 'create'])->name('create'); // Route create SPK
-        Route::get('/create2', [MesSpkController::class, 'create2'])->name('create2'); // Route create SPK
+        // Tambahkan rute untuk aksi revision
+        Route::post('/revision/{id}', [DeliveryController::class, 'updateRevision'])->name('delivery.revision');
 
+        // Tambahkan rute untuk aksi Deliver
+        Route::post('/deliver', [DeliveryController::class, 'deliver'])->name('delivery.deliver');
+        // rute aksi customer accept
+        Route::post('/customer-accept/{id}', [DeliveryController::class, 'customerAccept'])->name('delivery.customer-accept');
+        // rute aksi reject
+        Route::post('/reject/{poNumber}', [DeliveryController::class, 'rejectDelivery'])->name('delivery.reject');
+        // rute arriving
+        Route::post('/upload-attachment/{poNumber}', [DeliveryController::class, 'uploadAttachment'])->name('delivery.upload-attachment');
+
+
+    });
+
+    
+
+    // Menu MES
+    Route::prefix('mes')->name('mes-menu.')->group(function () {
+        Route::prefix('batchmanagement')->name('batchmanagement.')->group(function () {
+            Route::get('/planning-work-date', [MesBatchManagementController::class, 'planningWorkDate'])
+                ->name('planning');
+            
+            Route::get('/planning-work-date/data', [MesBatchManagementController::class, 'getPlanningWorkDates'])
+                ->name('planning.data');
+            
+            Route::post('/planning-work-date/store', [MesBatchManagementController::class, 'store'])
+                ->name('planning.store');
+            
+            Route::get('/planning-work-date/{id}/edit', [MesBatchManagementController::class, 'edit'])
+                ->name('planning.edit');
+            
+            // Pastikan rute update ini terdefinisi dengan benar
+            Route::put('/planning-work-date/{id}', [MesBatchManagementController::class, 'update'])
+                ->name('planning.update');
+        });
+    });
+
+    // Menu CMMS
+    Route::prefix('cmms')->name('cmms-menu.')->group(function () {
+
+        Route::get('/dashboard/powder', [GrafanaController::class, 'cmmsPowderPlant'])->name('dashboard.powder');
     });
 
 
@@ -120,7 +175,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/store-spk', [EdcController::class, 'storeSpk'])->name('store'); // Akses untuk manager_edc & staff_edc
             Route::post('/request-close/{id}', [EdcController::class, 'requestCloseSpk'])->name('request-close');
             Route::post('/spk/reject-to-rejected/{id}', [EdcController::class, 'rejectToRejected'])->name('reject-to-rejected');
-
+            Route::get('/unassigned-spk', [EdcController::class, 'getUnassignedSpkData'])->name('unassigned-spk');
         });
 
         // Rute tambahan untuk manager_edc
@@ -145,6 +200,7 @@ Route::middleware('auth')->group(function () {
 
 });
 require __DIR__.'/auth.php';
+
 
 
 

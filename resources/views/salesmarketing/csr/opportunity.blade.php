@@ -3,7 +3,9 @@
 @php
     $title = 'List of Opportunity';
 @endphp
+
 @include('layouts.head')
+
 <style>
     
     /* Responsiveness for tables with scroll */
@@ -247,288 +249,6 @@
                         </div>
                     </div>
 			    </div>
-
-                <!-- Tabel untuk Status Request PO PPIC -->
-                <div class="page-inner mt--5">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h1 class="fw-bold">Status Request PO PPIC</h1>
-                                    <hr>
-                                    <div class="table-responsive">
-                                        <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
-                                            <!-- Filter Start Date -->
-                                            <div class="me-2">
-                                                <label for="filterStartDate" class="form-label">Start Date</label>
-                                                <input type="date" id="filterStartDate" class="form-control" />
-                                            </div>
-
-                                            <!-- Separator (-) -->
-                                            <div class="me-2" style="font-weight: bold; margin-top: 2%; margin-left: 1%; margin-right: 1%;"> - </div>
-
-                                            <!-- Filter End Date -->
-                                            <div class="me-2">
-                                                <label for="filterEndDate" class="form-label">End Date</label>
-                                                <input type="date" id="filterEndDate" class="form-control" />
-                                            </div>
-
-                                            <!-- Clear Filter Button -->
-                                            <div style="margin-left: 1%;">
-                                                <label class="form-label d-block" style="visibility: hidden;">Clear</label>
-                                                <button id="clearFilter" class="btn btn-default btn-round">Clear Filter</button>
-                                            </div>
-                                        </div>
-                                        <table id="status-request-table" class="display table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Status</th>
-                                                    <th>No. PO</th>
-                                                    <th>Request Date</th>
-                                                    <th>Incoterm</th>
-                                                    <th>Customer</th>
-                                                    <th>Material</th>
-                                                    <th>Nama Barang Jual</th>
-                                                    <th>Detail</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
-                                <!-- modal detail data request to ppic -->
-                                <div class="modal fade" id="detailModalStatus" tabindex="-1" role="dialog" aria-labelledby="detailModalStatusLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                                <h5 class="modal-title" style="flex: 1; text-align: center;" id="detailModalStatusLabel">Detail Opportunity</h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>No. PO:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusNoPo" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Incoterm:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusIncoterm" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Customer:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusCustomer" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Material:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusMaterial" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Asli:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusNamaBarangAsli" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Jual:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusNamaBarangJual" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Quantity:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusQty" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Unit of Measure:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusUom" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Alamat Kirim:</strong></label>
-                                                        <textarea class="form-control bg-light" id="modalStatusAlamatKirim" readonly rows="3"></textarea>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Kemasan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusKemasan" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Gudang Pengambilan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusGudangPengambilan" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Tanggal Tiba:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusTanggalTiba" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-12">
-                                                        <label><strong>Products:</strong></label>
-                                                        <ul id="modalProductList" class="list-group">
-                                                            <!-- Produk akan dimasukkan melalui JavaScript -->
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <!-- Tambahkan jarak dan judul -->
-                                                <div class="row mb-4 mt-4">
-                                                    <div class="col-md-12 text-center">
-                                                        <h2 style="font-size: 1.5rem; font-weight: bold;">Feedback PPIC</h4>
-                                                        <hr>
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row mb-3" id="ppicFeedbackSection">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Agree Arriving Date:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusAgreeArrivingDate" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Agree Loading Date:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusAgreeLoadingDate" readonly>
-                                                    </div>
-                                                    <div class="col-md-6 mt-3">
-                                                        <label><strong>Sales Order Type:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusSalesOrderType" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3" id="reasonInputRow" style="display: none;">
-                                                    <div class="col-md-12">
-                                                        <label><strong>Reason:</strong></label>
-                                                        <textarea class="form-control bg-light" id="modalStatusReason" readonly rows="3"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3" id="revisionSection" style="display: none;">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Revision Date:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="modalStatusRevisionDate" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Reason Revision:</strong></label>
-                                                        <textarea class="form-control bg-light" id="modalStatusReasonRevision" readonly rows="3"></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary btn-round" id="btnCustomerAccept" style="display: none;">
-                                                    Customer Accept
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- modal edit -->
-                                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color: #266CA9; color: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                                <h5 class="modal-title" style="flex: 1; text-align: center;" id="editModalLabel">Edit Opportunity</h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <input type="hidden" id="editId">
-
-                                            <div class="modal-body">
-                                                <!-- Form Content -->
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>No. PO:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editNoPo" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Incoterm:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editIncoterm" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Customer:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editCustomer" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Material:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editMaterial" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Asli:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editNamaBarangAsli" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Nama Barang Jual:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editNamaBarangJual" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Quantity:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editQty" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Unit of Measure:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editUom" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Alamat Kirim:</strong></label>
-                                                        <textarea class="form-control bg-light" id="editAlamatKirim" readonly rows="3"></textarea>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Kemasan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editKemasan" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label><strong>Gudang Pengambilan:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editGudangPengambilan" readonly>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label><strong>Tanggal Tiba:</strong></label>
-                                                        <input type="text" class="form-control bg-light" id="editTanggalTiba" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-12">
-                                                        <label><strong>Products:</strong></label>
-                                                        <ul id="productList" class="list-group mb-3">
-                                                            <!-- Produk diisi melalui JavaScript -->
-                                                        </ul>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="newProductInput" placeholder="Add new product">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn-success" id="addProductButton">Add</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary btn-round" id="saveEditButton">
-                                                    <i class="fa fa-save"></i> Save Changes
-                                                </button>
-                                                <button type="button" class="btn btn-success btn-round d-none" id="modalRequestToPpicButton">
-                                                    <i class="fa fa-paper-plane"></i> Request to PPIC
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 		    </div>
             <!-- Footer -->
             @include('layouts.footer')
@@ -727,589 +447,81 @@
 
     </script>
 
-    <!-- table status request to ppic -->
+    <!-- save to draft -->
     <script>
-        $(document).ready(function () {
-            // Inisialisasi DataTable untuk tabel status request
-            var statusTable = $('#status-request-table').DataTable({
-                "processing": true,
-                ajax: {
-                    url: '/salesmarketing/csr/api/status-request-data',
-                    dataSrc: '',
-                },
-                columns: [
-                    {
-                        data: 'status',
-                        render: function (data) {
-                            if (!data) return '<span class="badge badge-info">Unknown</span>';
-                            if (data.toLowerCase() === 'draft') return '<span class="badge badge-secondary">Draft</span>';
-                            if (data.toLowerCase() === 'open') return '<span class="badge badge-danger">Open</span>';
-                            if (data.toLowerCase() === 'revision') return '<span class="badge badge-info">Revision Date</span>';
-                            if (data.toLowerCase() === 'preparing') return '<span class="badge badge-warning">Preparing</span>';
-                            if (data.toLowerCase() === 'reject') return '<span class="badge badge-dark">Reject</span>';
-                            return '<span class="badge badge-default">Unknown</span>';
+        $('#saveToDraftButton').on('click', function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to save this data to draft?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save it!',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const data = {
+                        no_po: $('#modalNoPo').val(),
+                        incoterm: $('#modalIncoterm').val(),
+                        customer: $('#modalCustomer').val(),
+                        material: $('#modalMaterial').val(),
+                        nama_barang_asli: $('#modalNamaBarangAsli').val(),
+                        nama_barang_jual: $('#modalNamaBarangJual').val(),
+                        qty: $('#modalQty').val(),
+                        uom: $('#modalUom').val(),
+                        alamat_kirim: $('#modalAlamatKirim').val(),
+                        kemasan: $('#modalKemasan').val(),
+                        gudang_pengambilan: $('#modalGudangPengambilan').val(),
+                        tanggal_tiba: $('#modalTanggalTiba').val(),
+                        products: $('#modalProducts').val(),
+                    };
+
+                    console.log('Mengirim data:', data);
+
+                    fetch('/salesmarketing/csr/save-to-draft', {
+                        
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
-                    },
-                    { data: 'no_po' },
-                    { 
-                        data: 'created_at',
-                        render: function (data) {
-                            return data ? new Date(data).toISOString().split('T')[0] : 'N/A';
-                        },
-                    },
-                    { data: 'incoterm' },
-                    { data: 'customer' },
-                    { data: 'material' },
-                    { data: 'nama_barang_jual' },
-                    {
-                        data: null,
-                        defaultContent:
-                            '<button class="btn btn-link btn-info btn-lg btn-status-detail" data-toggle="modal" data-target="#detailModalStatus"><i class="fa fa-eye"></i></button>',
-                        orderable: false,
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            // Periksa jika status adalah "open" atau "draft"
-                            if (row.status && (row.status.toLowerCase() === 'open' || row.status.toLowerCase() === 'draft')) {
-                                return `
-                                    <button class="btn btn-info btn-link btn-edit" data-id="${row.id}" data-toggle="modal" data-target="#editModal">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-link btn-delete" data-id="${row.id}">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                `;
-                            } else {
-                                // Jika status bukan "open" atau "draft", hanya tampilkan tombol delete
-                                return `
-                                  
-                                `;
-                            }
-                        },
-                        orderable: false,
-                    },
-                ],
-                responsive: true,
-                pageLength: 10,
-                order: [[0, 'desc']], // Menampilkan data terbaru di atas
-            });
-
-            // Event klik tombol untuk detail data
-            $('#status-request-table').on('click', '.btn-status-detail', function () {
-                var rowData = statusTable.row($(this).parents('tr')).data();
-
-                // Isi data umum ke modal
-                $('#modalStatusNoPo').val(rowData.no_po);
-                $('#modalStatusIncoterm').val(rowData.incoterm);
-                $('#modalStatusCustomer').val(rowData.customer);
-                $('#modalStatusMaterial').val(rowData.material);
-                $('#modalStatusNamaBarangAsli').val(rowData.nama_barang_asli);
-                $('#modalStatusNamaBarangJual').val(rowData.nama_barang_jual);
-                $('#modalStatusQty').val(rowData.qty);
-                $('#modalStatusUom').val(rowData.uom);
-                $('#modalStatusAlamatKirim').val(rowData.alamat_kirim);
-                $('#modalStatusKemasan').val(rowData.kemasan);
-                $('#modalStatusGudangPengambilan').val(rowData.gudang_pengambilan);
-                $('#modalStatusTanggalTiba').val(rowData.tanggal_tiba);
-
-                // Logika untuk Revision Date dan Reason Revision
-                if (rowData.revision_date && rowData.reason_revision && 
-                    rowData.revision_date !== 'N/A' && rowData.reason_revision !== 'N/A') {
-                    $('#modalStatusRevisionDate').val(rowData.revision_date);
-                    $('#modalStatusReasonRevision').val(rowData.reason_revision);
-                    $('#revisionSection').show(); // Tampilkan form jika data tersedia
-                } else {
-                    $('#revisionSection').hide(); // Sembunyikan form jika data tidak tersedia
-                }
-
-                // Logika untuk menampilkan tombol Customer Accept
-                if (rowData.status && rowData.status.toLowerCase() === 'revision') {
-                    $('#btnCustomerAccept').show(); // Tampilkan tombol Customer Accept
-                } else {
-                    $('#btnCustomerAccept').hide(); // Sembunyikan tombol Customer Accept
-                }
-
-                // Logika untuk data tambahan
-                if (rowData.status && rowData.status.toLowerCase() === 'preparing') {
-                    $('#modalStatusAgreeArrivingDate').val(rowData.agree_arriving_date).parent().show();
-                    $('#modalStatusAgreeLoadingDate').val(rowData.agree_loading_date).parent().show();
-                    $('#modalStatusSalesOrderType').val(rowData.sales_order_type).parent().show();
-                } else {
-                    $('#modalStatusAgreeArrivingDate').val('').parent().hide();
-                    $('#modalStatusAgreeLoadingDate').val('').parent().hide();
-                    $('#modalStatusSalesOrderType').val('').parent().hide();
-                }
-
-                // Render daftar produk ke dalam modal
-                const productList = $('#modalProductList');
-                productList.empty();
-                if (rowData.products && rowData.products.length > 0) {
-                    rowData.products.forEach(product => {
-                        productList.append(`<li class="list-group-item">${product}</li>`);
-                    });
-                } else {
-                    productList.append('<li class="list-group-item text-muted">No products available</li>');
-                }
-
-                // Tampilkan/hidden textarea untuk alasan reject
-                if (rowData.status && rowData.status.toLowerCase() === 'reject') {
-                    $('#modalStatusReason').val(rowData.reason || '');
-                    $('#reasonInputRow').show();
-                } else {
-                    $('#reasonInputRow').hide();
-                }
-
-                // Tampilkan modal detail
-                $('#detailModalStatus').modal('show');
-
-                // Event untuk Customer Accept
-                $('#btnCustomerAccept').off('click').on('click', function () {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: `This will change the status to Open.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, accept!',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Kirim permintaan AJAX untuk mengubah status menjadi open
-                            $.ajax({
-                                url: '/salesmarketing/csr/ppic-eticket/update-status',
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                                },
-                                data: {
-                                    id: rowData.id, // Kirim ID ke server
-                                    status: 'open', // Ubah status menjadi open
-                                },
-                                success: function (response) {
-                                    Swal.fire('Success!', 'Status changed to Open.', 'success').then(() => {
-                                        $('#detailModalStatus').modal('hide'); // Tutup modal
-                                        $('#status-request-table').DataTable().ajax.reload(); // Reload DataTable
-                                    });
-                                },
-                                error: function (xhr) {
-                                    console.error('Error response:', xhr);
-                                    const response = xhr.responseJSON;
-                                    Swal.fire('Error!', response?.message || 'Failed to update status.', 'error');
-                                },
-                            });
-                        }
-                    });
-                });
-            });
-
-
-
-            // Event pada tombol "Request to PPIC"
-            $('#requestToPpicButton').on('click', function () {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to send this request to PPIC?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, send it!',
-                    cancelButtonText: 'Cancel',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Ambil data dari modal
-                        let selectedProducts = $('#modalProducts').val();
-                        selectedProducts = [...new Set(selectedProducts)]; // Hapus duplikasi produk
-
-                        const data = {
-                            no_po: $('#modalNoPo').val(),
-                            incoterm: $('#modalIncoterm').val(),
-                            customer: $('#modalCustomer').val(),
-                            material: $('#modalMaterial').val(),
-                            nama_barang_asli: $('#modalNamaBarangAsli').val(),
-                            nama_barang_jual: $('#modalNamaBarangJual').val(),
-                            qty: $('#modalQty').val(),
-                            uom: $('#modalUom').val(),
-                            alamat_kirim: $('#modalAlamatKirim').val(),
-                            kemasan: $('#modalKemasan').val(),
-                            gudang_pengambilan: $('#modalGudangPengambilan').val(),
-                            tanggal_tiba: $('#modalTanggalTiba').val(),
-                            products: selectedProducts,
-                        };
-
-                        // Kirim data ke server
-                        fetch('/salesmarketing/csr/request-to-ppic', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                            body: JSON.stringify(data),
-                        })
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error('Failed to save data');
-                                }
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: responseData.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    // Tutup modal
-                                    $('#detailModal').modal('hide');
-                                    // Refresh tabel dengan data terbaru
-                                    statusTable.ajax.reload(null, false);
-                                });
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Failed to save data. Please try again later.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                });
-                            });
-                    }
-                });
-            });
-        });
-
-        // edit data product
-        $(document).ready(function () {
-            let currentProducts = [];
-
-            // Event klik tombol Edit
-            $('#status-request-table').on('click', '.btn-edit', function () {
-                const id = $(this).data('id');
-
-                // Fetch data berdasarkan ID
-                fetch(`/salesmarketing/csr/api/opportunity/${id}`)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        $('#editNoPo').val(data.no_po);
-                        $('#editIncoterm').val(data.incoterm);
-                        $('#editCustomer').val(data.customer);
-                        $('#editMaterial').val(data.material);
-                        $('#editNamaBarangAsli').val(data.nama_barang_asli);
-                        $('#editNamaBarangJual').val(data.nama_barang_jual);
-                        $('#editQty').val(data.qty);
-                        $('#editUom').val(data.uom);
-                        $('#editAlamatKirim').val(data.alamat_kirim);
-                        $('#editKemasan').val(data.kemasan);
-                        $('#editGudangPengambilan').val(data.gudang_pengambilan);
-                        $('#editTanggalTiba').val(data.tanggal_tiba);
-                        $('#editId').val(data.id);
-
-                        // Isi produk ke daftar
-                        currentProducts = data.products || [];
-                        renderProductList();
-
-                        // Tampilkan tombol "Request to PPIC" hanya jika status adalah "draft"
-                        if (data.status && data.status.toLowerCase() === 'draft') {
-                            $('#modalRequestToPpicButton').removeClass('d-none');
-                        } else {
-                            $('#modalRequestToPpicButton').addClass('d-none');
-                        }
-
-                        // Tampilkan modal
-                        $('#editModal').modal('show');
+                        body: JSON.stringify(data),
                     })
-                    .catch((error) => console.error('Error fetching data:', error));
-            });
-
-            // Render daftar produk
-            function renderProductList() {
-                const productList = $('#productList');
-                productList.empty();
-                currentProducts.forEach((product, index) => {
-                    productList.append(`
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${product}
-                            <button type="button" class="btn btn-danger btn-sm btn-remove-product" data-index="${index}">
-                                Remove
-                            </button>
-                        </li>
-                    `);
-                });
-            }
-
-            // Tambahkan produk baru
-            $('#addProductButton').on('click', function () {
-                const newProduct = $('#newProductInput').val().trim();
-                if (newProduct) {
-                    currentProducts.push(newProduct);
-                    renderProductList();
-                    $('#newProductInput').val('');
-                } else {
-                    Swal.fire('Error', 'Please enter a valid product name.', 'error');
-                }
-            });
-
-            // Hapus produk dari daftar
-            $('#productList').on('click', '.btn-remove-product', function () {
-                const index = $(this).data('index');
-                currentProducts.splice(index, 1);
-                renderProductList();
-            });
-
-            // Simpan perubahan
-            $('#saveEditButton').on('click', function () {
-                const id = $('#editId').val();
-
-                if (!id) {
-                    Swal.fire('Error!', 'No valid ID found for this record.', 'error');
-                    return;
-                }
-
-                if (!currentProducts.length) {
-                    Swal.fire('Error!', 'Please add at least one product.', 'error');
-                    return;
-                }
-
-                // Konfirmasi sebelum menyimpan
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to save the changes?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, save it!',
-                    cancelButtonText: 'Cancel',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Lakukan penyimpanan jika dikonfirmasi
-                        fetch(`/salesmarketing/csr/api/opportunity/${id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                            body: JSON.stringify({ products: currentProducts }),
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error('Failed to save data to draft');
+                            }
+                            return response.json();
                         })
-                            .then((response) => {
-                                if (!response.ok) throw new Error('Failed to update data');
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: responseData.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    // Tutup modal dan reload tabel
-                                    $('#editModal').modal('hide');
-                                    $('#status-request-table').DataTable().ajax.reload(null, false);
-                                });
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error); // Debugging
-                                Swal.fire('Error!', 'Failed to update data. Please try again later.', 'error');
+                        .then((responseData) => {
+                            console.log('Respons dari server:', responseData);
+                            Swal.fire({
+                                title: 'Success!',
+                                text: responseData.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                            }).then(() => {
+                                $('#detailModal').modal('hide');
+                                // Refresh tabel setelah data disimpan
+                                $('#status-request-table').DataTable().ajax.reload(null, false);
                             });
-                    }
-                });
-            });
-
-            // Delete
-            $('#status-request-table').on('click', '.btn-delete', function () {
-                const id = $(this).data('id');
-                console.log('Delete ID:', id); // Debugging
-
-                if (!id) {
-                    Swal.fire('Error!', 'No valid ID found for this record.', 'error');
-                    return;
-                }
-
-                // Konfirmasi sebelum menghapus
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You won’t be able to revert this!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Lakukan penghapusan jika dikonfirmasi
-                        fetch(`/salesmarketing/csr/api/opportunity/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
                         })
-                            .then((response) => {
-                                if (!response.ok) throw new Error('Failed to delete data');
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                Swal.fire({
-                                    title: 'Deleted!',
-                                    text: responseData.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    // Reload tabel setelah data dihapus
-                                    $('#status-request-table').DataTable().ajax.reload(null, false);
-                                });
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error); // Debugging
-                                Swal.fire('Error!', 'Failed to delete data. Please try again later.', 'error');
+                        .catch((error) => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Failed to save data to draft. Please try again later.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
                             });
-                    }
-                });
-            });
-
-            // save to draft
-            $('#saveToDraftButton').on('click', function () {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to save this data to draft?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, save it!',
-                    cancelButtonText: 'Cancel',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const data = {
-                            no_po: $('#modalNoPo').val(),
-                            incoterm: $('#modalIncoterm').val(),
-                            customer: $('#modalCustomer').val(),
-                            material: $('#modalMaterial').val(),
-                            nama_barang_asli: $('#modalNamaBarangAsli').val(),
-                            nama_barang_jual: $('#modalNamaBarangJual').val(),
-                            qty: $('#modalQty').val(),
-                            uom: $('#modalUom').val(),
-                            alamat_kirim: $('#modalAlamatKirim').val(),
-                            kemasan: $('#modalKemasan').val(),
-                            gudang_pengambilan: $('#modalGudangPengambilan').val(),
-                            tanggal_tiba: $('#modalTanggalTiba').val(),
-                            products: $('#modalProducts').val(),
-                        };
-
-                        console.log('Mengirim data:', data);
-
-                        fetch('/salesmarketing/csr/save-to-draft', {
-                            
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                            body: JSON.stringify(data),
-                        })
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error('Failed to save data to draft');
-                                }
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                console.log('Respons dari server:', responseData);
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: responseData.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    $('#detailModal').modal('hide');
-                                    // Refresh tabel setelah data disimpan
-                                    $('#status-request-table').DataTable().ajax.reload(null, false);
-                                });
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Failed to save data to draft. Please try again later.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                });
-                            });
-                    }
-                });
-            });
-
-            // button request to ppic di modal edit
-            $('#modalRequestToPpicButton').on('click', function () {
-                const id = $('#editId').val();
-                const products = [];
-
-                // Ambil produk dari daftar produk di modal
-                $('#productList li').each(function () {
-                    products.push($(this).text().trim());
-                });
-
-                if (!id) {
-                    Swal.fire('Error!', 'No valid ID found for this record.', 'error');
-                    return;
+                        });
                 }
-
-                if (products.length === 0) {
-                    Swal.fire('Error!', 'Please add at least one product.', 'error');
-                    return;
-                }
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to send this request to PPIC?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, send it!',
-                    cancelButtonText: 'Cancel',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Update status ke "open" dan simpan produk
-                        fetch(`/salesmarketing/csr/api/opportunity/${id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                            body: JSON.stringify({
-                                status: 'open',
-                                products: products,
-                            }),
-                        })
-                            .then((response) => {
-                                if (!response.ok) throw new Error('Failed to update opportunity');
-                                return response.json();
-                            })
-                            .then((responseData) => {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: responseData.message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    // Tutup modal dan reload tabel
-                                    $('#editModal').modal('hide');
-                                    $('#status-request-table').DataTable().ajax.reload(null, false);
-                                });
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                                Swal.fire('Error!', 'Failed to update opportunity. Please try again later.', 'error');
-                            });
-                    }
-                });
             });
-
         });
     </script>
+
+
 
 
 

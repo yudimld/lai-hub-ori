@@ -25,6 +25,7 @@ class Edc extends Model
     protected $fillable = [
         'spkNumber',
         'requestDate',
+        'expectedFinishDate',
         'subject',
         'deskripsi',
         'createdBy',
@@ -39,23 +40,89 @@ class Edc extends Model
         'jenis_spk',
         'reason',
         'persentase',
+        'team_members',
+        
     ];
 
     protected $casts = [
-        'requestDate'    => 'date:Y-m-d',
-        'start_date'     => 'date:Y-m-d',
-        'deadline_date'  => 'date:Y-m-d',
-        'attachments'    => 'array',
-        'createdAt'      => 'datetime',
-        'updatedAt'      => 'datetime',
+        'requestDate'           => 'date:Y-m-d',
+        'expectedFinishDate'    => 'date:Y-m-d',
+        'start_date'            => 'date:Y-m-d',
+        'deadline_date'         => 'date:Y-m-d',
+        'attachments'           => 'array',
+        // 'team_members'          => 'array',
+        'createdAt'             => 'datetime',
+        'updatedAt'             => 'datetime',
     ];
 
 
-    public static function getCategoryCounts()
+    public static function getAdjustedAmountOfFeeByAssignee()
     {
         return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
             return $collection->aggregate([
-                ['$group' => ['_id' => '$category', 'count' => ['$sum' => 1]]]
+                [
+                    '$project' => [
+                        'assignee' => 1,
+                        'team_members' => 1,
+                        'jenis_biaya' => ['$toDouble' => '$jenis_biaya'], // Konversi biaya ke tipe numerik
+                        'split_fee' => [
+                            '$divide' => [
+                                ['$toDouble' => '$jenis_biaya'], // Total biaya
+                                ['$add' => [
+                                    1, // Untuk assignee
+                                    ['$size' => ['$ifNull' => ['$team_members', []]]] // Tambahkan jumlah team_members (jika ada)
+                                ]]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    '$group' => [
+                        '_id' => '$assignee', // Kelompokkan berdasarkan assignee
+                        'total_fee' => ['$sum' => '$split_fee'] // Jumlahkan biaya yang sudah dibagi
+                    ]
+                ],
+                [
+                    '$sort' => ['total_fee' => -1] // Urutkan berdasarkan total_fee secara descending
+                ]
+            ]);
+        });
+    }
+
+    public static function getPriorityCountsByAssignee()
+    {
+        return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
+            return $collection->aggregate([
+                // Filter hanya data dengan priority yang valid
+                ['$match' => [
+                    'priority' => ['$in' => ['minor', 'major']], // Perhatikan huruf kecil
+                    'assignee' => ['$exists' => true, '$ne' => null]
+                ]],
+                // Group berdasarkan assignee dan priority
+                ['$group' => [
+                    '_id' => [
+                        'assignee' => '$assignee',
+                        'priority' => '$priority'
+                    ],
+                    'count' => ['$sum' => 1]
+                ]]
+            ]);
+        });
+    }    
+
+    public static function getAmountOfFeeByAssignee()
+    {
+        return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
+            return $collection->aggregate([
+                [
+                    '$group' => [
+                        '_id' => '$assignee', // Group berdasarkan assignee
+                        'total_fee' => ['$sum' => ['$toInt' => '$jenis_biaya']] // Menjumlahkan amount of fee
+                    ]
+                ],
+                [
+                    '$sort' => ['total_fee' => -1] // Urutkan berdasarkan total_fee (desc)
+                ]
             ]);
         });
     }
@@ -83,7 +150,16 @@ class Edc extends Model
     public static function getUnassignedSpk()
     {
         return self::where('status', 'Open')->orderBy('created_at', 'desc')->get()->map(function ($spk) {
-            logger()->info("Processing SPK with ID: {$spk->_id}", ['attachments' => $spk->attachments]); // Tambahkan log
+             // Pastikan team_members adalah array
+            $teamMembers = [];
+            if (isset($spk->team_members)) {
+                if (is_array($spk->team_members)) {
+                    $teamMembers = $spk->team_members;
+                } elseif (is_string($spk->team_members)) {
+                    $teamMembers = json_decode($spk->team_members, true) ?? [];
+                }
+            }
+            
             return [
                 'id'            => isset($spk->_id) ? (string) $spk->_id : null,
                 'spkNumber'     => $spk->spkNumber ?? '-',
@@ -98,10 +174,15 @@ class Edc extends Model
                 'deadline_date' => $spk->deadline_date ?? 'Not Set',
                 'jenis_biaya'   => $spk->jenis_biaya ?? 'Not Defined',
                 'jenis_spk'     => $spk->jenis_spk ?? 'Undefined',
-                'deskripsi'   => $spk->deskripsi ?? 'No Description Available',
+                'deskripsi'     => $spk->deskripsi ?? 'No Description Available',
+                'expectedFinishDate'  => isset($spk->expectedFinishDate) ? $spk->expectedFinishDate->format('Y-m-d') : null,
+                'reason' => $spk->reason,
                 'attachments'   => $spk->attachments ?? [], // Pastikan attachments ada
+                'team_members'  => $teamMembers,
             ];
         })->toArray();
+
+        
     }
     
     
@@ -119,6 +200,12 @@ class Edc extends Model
         return DB::connection('mongodb')->table('edc')->raw(function ($collection) use ($id, $data) {
             $objectId = new \MongoDB\BSON\ObjectId($id);
 
+
+            // Pastikan team_members adalah array
+            if (isset($data['team_members']) && is_string($data['team_members'])) {
+                $data['team_members'] = json_decode($data['team_members'], true) ?? [];
+            }
+
             return $collection->updateOne(
                 ['_id' => $objectId],
                 ['$set' => $data]
@@ -126,64 +213,6 @@ class Edc extends Model
         });
     }
 
-    // halaman list SPK
-    // public static function getAllSpks()
-    // {
-    //     return DB::connection('mongodb')->table('edc')->get()
-    //         ->filter(function ($spk) {
-    //             // Filter data dengan status 'Request to Reject'
-    //             return ($spk->status ?? 'Open') !== 'Request to Reject';
-    //         })
-    //         ->map(function ($spk) {
-    //             // Tentukan status berdasarkan kondisi saat ini
-    //             $status = $spk->status ?? 'Open'; // Default status 'Open'
-                
-    //             if ($status === 'Open') {
-    //                 // Jika status saat ini 'Open', cek apakah semua field sudah lengkap
-    //                 $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
-    //                             !empty($spk->assignee) &&
-    //                             !empty($spk->priority) &&
-    //                             !empty($spk->category) &&
-    //                             !empty($spk->start_date) &&
-    //                             !empty($spk->deadline_date) &&
-    //                             !empty($spk->jenis_biaya) &&
-    //                             !empty($spk->jenis_spk);
-        
-    //                 if ($isComplete) {
-    //                     $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
-    //                 }
-    //             }
-
-    //             // Hitung progress
-    //             $fields = ['assignee', 'priority', 'category', 'start_date', 'deadline_date', 'jenis_biaya', 'jenis_spk'];
-    //             $filledFields = 0;
-    //             foreach ($fields as $field) {
-    //                 if (!empty($spk->$field)) {
-    //                     $filledFields++;
-    //                 }
-    //             }
-    //             $progress = round(($filledFields / count($fields)) * 100);
-            
-    //             return [
-    //                 'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
-    //                 'spkNumber'     => $spk->spkNumber ?? '-',
-    //                 'requestDate'   => $spk->requestDate ?? '-',
-    //                 'subject'       => $spk->subject ?? '-',
-    //                 'createdBy'     => $spk->createdBy ?? '-',
-    //                 'status'        => $status, // Status berdasarkan kondisi
-    //                 'priority'      => $spk->priority ?? '-',
-    //                 'category'      => $spk->category ?? '-',
-    //                 'assignee'      => $spk->assignee ?? 'Unassigned',
-    //                 'start_date'    => $spk->start_date ?? '-',
-    //                 'deadline_date' => $spk->deadline_date ?? '-',
-    //                 'jenis_biaya'   => $spk->jenis_biaya ?? '-',
-    //                 'jenis_spk'     => $spk->jenis_spk ?? '-',
-    //                 'description'   => $spk->deskripsi ?? 'No Description Available', // Tambahkan description
-    //                 'attachments'   => isset($spk->attachments) ? (is_string($spk->attachments) ? json_decode($spk->attachments, true) : $spk->attachments) : [],
-    //                 'progress'      => $progress,
-    //             ];
-    //         })->toArray();
-    // }
     public static function getAllSpks()
     {
         return DB::connection('mongodb')->table('edc')->get()
@@ -194,7 +223,7 @@ class Edc extends Model
             ->map(function ($spk) {
                 // Tentukan status berdasarkan kondisi saat ini
                 $status = $spk->status ?? 'Open'; // Default status 'Open'
-                
+    
                 if ($status === 'Open') {
                     // Cek kelengkapan field untuk status 'Open'
                     $isComplete = isset($spk->assignee, $spk->priority, $spk->category, $spk->start_date, $spk->deadline_date, $spk->jenis_biaya, $spk->jenis_spk) &&
@@ -210,7 +239,7 @@ class Edc extends Model
                         $status = 'Assigned'; // Ubah status ke 'Assigned' jika semua field lengkap
                     }
                 }
-
+    
                 // Hitung nilai persentase (contoh logika)
                 $persentase = 0; // Default nilai
                 if (isset($spk->persentase)) {
@@ -227,27 +256,43 @@ class Edc extends Model
                         $attachments = $spk->attachments;
                     }
                 }
-
+    
+                // Decode teamMembers jika perlu
+                $teamMembers = [];
+                if (isset($spk->team_members)) {
+                    if (is_string($spk->team_members)) {
+                        $teamMembers = json_decode($spk->team_members, true) ?? [];
+                    } elseif (is_array($spk->team_members)) {
+                        $teamMembers = $spk->team_members;
+                    }
+                }
+    
                 return [
-                    'id'            => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
-                    'spkNumber'     => $spk->spkNumber ?? '-',
-                    'requestDate'   => $spk->requestDate ?? '-',
-                    'subject'       => $spk->subject ?? '-',
-                    'createdBy'     => $spk->createdBy ?? '-',
-                    'status'        => $status, // Status berdasarkan kondisi
-                    'priority'      => $spk->priority ?? '-',
-                    'category'      => $spk->category ?? '-',
-                    'assignee'      => $spk->assignee ?? 'Unassigned',
-                    'start_date'    => $spk->start_date ?? '-',
-                    'deadline_date' => $spk->deadline_date ?? '-',
-                    'jenis_biaya'   => $spk->jenis_biaya ?? '-',
-                    'jenis_spk'     => $spk->jenis_spk ?? '-',
-                    'description'   => $spk->deskripsi ?? 'No Description Available',
-                    'attachments'   => $attachments,
-                    'persentase'    => $persentase,
+                    'id'                  => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
+                    'spkNumber'           => $spk->spkNumber ?? '-',
+                    'requestDate'         => $spk->requestDate ?? '-',
+                    'subject'             => $spk->subject ?? '-',
+                    'createdBy'           => $spk->createdBy ?? '-',
+                    'status'              => $status, // Status berdasarkan kondisi
+                    'priority'            => $spk->priority ?? '-',
+                    'category'            => $spk->category ?? '-',
+                    'assignee'            => $spk->assignee ?? 'Unassigned',
+                    'start_date'          => $spk->start_date ?? '-',
+                    'deadline_date'       => $spk->deadline_date ?? '-',
+                    'jenis_biaya'         => $spk->jenis_biaya ?? '-',
+                    'jenis_spk'           => $spk->jenis_spk ?? '-',
+                    'description'         => $spk->deskripsi ?? 'No Description Available',
+                    'attachments'         => $attachments,
+                    'expectedFinishDate'  => $spk->expectedFinishDate ?? '-',
+                    'reason'              => $spk->reason ?? '-',
+                    'teamMembers'         => $teamMembers, // Pastikan teamMembers didefinisikan
+                    'persentase'          => $persentase,
+                    'updated_at'          => isset($spk->updated_at) ? date('Y-m-d H:i:s', strtotime($spk->updated_at)) : '-',
+
                 ];
             })->toArray();
     }
+    
 
     // Tambahkan validasi di model Edc untuk memastikan bahwa nilai updatedAt selalu bertipe string atau datetime sebelum digunakan
     public function getUpdatedAtAttribute($value)

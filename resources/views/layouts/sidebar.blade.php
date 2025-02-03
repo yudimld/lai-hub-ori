@@ -49,6 +49,17 @@
                     </li>
                 @endif
 
+                <!-- Menu untuk Batch Management -->
+                @if (Request::is('mes/batchmanagement*'))
+                    <li class="nav-item {{ Request::is('mes/batchmanagement/planning-work-date') ? 'active' : '' }}">
+                        <a href="{{ route('mes-menu.batchmanagement.planning') }}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <p>Planning Work Date</p>
+                        </a>
+                    </li>
+                @endif
+
+
                 <!-- Menu untuk Sales Marketing CSR -->
                 @if (Request::is('salesmarketing/csr*'))
                     <!-- Menu untuk manager_csr -->
@@ -65,6 +76,7 @@
                                 <p>SO Number</p>
                             </a>
                         </li>
+
                     @endif
 
                     <!-- Menu untuk spv_csr -->
@@ -81,6 +93,7 @@
                                 <p>SO Number</p>
                             </a>
                         </li>
+
                     @endif
 
                     <!-- Menu untuk staff_csr -->
@@ -97,6 +110,7 @@
                                 <p>SO Number</p>
                             </a>
                         </li>
+
                     @endif
 
                     <!-- Menu untuk staff_edc -->
@@ -107,10 +121,22 @@
                                 <p>Opportunity</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/status-request-ppic') ? 'active' : '' }}">
+                            <a href="{{ route('csr.status-request-ppic') }}">
+                                <i class="fas fa-file-alt"></i>
+                                <p>Status Request PPIC</p>
+                            </a>
+                        </li>
                         <li class="nav-item {{ Request::is('salesmarketing/csr/so-number') ? 'active' : '' }}">
                             <a href="{{ route('csr.so-number') }}">
                                 <i class="fas fa-warehouse"></i>
                                 <p>SO Number</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('salesmarketing/csr/status-delivery') ? 'active' : '' }}">
+                            <a href="{{ route('csr.status-delivery') }}">
+                                <i class="fas fa-truck"></i>
+                                <p>Status Delivery</p>
                             </a>
                         </li>
                     @endif
@@ -127,7 +153,7 @@
                                 <p>Data SPK CSR</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('ppic-eticket/ppic/requests') ? 'active' : '' }}">
+                        <li class="nav-item {{ Request::is('ppic-eticket') ? 'active' : '' }}">
                             <a href="{{ route('ppic.requests') }}">
                                 <i class="fas fa-plus"></i>
                                 <p>Create SPK</p>
@@ -151,7 +177,7 @@
                         </li>
                     @endif
 
-                    <!-- Menu untuk staff_ppic -->
+                    <!-- Menu untuk staff_edc -->
                     @if (Auth::user()->role === 'staff_edc')
                         <li class="nav-item {{ Request::is('ppic-eticket') ? 'active' : '' }}">
                             <a href="{{ route('ppic.eticket') }}">
@@ -159,10 +185,16 @@
                                 <p>Data SPK CSR</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('ppic-eticket/ppic/requests') ? 'active' : '' }}">
-                            <a href="{{ route('ppic.requests') }}">
+                        <li class="nav-item {{ Request::is('ppic-eticket/create-spk') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.create-spk') }}">
                                 <i class="fas fa-plus"></i>
                                 <p>Create SPK</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('ppic-eticket/master-data') ? 'active' : '' }}">
+                            <a href="{{ route('ppic.master-data') }}">
+                                <i class="fas fa-database"></i>
+                                <p>Master Data</p>
                             </a>
                         </li>
                     @endif

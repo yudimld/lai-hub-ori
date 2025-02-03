@@ -21,11 +21,13 @@ class AdminController extends Controller
         // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username', // Tambahkan validasi unique
+            'username' => 'required|string|max:255|unique:users,username', 
             'email' => 'required|email|unique:users,email',
             'id_card' => 'required|string|max:255|unique:users,id_card',
             'role' => 'required|string',
-            'password' => 'required|string|min:6|confirmed' // Password harus dikonfirmasi
+            'department' => 'required|string|max:255', 
+            'company' => 'required|string|max:255', 
+            'password' => 'required|string|min:6|confirmed', 
             
         ]);
       
@@ -36,7 +38,9 @@ class AdminController extends Controller
             'email' => $request->email,
             'id_card' => $request->id_card,
             'role' => $request->role,
-            'password' => bcrypt($request->password) // Hash password
+            'department' => $request->department, 
+            'company' => $request->company, 
+            'password' => bcrypt($request->password) 
         ]);
     
         return redirect()->route('admin.dashboard')->with('success', 'User added successfully.');
@@ -48,11 +52,13 @@ class AdminController extends Controller
         // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $id, // Validasi unique dengan pengecualian user saat ini
-            'email' => 'required|email|unique:users,email,' . $id, // Validasi unique untuk email
-            'id_card' => 'required|string|max:255|unique:users,id_card,' . $id, // Validasi unique untuk id_card
+            'username' => 'required|string|max:255|unique:users,username,' . $id, 
+            'email' => 'required|email|unique:users,email,' . $id, 
+            'id_card' => 'required|string|max:255|unique:users,id_card,' . $id, 
             'role' => 'required|string',
-            'password' => 'nullable|string|min:6|confirmed' // Password opsional
+            'department' => 'required|string|max:255', 
+            'company' => 'required|string|max:255', 
+            'password' => 'nullable|string|min:6|confirmed' 
         ]);
     
         $user = User::findOrFail($id);
@@ -64,6 +70,8 @@ class AdminController extends Controller
             'email' => $request->email,
             'id_card' => $request->id_card,
             'role' => $request->role,
+            'department' => $request->department, 
+            'company' => $request->company,
             'password' => $request->password ? bcrypt($request->password) : $user->password // Update password jika ada
         ]);
     

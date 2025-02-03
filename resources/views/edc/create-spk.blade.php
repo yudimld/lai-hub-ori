@@ -20,7 +20,7 @@
 						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
 							<div>
 								<h2 class="text-white pb-2 fw-bold">Create SPK EDC</h2>
-								<h5 class="text-white op-7 mb-2">Buat SPK untuk masuk ke List Antrian Project EDC</h5>
+								<h5 class="text-white op-7 mb-2">Create a SPK to enter the EDC Project List</h5>
 							</div>
 						</div>
 					</div>
@@ -49,19 +49,35 @@
                                             </div>
                                         </div>
 
+                                        <!-- Expected Finish Date -->
+                                        <div class="form-group row align-items-center">
+                                            <label for="expectedFinishDate" class="col-md-2 col-form-label text-left">Expected Finish Date</label>
+                                            <div class="col-md-10">
+                                                <input type="date" name="expectedFinishDate" class="form-control" id="expectedFinishDate" style="background-color: #eeefef" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reason -->
+                                        <div class="form-group row align-items-center">
+                                            <label for="reason" class="col-md-2 col-form-label text-left">Reason</label>
+                                            <div class="col-md-10">
+                                                <textarea name="reason" class="form-control" id="reason" rows="5" style="background-color: #eeefef" required></textarea>
+                                            </div>
+                                        </div>
+
                                         <!-- Subject -->
                                         <div class="form-group row align-items-center">
                                             <label for="subject" class="col-md-2 col-form-label text-left">Subject</label>
                                             <div class="col-md-10">
-                                                <input type="text" name="subject" class="form-control" id="subject" style="background-color: #eeefef">
+                                                <input type="text" name="subject" class="form-control" id="subject" style="background-color: #eeefef" required>
                                             </div>
                                         </div>
 
                                         <!-- Deskripsi Pekerjaan -->
                                         <div class="form-group row align-items-center">
-                                            <label class="col-md-2 col-form-label text-left" for="deskripsi">Deskripsi Pekerjaan</label>
+                                            <label class="col-md-2 col-form-label text-left" for="deskripsi">Work Description</label>
                                             <div class="col-md-10">
-                                                <textarea name="deskripsi" class="form-control" id="deskripsi" rows="5" style="background-color: #eeefef;"></textarea>
+                                                <textarea name="deskripsi" class="form-control" id="deskripsi" rows="5" style="background-color: #eeefef;" required></textarea>
                                             </div>
                                         </div>
 
@@ -246,6 +262,49 @@
             `; // Tambahkan spinner dan ubah teks tombol
         });
     </script>
+
+    <!-- wajib isi form  -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('createSpkForm');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            // Fungsi untuk memeriksa validasi semua input
+            const checkFormValidity = () => {
+                const inputs = form.querySelectorAll('input, textarea');
+                let isValid = true;
+
+                inputs.forEach((input) => {
+                    // Periksa jika input kosong
+                    if (input.hasAttribute('required') && input.value.trim() === '') {
+                        isValid = false;
+                        input.classList.add('is-invalid'); // Tambahkan kelas invalid
+                    } else {
+                        input.classList.remove('is-invalid'); // Hapus kelas invalid jika valid
+                    }
+                });
+
+                return isValid;
+            };
+
+            // Event listener untuk memeriksa validasi saat tombol submit diklik
+            form.addEventListener('submit', function (event) {
+                if (!checkFormValidity()) {
+                    event.preventDefault(); // Mencegah pengiriman form
+                    alert('Please fill all required fields before submitting!');
+                }
+            });
+
+            // Event listener untuk mengaktifkan/menonaktifkan tombol submit
+            form.addEventListener('input', function () {
+                submitButton.disabled = !checkFormValidity();
+            });
+
+            // Inisialisasi: Nonaktifkan tombol submit jika form tidak valid
+            submitButton.disabled = !checkFormValidity();
+        });
+    </script>
+
 
 
 

@@ -5,7 +5,6 @@
 @endphp
 @include('layouts.head')
 
-
 <style>
 
     .modal-blur {
@@ -58,42 +57,9 @@
                                             </thead>
 
                                             <tbody>
-                                                @if (!empty($spkList))
-                                                    @foreach ($spkList as $spk)
-                                                    <tr>
-                                                        <td>{{ $spk['spkNumber'] }}</td>
-                                                        <td>{{ $spk['subject'] }}</td>
-                                                        <td>{{ $spk['deskripsi'] }}</td>
-                                                        <td>{{ $spk['requestDate'] }}</td>
-                                                        <td>{{ $spk['createdBy'] }}</td>
-                                                        <td>
-                                                            @if ($spk['status'] === 'Assigned')
-                                                                <span class="badge badge-primary">Assigned</span>
-                                                            @endif
-
-                                                            <button 
-                                                            
-                                                                class="btn btn-primary btn-round show-details-button btn-link btn-lg"
-                                                                data-id="{{ $spk['id'] }}" 
-                                                                data-spk-number="{{ $spk['spkNumber'] }}" 
-                                                                data-request-date="{{ $spk['requestDate'] }}" 
-                                                                data-subject="{{ $spk['subject'] }}" 
-                                                                data-created-by="{{ $spk['createdBy'] }}" 
-                                                                data-deskripsi="{{ $spk['deskripsi'] ?? '' }}"
-                                                                data-attachments='@json($spk['attachments'])'
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#spkDetailsModal">
-                                                                <i class="fa fa-eye"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td colspan="6" class="text-center">No data available</td>
-                                                    </tr>
-                                                @endif
+                                                <!-- data dari js -->
                                             </tbody>
+                                            
                                         </table>
                                         <form id="spkDetailsForm" method="POST" action="{{ route('edc.assign-spk-action', ['id' => 'ID_PLACEHOLDER']) }}">
                                             @csrf
@@ -120,6 +86,21 @@
                                                                         <input type="date" id="requestDate" name="requestDate" class="form-control" readonly>
                                                                     </div>
                                                                 </div>
+
+                                                                <!-- Expected Finish Date -->
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-6">
+                                                                        <label for="expectedFinishDate" class="form-label">Expected Finish Date</label>
+                                                                        <input type="date" id="expectedFinishDate" name="expectedFinishDate" class="form-control" readonly>
+                                                                    </div>
+                                                                
+                                                                    <!-- Reason -->
+                                                                    <div class="col-md-6">
+                                                                        <label for="reason" class="form-label">Reason</label>
+                                                                        <textarea id="reason" name="reason" class="form-control" rows="4" readonly></textarea>
+                                                                    </div>
+                                                                </div>
+
 
                                                                 <!-- Subject -->
                                                                 <div class="row mb-3">
@@ -159,17 +140,36 @@
                                                                         <select id="assignee" name="assignee" class="form-control">
                                                                             <option value="-" selected></option>
                                                                             <option value="Yudi Mulyadi">Yudi Mulyadi</option>
-                                                                            <option value="Yudi Mulyadi">Danan Dwiyaksa</option>
+                                                                            <option value="Danan Dwiyaksa">Danan Dwiyaksa</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
+
+                                                                <!-- Anggota Tim -->
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-12">
+                                                                        <label class="form-label">Team Members</label>
+                                                                        <div id="teamMembersContainer">
+                                                                            <div class="d-flex mb-2">
+                                                                                <input type="text" name="teamMembers[]" class="form-control" placeholder="Enter team member name">
+                                                                                <button type="button" class="btn btn-danger btn-sm remove-member-btn ms-2" style="display: none;">
+                                                                                    <i class="fa fa-times"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="addMemberButton" class="btn btn-primary btn-sm mt-2">
+                                                                            <i class="fa fa-plus"></i> Add Team Member
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
 
                                                                 <!-- Category and Priority -->
                                                                 <div class="row mb-3">
                                                                     <div class="col-md-6">
                                                                         <label for="category" class="form-label">Category</label>
                                                                         <select id="category" name="category" class="form-control">
-                                                                            <option value="create" selected>Create</option>
+                                                                            <option value="create" selected>Development</option>
                                                                             <option value="modification">Modification</option>
                                                                         </select>
                                                                     </div>
@@ -197,11 +197,8 @@
                                                                  <!-- Jenis Biaya -->
                                                                  <div class="row mb-3">
                                                                     <div class="col-md-6">
-                                                                        <label for="jenisBiaya" class="form-label">Amount of Fee</label>
-                                                                            <select id="jenisBiaya" name="jenisBiaya" class="form-control">
-                                                                                <option value="< 5 juta" selected>< 5 Juta</option>
-                                                                                <option value="> 5 juta">> 5 Juta</option>
-                                                                        </select>
+                                                                        <label for="jenisBiaya" class="form-label">Cost (Rupiah)</label>
+                                                                        <input type="number" min="0" id="jenisBiaya" name="jenisBiaya" class="form-control" placeholder="Enter amount of fee">
                                                                     </div>
                                                                 <!-- Jenis SPK -->
                                                                     <div class="col-md-6">
@@ -328,6 +325,7 @@
                                                                         data-jenis-biaya="{{ $spk->jenis_biaya ?? '' }}"
                                                                         data-jenis-spk="{{ $spk->jenis_spk ?? '' }}"
                                                                         data-persentase="{{ $spk->persentase }}"
+                                                                        data-team-members='@json($spk->team_members ?? [])'
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#editSpkModal">
                                                                         <i class="fa fa-edit"> Edit</i>
@@ -358,6 +356,7 @@
                                                                                 <option value="modification">Modification</option>
                                                                             </select>
                                                                         </div>
+                                                                        
                                                                         <div class="col-md-6">
                                                                             <label for="editPriority" class="form-label">Priority</label>
                                                                             <select id="editPriority" name="editPriority" class="form-control">
@@ -383,11 +382,8 @@
                                                                     <div class="row mb-3">
                                                                         <!-- Jenis Biaya -->
                                                                         <div class="col-md-6">
-                                                                            <label for="editJenisBiaya" class="form-label">Amount of Fee</label>
-                                                                                <select id="editJenisBiaya" name="editJenisBiaya" class="form-control">
-                                                                                    <option value="< 5 juta" selected>< 5 Juta</option>
-                                                                                    <option value="> 5 juta">> 5 Juta</option>
-                                                                            </select>
+                                                                            <label for="editJenisBiaya" class="form-label">Amount of Fee (Rupiah)</label>
+                                                                            <input type="number" min="0" id="editJenisBiaya" name="editJenisBiaya" class="form-control" placeholder="Enter amount of fee">
                                                                         </div>
                                                                         <!-- Jenis SPK -->
                                                                         <div class="col-md-6">
@@ -404,6 +400,17 @@
                                                                         <div class="col-md-6">
                                                                             <label for="editPersentase" class="form-label">Progress (%)</label>
                                                                             <input type="number" id="editPersentase" name="editPersentase" class="form-control" min="0" max="100" placeholder="0-100">
+                                                                        </div>
+                                                                    
+                                                                    
+                                                                        <div class="col-md-6">
+                                                                            <label for="editTeamMembers" class="form-label">Team Members</label>
+                                                                            <div id="editTeamMembersContainer">
+                                                                                <!-- Input anggota tim akan ditambahkan di sini -->
+                                                                            </div>
+                                                                            <button type="button" id="addEditTeamMemberButton" class="btn btn-primary btn-sm mt-2">
+                                                                                <i class="fa fa-plus"></i> Add Team Member
+                                                                            </button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
@@ -458,6 +465,54 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- inisiasi datatable SPK-OPEN -->
+    <script>
+        $('#assign-spk-table').DataTable({
+            "processing": true,
+            ajax: {
+                url: '{{ route('edc.unassigned-spk') }}',
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            },
+            columns: [
+                { data: 'spkNumber', name: 'spkNumber' },
+                { data: 'subject', name: 'subject' },
+                { data: 'deskripsi', name: 'deskripsi' },
+                { data: 'requestDate', name: 'requestDate' },
+                { data: 'createdBy', name: 'createdBy' },
+                
+                {
+                    data: null,
+                    render: function (data) {
+                        return `
+                            <button class="btn btn-primary btn-round show-details-button btn-link btn-lg"
+                                data-id="${data.id}" 
+                                data-spk-number="${data.spkNumber}" 
+                                data-request-date="${data.requestDate}" 
+                                data-expected-finish-date="${data.expectedFinishDate}" 
+                                data-subject="${data.subject}" 
+                                data-created-by="${data.createdBy}" 
+                                data-deskripsi="${data.deskripsi}"
+                                data-attachments='${JSON.stringify(data.attachments || [])}'
+                                data-reason="${data.reason}"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#spkDetailsModal">
+                                <i class="fa fa-eye"></i>
+                            </button>`;
+                    },
+                    orderable: false,
+                    searchable: false,
+                },
+            ],
+            language: {
+                emptyTable: "No unassigned SPK available."
+            }
+        });
+    </script>
+
+
     <!-- JS detail button show -->
     <script>
         $(document).on('click', '.show-details-button', function () {
@@ -465,19 +520,23 @@
             const spkId = $(this).data('id');
             const spkNumber = $(this).data('spk-number') || '-';
             const requestDate = $(this).data('request-date') || '-';
+            const expectedFinishDate = $(this).data('expected-finish-date') || '-';
             const subject = $(this).data('subject') || '-';
             const createdBy = $(this).data('created-by') || '-';
             const deskripsi = $(this).data('deskripsi') || '-';
             const attachments = $(this).data('attachments') || [];
+            const reason = $(this).data('reason') || '-';
 
             // Isi form modal
             $('#spkId').val(spkId);
             $('#spkDetailsForm').attr('action', `/edc/assign-spk/${spkId}`);
             $('#spkNumber').val(spkNumber);
             $('#requestDate').val(requestDate);
+            $('#expectedFinishDate').val(expectedFinishDate);
             $('#subject').val(subject);
             $('#createdBy').val(createdBy);
             $('#Deskripsi').val(deskripsi);
+            $('#reason').val(reason);
 
             // Tampilkan daftar attachments
             let attachmentsHtml = '';
@@ -808,7 +867,8 @@
     <script>
         $(document).ready(function () {
             $('#assign-table').DataTable({
-                "processing": true,
+                processing: true,
+                
             }); // Inisialisasi DataTable
             order: [[4, 'desc']]; // Urutkan kolom pertama (indeks 0) secara descending
 
@@ -895,6 +955,8 @@
                 const jenisBiaya = $(this).data('jenis-biaya');
                 const jenisSpk = $(this).data('jenis-spk');
                 const persentase = $(this).data('persentase');
+                const teamMembers = $(this).data('team-members') || [];
+
 
                 // Isi modal dengan data SPK
                 $('#editSpkId').val(spkId);
@@ -905,6 +967,45 @@
                 $('#editJenisBiaya').val(jenisBiaya);
                 $('#editJenisSpk').val(jenisSpk);
                 $('#editPersentase').val(persentase);
+                // Kosongkan container anggota tim
+                const container = $('#editTeamMembersContainer');
+                container.empty();
+
+                // Tambahkan anggota tim ke dalam modal
+                if (teamMembers.length > 0) {
+                    teamMembers.forEach(member => {
+                        container.append(`
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control team-member-input" value="${member}" placeholder="Team Member">
+                                <button type="button" class="btn btn-danger btn-round btn-sm remove-member-button">Remove</button>
+                            </div>
+                        `);
+                    });
+                } else {
+                    // Jika tidak ada anggota tim, tambahkan input kosong
+                    container.append(`
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control team-member-input" placeholder="Team Member">
+                            <button type="button" class="btn btn-danger btn-round btn-sm remove-member-button">Remove</button>
+                        </div>
+                    `);
+                }
+            });
+
+            // Tambahkan anggota tim baru di modal edit
+            $('#addEditTeamMemberButton').on('click', function () {
+                const container = $('#editTeamMembersContainer');
+                container.append(`
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control team-member-input" placeholder="Team Member">
+                        <button type="button" class="btn btn-danger btn-round btn-sm remove-member-button">Remove</button>
+                    </div>
+                `);
+            });
+
+             // Hapus anggota tim di modal edit
+            $(document).on('click', '.remove-member-button', function () {
+                $(this).closest('.input-group').remove();
             });
 
             // Event untuk menyimpan perubahan
@@ -918,7 +1019,17 @@
                     jenis_biaya: $('#editJenisBiaya').val(),
                     jenis_spk: $('#editJenisSpk').val(),
                     persentase: $('#editPersentase').val(),
+                    team_members: []
+                    
                 };
+
+                // Ambil semua anggota tim
+            $('#editTeamMembersContainer .team-member-input').each(function () {
+                const member = $(this).val().trim();
+                if (member) {
+                    data.team_members.push(member);
+                }
+            });
 
                 // Tampilkan konfirmasi SweetAlert sebelum melanjutkan
                 Swal.fire({
@@ -981,7 +1092,73 @@
                     }
                 });
             });
+
         });
+    </script>
+
+    <!-- default format ruiah amount of fee -->
+    <script>
+        document.addEventListener('input', function (e) {
+            const target = e.target;
+
+            // Periksa apakah elemen memiliki data-format="rupiah"
+            if (target.getAttribute('data-format') === 'rupiah') {
+                // Hapus format sebelumnya dan hanya ambil angka
+                let value = target.value.replace(/[^\d]/g, '');
+
+                // Format angka menjadi Rupiah
+                const formatted = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                }).format(value);
+
+                // Perbarui nilai input
+                target.value = formatted;
+            }
+        });
+
+    </script>
+
+    <!-- js tambah/hapus input anggota tim  -->
+    <script>
+        $(document).ready(function () {
+            const maxMembers = 10; // Maksimal anggota tim
+            const container = $('#teamMembersContainer');
+            const addMemberButton = $('#addMemberButton');
+
+            // Tambahkan anggota tim baru
+            addMemberButton.on('click', function () {
+                const currentCount = container.children().length;
+
+                if (currentCount < maxMembers) {
+                    const newMember = $(`
+                        <div class="d-flex mb-2">
+                            <input type="text" name="teamMembers[]" class="form-control" placeholder="Enter team member name">
+                            <button type="button" class="btn btn-danger btn-sm remove-member-btn ms-2">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    `);
+
+                    container.append(newMember);
+                } else {
+                    alert('Maximum of 10 team members allowed.');
+                }
+            });
+
+            // Hapus anggota tim
+            container.on('click', '.remove-member-btn', function () {
+                $(this).parent().remove();
+            });
+
+            // Tampilkan tombol "Remove" jika ada lebih dari satu anggota tim
+            container.on('DOMSubtreeModified', function () {
+                const memberCount = container.children().length;
+                container.find('.remove-member-btn').toggle(memberCount > 1);
+            });
+        });
+
     </script>
 
 </body>

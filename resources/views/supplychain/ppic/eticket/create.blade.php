@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+@php
+    $title = 'Create SPK';
+@endphp
 @include('layouts.head')
+
 
 <body>
 	<div class="wrapper">
@@ -16,465 +20,292 @@
 					<div class="page-inner py-5">
 						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
 							<div>
-								<h2 class="text-white pb-2 fw-bold">E-TICKET PPIC</h2>
-								<h5 class="text-white op-7 mb-2">Tambahkan E-ticket untuk diteruskan ke PPIC</h5>
+								<h2 class="text-white pb-2 fw-bold">CREATE SPK</h2>
+								<h5 class="text-white op-7 mb-0">Create SPK to pass to Production</h5>
 							</div>
 						</div>
 					</div>
 				</div>
+
 				<div class="page-inner mt--5">
-                <div class="row">
-						<div class="col-md-12">
+					<div class="row">
+						<!-- Form Container -->
+						<div class="col-md-8" id="form-container">
 							<div class="card">
-								<div class="card-header">
-									<div class="card-title">Form Elements</div>
-								</div>
 								<div class="card-body">
-									<div class="row">
-										<div class="col-md-6 col-lg-4">
-											<div class="form-group">
-												<label for="email2">Email Address</label>
-												<input type="email" class="form-control" id="email2" placeholder="Enter Email">
-												<small id="emailHelp2" class="form-text text-muted">We'll never share your email with anyone else.</small>
-											</div>
-											<div class="form-group">
-												<label for="password">Password</label>
-												<input type="password" class="form-control" id="password" placeholder="Password">
-											</div>
-											<div class="form-group form-inline">
-												<label for="inlineinput" class="col-md-3 col-form-label">Inline Input</label>
-												<div class="col-md-9 p-0">
-													<input type="text" class="form-control input-full" id="inlineinput" placeholder="Enter Input">
-												</div>
-											</div>
-											<div class="form-group has-success">
-												<label for="successInput">Success Input</label>
-												<input type="text" id="successInput" value="Success" class="form-control">
-											</div>
-											<div class="form-group has-error has-feedback">
-												<label for="errorInput">Error Input</label>
-												<input type="text" id="errorInput" value="Error" class="form-control">
-												<small id="emailHelp" class="form-text text-muted">Please provide a valid informations.</small>
-											</div>
-											<div class="form-group">
-												<label for="disableinput">Disable Input</label>
-												<input type="text" class="form-control" id="disableinput" placeholder="Enter Input" disabled="">
-											</div>
-											<div class="form-check">
-												<label>Gender</label><br>
-												<label class="form-radio-label">
-													<input class="form-radio-input" type="radio" name="optionsRadios" value="" checked="">
-													<span class="form-radio-sign">Male</span>
-												</label>
-												<label class="form-radio-label ml-3">
-													<input class="form-radio-input" type="radio" name="optionsRadios" value="">
-													<span class="form-radio-sign">Female</span>
-												</label>
-											</div>
-											<div class="form-group">
-												<label class="control-label">
-													Static
-												</label> 
-												<p class="form-control-static">hello@example.com</p> 
-											</div>
-											<div class="form-group">
-												<label for="exampleFormControlSelect1">Example select</label>
-												<select class="form-control" id="exampleFormControlSelect1">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-											<div class="form-group">
-												<label for="exampleFormControlSelect2">Example multiple select</label>
-												<select multiple="" class="form-control" id="exampleFormControlSelect2">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-											<div class="form-group">
-												<label for="exampleFormControlFile1">Example file input</label>
-												<input type="file" class="form-control-file" id="exampleFormControlFile1">
-											</div>
-											<div class="form-group">
-												<label for="comment">Comment</label>
-												<textarea class="form-control" id="comment" rows="5">
-												</textarea>
-											</div>
-											<div class="form-check">
-												<label class="form-check-label">
-													<input class="form-check-input" type="checkbox" value="">
-													<span class="form-check-sign">Agree with terms and conditions</span>
-												</label>
-											</div>
+									<h2 class="text-center mb-4">Form Input</h2>
+									<form id="materialForm" action="{{ route('ppic.store-spk') }}" method="POST">
+										@csrf <!-- Tambahkan ini jika menggunakan Laravel untuk keamanan -->
+
+										<!-- Input Material Number -->
+										<div class="form-group">
+											<label for="material_number">Material Number</label>
+											<input type="text" id="material_number" name="material_number" class="form-control" placeholder="Enter Material Number" required>
 										</div>
-										<div class="col-md-6 col-lg-4">				
-											<div class="form-group">
-												<div class="input-group mb-3">
-													<div class="input-group-prepend">
-														<span class="input-group-text" id="basic-addon1">@</span>
-													</div>
-													<input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group mb-3">
-													<input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-													<div class="input-group-append">
-														<span class="input-group-text" id="basic-addon2">@example.com</span>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="basic-url">Your vanity URL</label>
-												<div class="input-group mb-3">
-													<div class="input-group-prepend">
-														<span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-													</div>
-													<input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group mb-3">
-													<div class="input-group-prepend">
-														<span class="input-group-text">$</span>
-													</div>
-													<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-													<div class="input-group-append">
-														<span class="input-group-text">.00</span>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text">With textarea</span>
-													</div>
-													<textarea class="form-control" aria-label="With textarea"></textarea>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<button class="btn btn-default btn-border" type="button">Button</button>
-													</div>
-													<input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<input type="text" class="form-control" aria-label="Text input with dropdown button">
-													<div class="input-group-append">
-														<button class="btn btn-primary btn-border dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="#">Action</a>
-															<a class="dropdown-item" href="#">Another action</a>
-															<a class="dropdown-item" href="#">Something else here</a>
-															<div role="separator" class="dropdown-divider"></div>
-															<a class="dropdown-item" href="#">Separated link</a>
+
+										<!-- Input Order Type -->
+										<div class="form-group">
+											<label for="order_type">Order Type</label>
+											<input type="text" id="order_type" name="order_type" class="form-control" placeholder="Enter Order Type" required>
+										</div>
+
+										<!-- Input Production Plant -->
+										<div class="form-group">
+											<label for="production_plant">Production Plant</label>
+											<input type="text" id="production_plant" name="production_plant" class="form-control" placeholder="Enter Production Plant" required>
+										</div>
+
+										<!-- Submit Button -->
+										<div class="text-center">
+											<button type="button" class="btn btn-round btn-success" id="btn-step-1">
+												<i class="fas fa-check"></i> Submit
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- Bypass Button -->
+							<div class="text-center mt-3">
+								<button type="button" class="btn btn-primary" id="btn-bypass">
+									<i class="fas fa-arrow-right"></i> Bypass to Next Step
+								</button>
+							</div>
+						</div>
+
+						<!-- Next Step Container -->
+						<div class="col-md-12" id="next-step-container" style="display: none;">
+							<div class="card">
+								<div class="card-body">
+									<div class="card-header">
+										<h5 class="card-title" id="dynamic-card-title">Create Process Order : General Data</h5>
+									</div>
+									<div class="card-body">
+										<ul class="nav nav-pills nav-primary" id="pills-tab" role="tablist">
+											<li class="nav-item submenu">
+												<a class="nav-link active show" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false" data-title="Create Process Order : General Data">
+													<i class="fas fa-info-circle"></i> General Data
+												</a>
+											</li>
+											<li class="nav-item submenu">
+												<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false" data-title="Create Process Order : Operation">
+													<i class="fas fa-cogs"></i> Operation
+												</a>
+											</li>
+											<li class="nav-item submenu">
+												<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="true" data-title="Create Process Order : Materials">
+													<i class="fas fa-box"></i> Materials
+												</a>
+											</li>
+										</ul>
+
+										<div class="tab-content mt-2 mb-3" id="pills-tabContent">
+											<!-- general Data -->
+											<div class="tab-pane fade active show" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+												<form>
+													<!-- General Data -->
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="material" class="form-label">Material</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="material" placeholder="1100019677" readonly>
+																<span class="input-group-text bg-light">BOOSTER CT 220</span>
+															</div>
+														</div>
+														<div class="col-md-6">
+															<label for="process_order" class="form-label">Process Order</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="process_order" placeholder="000000000001" readonly>
+															</div>
 														</div>
 													</div>
+
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="status" class="form-label">Status</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="status" placeholder="CRTD BCRQ MANC SETC" readonly>
+																<span class="input-group-text bg-light">
+																	<i class="fas fa-info-circle"></i>
+																</span>
+															</div>
+														</div>
+														<div class="col-md-3">
+															<label for="type" class="form-label">Type</label>
+															<input type="text" class="form-control bg-light" id="type" placeholder="ZPNP" readonly>
+														</div>
+														<div class="col-md-3">
+															<label for="plant" class="form-label">Plant</label>
+															<input type="text" class="form-control bg-light" id="plant" placeholder="1811" readonly>
+														</div>
+													</div>
+
+													<!-- Garis Biru -->
+													<div class="border-bottom border-primary mb-3"></div>
+
+													<!-- Quantities Section -->
+													<div class="row mb-3">
+														<div class="col-md-12">
+															<h6 class="text-primary">Quantities</h6>
+														</div>
+														<div class="col-md-4">
+															<label for="total_qty" class="form-label">Total Qty</label>
+															<div class="input-group">
+																<input type="text" class="form-control" id="total_qty" placeholder="50.000">
+																<span class="input-group-text bg-light">KG</span>
+															</div>
+														</div>
+													</div>
+
+													<!-- Garis Biru -->
+													<div class="border-bottom border-primary mb-3"></div>
+
+													<!-- Dates Section -->
+													<div class="row mb-3">
+														<div class="col-md-12">
+															<h6 class="text-primary">Dates</h6>
+														</div>
+														<!-- Basic Dates -->
+														<div class="col-md-2">
+															<label class="form-label">Basic Dates</label>
+														</div>
+														<div class="col-md-3">
+															<label for="basic_end" class="form-label">End</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="basic_end" placeholder="16.12.2024">
+																<input type="text" class="form-control bg-light" placeholder="11:00:00">
+															</div>
+														</div>
+														<div class="col-md-4">
+															<label for="basic_start" class="form-label">Start</label>
+															<div class="input-group">
+																<input type="date" class="form-control bg-light" id="basic_start" placeholder="04.12.2024">
+																<input type="time" class="form-control bg-light" placeholder="07:00:00">
+															</div>
+														</div>
+														<div class="col-md-2">
+															<label for="basic_release" class="form-label">Release</label>
+															<input type="text" class="form-control bg-light" id="basic_release" placeholder="04.12.2024">
+														</div>
+
+														<!-- Scheduled Dates -->
+														<div class="col-md-2 mt-3">
+															<label class="form-label">Scheduled</label>
+														</div>
+														<div class="col-md-3 mt-3">
+															<label for="scheduled_end" class="form-label">End</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="scheduled_end" placeholder="16.12.2024">
+																<input type="text" class="form-control bg-light" placeholder="11:00:00">
+															</div>
+														</div>
+														<div class="col-md-3 mt-3">
+															<label for="scheduled_start" class="form-label">Start</label>
+															<div class="input-group">
+																<input type="text" class="form-control bg-light" id="scheduled_start" placeholder="04.12.2024" readonly>
+																<input type="text" class="form-control bg-light" placeholder="07:00:00">
+															</div>
+														</div>
+
+														
+													</div>
+												</form>
+											</div>
+
+											<!-- end general data -->
+
+											<!-- Operations -->
+											<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+												<!-- Tabel Checklist -->
+												<div class="table-responsive">
+														<table class="table table-bordered table-hover">
+															<thead class="thead-grey">
+																<tr>
+																	<th class="text-center">Action</th>
+																	<th class="text-center">Resource</th>
+																	<th class="text-center">Short Text</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td class="text-center"><input type="checkbox"></td>
+																	<td>18110018</td>
+																	<td>BOOSTER CT 220</td>
+																</tr>
+																<tr>
+																	<td class="text-center"><input type="checkbox"></td>
+																	<td>18110018</td>
+																	<td>BOOSTER CT 220</td>
+																</tr>
+																<tr>
+																	<td class="text-center"><input type="checkbox"></td>
+																	<td>18110018</td>
+																	<td>BOOSTER CT 220</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+											</div>
+											<!-- End Operation -->
+
+											<!-- Materials -->
+											<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+												<!-- Tabel Data -->
+												<div class="table-responsive">
+													<table class="table table-bordered table-hover">
+														<thead class="thead-grey">
+															<tr>
+																<th class="text-center">Item</th>
+																<th class="text-center">Material</th>
+																<th class="text-center">Material Description</th>
+																<th class="text-center">Qty</th>
+																<th class="text-center">UOM</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td>1</td>
+																<td>Material A</td>
+																<td>High-quality raw material</td>
+																<td>100</td>
+																<td>KG</td>
+															</tr>
+															<tr>
+																<td>2</td>
+																<td>Material B</td>
+																<td>Durable industrial material</td>
+																<td>250</td>
+																<td>L</td>
+															</tr>
+															<tr>
+																<td>3</td>
+																<td>Material C</td>
+																<td>Advanced polymer compound</td>
+																<td>50</td>
+																<td>PCS</td>
+															</tr>
+															<tr>
+																<td>4</td>
+																<td>Material D</td>
+																<td>Heat-resistant alloy</td>
+																<td>75</td>
+																<td>TON</td>
+															</tr>
+														</tbody>
+													</table>
 												</div>
 											</div>
-											<div class="form-group">
-												<div class="input-icon">
-													<input type="text" class="form-control" placeholder="Search for...">
-													<span class="input-icon-addon">
-														<i class="fa fa-search"></i>
-													</span>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-icon">
-													<span class="input-icon-addon">
-														<i class="fa fa-user"></i>
-													</span>
-													<input type="text" class="form-control" placeholder="Username">
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label">Image Check</label>
-												<div class="row">
-													<div class="col-6 col-sm-4">
-														<label class="imagecheck mb-4">
-															<input name="imagecheck" type="checkbox" value="1" class="imagecheck-input">
-															<figure class="imagecheck-figure">
-																<img src="../../assets/img/examples/product1.jpg" alt="title" class="imagecheck-image">
-															</figure>
-														</label>
-													</div>
-													<div class="col-6 col-sm-4">
-														<label class="imagecheck mb-4">
-															<input name="imagecheck" type="checkbox" value="2" class="imagecheck-input" checked="">
-															<figure class="imagecheck-figure">
-																<img src="../../assets/img/examples/product4.jpg" alt="title" class="imagecheck-image">
-															</figure>
-														</label>
-													</div>
-													<div class="col-6 col-sm-4">
-														<label class="imagecheck mb-4">
-															<input name="imagecheck" type="checkbox" value="3" class="imagecheck-input">
-															<figure class="imagecheck-figure">
-																<img src="../../assets/img/examples/product3.jpg" alt="title" class="imagecheck-image">
-															</figure>
-														</label>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label">Color Input</label>
-												<div class="row gutters-xs">
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="dark" class="colorinput-input">
-															<span class="colorinput-color bg-dark"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="primary" class="colorinput-input">
-															<span class="colorinput-color bg-primary"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="secondary" class="colorinput-input">
-															<span class="colorinput-color bg-secondary"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="info" class="colorinput-input">
-															<span class="colorinput-color bg-info"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="success" class="colorinput-input">
-															<span class="colorinput-color bg-success"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="danger" class="colorinput-input">
-															<span class="colorinput-color bg-danger"></span>
-														</label>
-													</div>
-													<div class="col-auto">
-														<label class="colorinput">
-															<input name="color" type="checkbox" value="warning" class="colorinput-input">
-															<span class="colorinput-color bg-warning"></span>
-														</label>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label">Size</label>
-												<div class="selectgroup w-100">
-													<label class="selectgroup-item">
-														<input type="radio" name="value" value="50" class="selectgroup-input" checked="">
-														<span class="selectgroup-button">S</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="value" value="100" class="selectgroup-input">
-														<span class="selectgroup-button">M</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="value" value="150" class="selectgroup-input">
-														<span class="selectgroup-button">L</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="value" value="200" class="selectgroup-input">
-														<span class="selectgroup-button">XL</span>
-													</label>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label">Icons input</label>
-												<div class="selectgroup w-100">
-													<label class="selectgroup-item">
-														<input type="radio" name="transportation" value="2" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="icon-screen-smartphone"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="transportation" value="1" class="selectgroup-input" checked="">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="icon-screen-tablet"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="transportation" value="6" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="icon-screen-desktop"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="transportation" value="6" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="fa fa-times"></i></span>
-													</label>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label d-block">Icon input</label>
-												<div class="selectgroup selectgroup-secondary selectgroup-pills">
-													<label class="selectgroup-item">
-														<input type="radio" name="icon-input" value="1" class="selectgroup-input" checked="">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="fa fa-sun"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="icon-input" value="2" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="fa fa-moon"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="icon-input" value="3" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="fa fa-tint"></i></span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="radio" name="icon-input" value="4" class="selectgroup-input">
-														<span class="selectgroup-button selectgroup-button-icon"><i class="fa fa-cloud"></i></span>
-													</label>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="form-label">Your skills</label>
-												<div class="selectgroup selectgroup-pills">
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="HTML" class="selectgroup-input" checked="">
-														<span class="selectgroup-button">HTML</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="CSS" class="selectgroup-input">
-														<span class="selectgroup-button">CSS</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="PHP" class="selectgroup-input">
-														<span class="selectgroup-button">PHP</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="JavaScript" class="selectgroup-input">
-														<span class="selectgroup-button">JavaScript</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="Ruby" class="selectgroup-input">
-														<span class="selectgroup-button">Ruby</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="Ruby" class="selectgroup-input">
-														<span class="selectgroup-button">Ruby</span>
-													</label>
-													<label class="selectgroup-item">
-														<input type="checkbox" name="value" value="C++" class="selectgroup-input">
-														<span class="selectgroup-button">C++</span>
-													</label>
-												</div>
-											</div>
-										</div>
-										<div class="col-md-6 col-lg-4">
-											<label class="mb-3"><b>Form Group Default</b></label>
-											<div class="form-group form-group-default">
-												<label>Input</label>
-												<input id="Name" type="text" class="form-control" placeholder="Fill Name">
-											</div>
-											<div class="form-group form-group-default">
-												<label>Select</label>
-												<select class="form-control" id="formGroupDefaultSelect">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-											<label class="mt-3 mb-3"><b>Form Floating Label</b></label>
-											<div class="form-group form-floating-label">
-												<input id="inputFloatingLabel" type="text" class="form-control input-border-bottom" required="">
-												<label for="inputFloatingLabel" class="placeholder">Input</label>
-											</div>
-											<div class="form-group form-floating-label">
-												<select class="form-control input-border-bottom" id="selectFloatingLabel" required="">
-													<option value="">&nbsp;</option>
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-												<label for="selectFloatingLabel" class="placeholder">Select</label>
-											</div>
-											<div class="form-group form-floating-label">
-												<input id="inputFloatingLabel2" type="text" class="form-control input-solid" required="">
-												<label for="inputFloatingLabel2" class="placeholder">Input</label>
-											</div>
-											<div class="form-group form-floating-label">
-												<select class="form-control input-solid" id="selectFloatingLabel2" required="">
-													<option value="">&nbsp;</option>
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-												<label for="selectFloatingLabel2" class="placeholder">Select</label>
-											</div>
-											
-											<div class="form-group">
-												<label for="largeInput">Large Input</label>
-												<input type="text" class="form-control form-control-lg" id="largeInput" placeholder="Large Input">
-											</div>
-											<div class="form-group">
-												<label for="largeInput">Default Input</label>
-												<input type="text" class="form-control form-control" id="defaultInput" placeholder="Default Input">
-											</div>
-											<div class="form-group">
-												<label for="smallInput">Small Input</label>
-												<input type="text" class="form-control form-control-sm" id="smallInput" placeholder="Small Input">
-											</div>
-											<div class="form-group">
-												<label for="largeSelect">Large Select</label>
-												<select class="form-control form-control-lg" id="largeSelect">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-											<div class="form-group">
-												<label for="defaultSelect">Default Select</label>
-												<select class="form-control form-control" id="defaultSelect">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
-											<div class="form-group">
-												<label for="smallSelect">Small Select</label>
-												<select class="form-control form-control-sm" id="smallSelect">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-												</select>
-											</div>
+											<!-- End Materials -->
 										</div>
 									</div>
-								</div>
-								<div class="card-action">
-									<button class="btn btn-success">Submit</button>
-									<button class="btn btn-danger">Cancel</button>
 								</div>
 							</div>
 						</div>
 					</div>
-			    </div>
+				</div>	
+			</div>
+        	<!-- Footer -->
+        	@include('layouts.footer')
 		</div>
-        <!-- Footer -->
-        @include('layouts.footer')
-	</div>
 
     <!--   Core JS Files   -->
     <script src="{{ asset('atlantis/js/core/jquery.3.2.1.min.js') }}"></script>
@@ -488,32 +319,122 @@
 	<!-- jQuery Scrollbar -->
 	<script src="{{ asset('atlantis/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 
-
-	<!-- Chart JS -->
-	<script src="{{ asset('atlantis/js/plugin/chart.js/chart.min.js') }}"></script>
-
-	<!-- jQuery Sparkline -->
-	<script src="{{ asset('atlantis/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-
-	<!-- Chart Circle -->
-	<script src="{{ asset('atlantis/js/plugin/chart-circle/circles.min.js') }}"></script>
-
-
 	<!-- Datatables -->
 	<script src="{{ asset('atlantis/js/plugin/datatables/datatables.min.js') }}"></script>
 
 	<!-- Bootstrap Notify -->
 	<script src="{{ asset('atlantis/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 
-	<!-- jQuery Vector Maps -->
-	<script src="{{ asset('atlantis/js/plugin/jqvmap/jquery.vmap.min.js') }}"></script>
-	<script src="{{ asset('atlantis/js/plugin/jqvmap/maps/jquery.vmap.world.js') }}"></script>
-
 	<!-- Sweet Alert -->
 	<script src="{{ asset('atlantis/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
 	<!-- Atlantis JS -->
 	<script src="{{ asset('atlantis/js/atlantis.min.js') }}"></script>
+
+	<!-- step 1 -->
+	<script>
+		document.getElementById('btn-step-1').addEventListener('click', function () {
+			// Ambil nilai input
+			const materialNumber = document.getElementById('material_number').value.trim();
+			const orderType = document.getElementById('order_type').value.trim();
+			const productionPlant = document.getElementById('production_plant').value.trim();
+
+			// Validasi input
+			if (!materialNumber || !orderType || !productionPlant) {
+				Swal.fire({
+					title: 'Error!',
+					text: 'Please fill out all fields before submitting.',
+					icon: 'error',
+					confirmButtonText: 'OK'
+				});
+				return;
+			}
+
+			// Konfirmasi SweetAlert
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "Do you want to create this SPK?",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, submit it!'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Kirim data ke server dengan AJAX
+					fetch("{{ route('ppic.store-spk') }}", {
+						method: "POST",
+						headers: {
+							'Content-Type': 'application/json',
+							'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+						},
+						body: JSON.stringify({
+							material_number: materialNumber,
+							order_type: orderType,
+							production_plant: productionPlant
+						})
+					})
+					.then(response => {
+						if (response.ok) {
+							return response.json();
+						} else {
+							throw new Error('Failed to save data');
+						}
+					})
+					.then(data => {
+						// Jika sukses, tampilkan SweetAlert sukses
+						Swal.fire({
+							title: 'Success!',
+							text: 'SPK has been successfully created. Continue to the next step.',
+							icon: 'success',
+							confirmButtonText: 'OK'
+						}).then(() => {
+							// Sembunyikan form input
+							document.getElementById('form-container').style.display = 'none';
+
+							// Tampilkan konten "Tes Ganti Tampilan"
+							document.getElementById('next-step-container').style.display = 'block';
+						});
+					})
+					.catch(error => {
+						// Jika gagal, tampilkan SweetAlert error
+						Swal.fire({
+							title: 'Error!',
+							text: 'There was an issue saving the SPK.',
+							icon: 'error',
+							confirmButtonText: 'OK'
+						});
+					});
+				}
+			});
+		});
+	</script>
+
+	<!-- JS Ubah judul header step 2,3,4 -->
+	<script>
+		document.querySelectorAll('#pills-tab .nav-link').forEach(tab => {
+			tab.addEventListener('click', function () {
+				// Ambil judul dari atribut data-title
+				const newTitle = this.getAttribute('data-title');
+
+				// Ubah teks card-title
+				document.getElementById('dynamic-card-title').textContent = newTitle;
+			});
+		});
+	</script>
+
+
+<script>
+    // Tombol Bypass
+    document.getElementById('btn-bypass').addEventListener('click', function () {
+        // Sembunyikan form-container
+        document.getElementById('form-container').style.display = 'none';
+
+        // Tampilkan next-step-container
+        document.getElementById('next-step-container').style.display = 'block';
+    });
+</script>
+
 
 
 

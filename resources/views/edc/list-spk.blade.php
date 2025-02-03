@@ -114,27 +114,27 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="table-responsive" style="overflow-x: auto;">
-                                        <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+                                        <!-- <div class="d-flex justify-content-end align-items-center gap-2 mb-3"> -->
                                             <!-- Filter Start Date -->
-                                            <div class="me-2">
+                                            <!-- <div class="me-2">
                                                 <label for="filterStartDate" class="form-label">Start Date</label>
                                                 <input type="date" id="filterStartDate" class="form-control" />
-                                            </div>
+                                            </div> -->
 
                                             <!-- Separator (-) -->
-                                            <div class="me-2" style="font-weight: bold; margin-top: 2%; margin-left: 1%; margin-right: 1%;"> - </div>
+                                            <!-- <div class="me-2" style="font-weight: bold; margin-top: 2%; margin-left: 1%; margin-right: 1%;"> - </div> -->
 
                                             <!-- Filter End Date -->
-                                            <div class="me-2">
+                                            <!-- <div class="me-2">
                                                 <label for="filterEndDate" class="form-label">End Date</label>
                                                 <input type="date" id="filterEndDate" class="form-control" />
-                                            </div>
+                                            </div> -->
 
                                             <!-- Clear Filter Button -->
-                                            <div style="margin-left: 1%;">
+                                            <!-- <div style="margin-left: 1%;">
                                                 <label class="form-label d-block" style="visibility: hidden;">Clear</label>
                                                 <button id="clearFilter" class="btn btn-default btn-round">Clear Filter</button>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <table id="dummy-data-table" class="display table table-striped table-hover">
                                             <thead>
@@ -142,16 +142,20 @@
                                                     <th>Detail</th>
                                                     <th>Status</th>
                                                     <th style="width: 150px;">Progress</th>
+                                                    <th>Updated Data</th>
                                                     <th>SPK Number</th>
                                                     <th>Request Date</th>
                                                     <th>Subject</th>
                                                     <th>Created By</th>
                                                     <th>Assignee</th>
+                                                    <th>Team Members</th>
                                                     <th>Priority</th>
                                                     <th>Category</th>
+                                                    <th>Expected Finish Date</th>
+                                                    <th>Reason</th>
                                                     <th>Start Date</th>
                                                     <th>Deadline Date</th>
-                                                    <th>Amount of Fee</th>
+                                                    <th>Cost</th>
                                                     <th>SPK type</th>
                                                     <th>Actions</th>
                                                 </tr>
@@ -176,6 +180,9 @@
                                                                     data-category="{{ $spk['category'] ?? '-' }}"
                                                                     data-start-date="{{ $spk['start_date'] ?? '-' }}"
                                                                     data-deadline-date="{{ $spk['deadline_date'] ?? '-' }}"
+                                                                    data-expected-finish-date="{{ $spk['expectedFinishDate'] }}"
+                                                                    data-reason="{{ $spk['reason'] }}"
+                                                                    data-team-members="{{ json_encode($spk['teamMembers'] ?? []) }}"
                                                                     data-jenis-biaya="{{ $spk['jenis_biaya'] ?? '-' }}"
                                                                     data-jenis-spk="{{ $spk['jenis_spk'] ?? '-' }}"
                                                                     data-bs-toggle="modal" 
@@ -212,13 +219,27 @@
                                                                     </span>
                                                                 </div>
                                                             </td> 
+                                                            <td>{{ $spk['updated_at'] }}</td>
                                                             <td>{{ $spk['spkNumber'] }}</td>
                                                             <td>{{ $spk['requestDate'] }}</td>
                                                             <td>{{ $spk['subject'] }}</td>
                                                             <td>{{ $spk['createdBy'] }}</td>
                                                             <td>{{ $spk['assignee'] }}</td>
+                                                            <td>
+                                                                @if (!empty($spk['teamMembers']) && count($spk['teamMembers']) > 0)
+                                                                    <ul>
+                                                                        @foreach ($spk['teamMembers'] as $member)
+                                                                            <li>{{ $member }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @else
+                                                                    <p>No Team Members</p>
+                                                                @endif
+                                                            </td>
                                                             <td>{{ $spk['priority'] }}</td>
                                                             <td>{{ $spk['category'] }}</td>
+                                                            <td>{{ $spk['expectedFinishDate'] }}</td>
+                                                            <td>{{ $spk['reason'] }}</td>
                                                             <td>{{ $spk['start_date'] }}</td>
                                                             <td>{{ $spk['deadline_date'] }}</td>
                                                             <td>{{ $spk['jenis_biaya'] }}</td>
@@ -291,6 +312,15 @@
                                                                     <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalAssignee">-</p>
                                                                 </div>
                                                             </div>
+                                                            <!-- Team Members -->
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6">
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <strong>Team Members</strong>
+                                                                    <ul id="modalTeamMembersList" class="list-unstyled mt-2" style="background-color: #f8f9fa; padding: 5px; border-radius: 5px;"></ul>
+                                                                </div>
+                                                            </div>
                                                             <div class="row mb-3">
                                                                 <div class="col-md-6 d-flex align-items-center">
                                                                     <strong style="width: 40%;">Request Date</strong>
@@ -302,17 +332,30 @@
                                                                 </div>
                                                             </div>
                                                             <!-- Subject -->
-    
                                                             <div class="row mb-3">
                                                                 <div class="col-md-6 d-flex align-items-center">
                                                                     <strong style="width: 40%;">Subject</strong>
-                                                                    <textarea style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; flex: 1; border: none;" rows="3" readonly id="modalSubject"></textarea>
+                                                                    <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; flex: 1; border: none;" readonly id="modalSubject"></textarea>
                                                                 </div>
                                                                 <div class="col-md-6 d-flex align-items-center">
                                                                     <strong style="width: 40%;">Category</strong>
                                                                     <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalCategory">-</p>
                                                                 </div>
                                                             </div>
+                                                            <!-- Expected Finish Date -->
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-6 d-flex align-items-center">
+                                                                    <strong style="width: 40%;">Expected Finish Date</strong>
+                                                                    <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalExpectedFinishDate">-</p>
+                                                                </div>
+                                                                <!-- Reason -->
+                                                                <div class="col-md-6 ">
+                                                                    <strong style="width: 40%;">Reason</strong>
+                                                                    <textarea id="modalReason" class="form-control mt-2" rows="3" readonly style="background-color: #f8f9fa; border-radius: 5px;"></textarea>
+                                                                </div>
+                                                            </div>
+
+                                                            
                                                             <div class="row mb-3">
                                                                 <div class="col-md-6 d-flex align-items-center">
                                                                     <strong style="width: 40%;">Start Date</strong>
@@ -325,7 +368,7 @@
                                                             </div>
                                                             <div class="row mb-3">
                                                                 <div class="col-md-6 d-flex align-items-center">
-                                                                    <strong style="width: 40%;">Amount of Fee</strong>
+                                                                    <strong style="width: 40%;">Cost</strong>
                                                                     <p style="background-color: #f8f9fa; padding: 5px; border-radius: 5px; margin: 0; flex: 1;" id="modalJenisBiaya">-</p>
                                                                 </div>
                                                                 <div class="col-md-6 d-flex align-items-center">
@@ -648,6 +691,9 @@
             const jenisBiaya = $(this).data('jenis-biaya') || '-';
             const jenisSpk = $(this).data('jenis-spk') || '-';
             const status = $(this).data('status') || '-';
+            const expectedFinishDate = $(this).data('expected-finish-date') || '-';
+            const reason = $(this).data('reason') || 'No Reason Provided';
+            const teamMembers = $(this).data('team-members') || [];
 
             // Debugging dan parsing attachments
             let attachments = [];
@@ -678,6 +724,18 @@
             $('#modalStartDate').text(startDate);
             $('#modalDeadlineDate').text(deadlineDate);
             $('#modalDescription').val(description);
+            $('#modalExpectedFinishDate').text(expectedFinishDate);
+            $('#modalReason').val(reason);
+             // Tampilkan daftar anggota tim
+            let teamMembersHtml = '';
+            if (teamMembers.length > 0) {
+                teamMembers.forEach(member => {
+                    teamMembersHtml += `<li>${member}</li>`;
+                });
+            } else {
+                teamMembersHtml = '<li>No Team Members</li>';
+            }
+            $('#modalTeamMembersList').html(teamMembersHtml);
             $('#modalJenisBiaya').text(jenisBiaya);
             $('#modalJenisSpk').text(jenisSpk);
 

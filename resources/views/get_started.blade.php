@@ -14,7 +14,7 @@
         <h3>LAI.HUB</h3>
     </div>
 
-
+    
     <div class="content">
         <div class="card">
             <a href="/loginPortal">

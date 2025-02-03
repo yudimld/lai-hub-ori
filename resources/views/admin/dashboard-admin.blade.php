@@ -9,6 +9,8 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
 <div class="container mt-5">
@@ -30,6 +32,8 @@
             <th>Email</th>
             <th>ID Card</th>
             <th>Role</th>
+            <th>Department</th>
+            <th>Company</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -42,19 +46,26 @@
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->id_card }}</td>
                 <td>{{ $user->role }}</td>
+                <td>{{ $user->department ?? 'N/A' }}</td>
+                <td>{{ $user->company ?? 'N/A' }}</td>
                 <td>
-                    <!-- Edit Button -->
-                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}">
-                        Edit
-                    </button>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <!-- Edit Button -->
+                        <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $user->id }}">
+                            <i class="fa fa-edit"></i>
+                        </button>
 
-                    <!-- Delete Button -->
-                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                        <!-- Delete Button -->
+                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
+
             </tr>
 
             <!-- Edit User Modal -->
@@ -93,13 +104,19 @@
                                     <label for="id_card" class="form-label">ID Card</label>
                                     <input type="text" name="id_card" class="form-control" value="{{ $user->id_card }}" required>
                                 </div>
+                            
                                 <div class="mb-3">
                                     <label for="role" class="form-label">Role</label>
-                                    <select name="role" class="form-control" required>
-                                        <option value="manager_edc" {{ $user->role === 'manager_edc' ? 'selected' : '' }}>Manager EDC</option>
-                                        <option value="staff_edc" {{ $user->role === 'staff_edc' ? 'selected' : '' }}>Staff EDC</option>
-                                        <option value="manager_logistik" {{ $user->role === 'manager_logistik' ? 'selected' : '' }}>Manager Logistik</option>
-                                    </select>
+                                    <input type="text" name="role" class="form-control" value="{{ $user->role ?? '' }}"required>
+                                    <small class="form-text text-muted">Examples: manager_edc, staff_edc, manager_logistik</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="department" class="form-label">Department</label>
+                                    <input type="text" name="department" class="form-control" value="{{ $user->department ?? '' }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="company" class="form-label">Company</label>
+                                    <input type="text" name="company" class="form-control" value="{{ $user->company ?? '' }}" required>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -149,19 +166,21 @@
                             <label for="id_card" class="form-label">ID Card</label>
                             <input type="text" name="id_card" class="form-control" placeholder="Enter ID card" required>
                         </div>
-                        <!-- <div class="mb-3">
-                            <label for="role" class="form-label">Role</label>
-                            <select name="role" class="form-control" required>
-                                <option value="">Select Role</option>
-                                <option value="manager_edc">Manager EDC</option>
-                                <option value="staff_edc">Staff EDC</option>
-                                <option value="manager_logistik">Manager Logistik</option>
-                            </select>
-                        </div> -->
+                        
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
                             <input type="text" name="role" class="form-control" placeholder="Enter Role" required>
                             <small class="form-text text-muted">Examples: manager_edc, staff_edc, manager_logistik</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" name="department" class="form-control" placeholder="Enter department" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company" class="form-label">Company</label>
+                            <input type="text" name="company" class="form-control" placeholder="Enter company" required>
                         </div>
 
                     </div>
