@@ -11,28 +11,6 @@
     <!-- Link CSS Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
- 
-
-    <style>
-        #userInfoButton i {
-            font-size: 16px; /* Ukuran ikon */
-            margin-right: 6px; /* Jarak antara ikon dan teks */
-        }
-
-        .logout {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px; /* Sesuaikan ukuran ikon */
-            color: #dc3545; /* Warna merah */
-        }
-
-        .logout:hover {
-            color: #b71c1c; /* Warna saat hover */
-        }
-
-    </style>
-
 </head>
 <body>
     <div class="header">
