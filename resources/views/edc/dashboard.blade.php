@@ -121,36 +121,12 @@
 													<div class="chart-container">
 														<canvas id="priorityBarChart" style="width: 100%; height: 300px;"></canvas>
 													</div>
-													
 												</div>
 											</div>
 										</div>
 
 										<!-- Bagian kanan: Total Amount of Fee per Assignee -->
-										<div class="col-md-6">
-											<div class="card">
-												<div class="card-header">
-													<h5>Total Cost Project per Assignee</h5>
-												</div>
-												<div class="card-body">
-													@foreach ($assigneeNames as $index => $name)
-														<div class="mb-3">
-															<div class="d-flex justify-content-between">
-																<span>{{ $name }}</span>
-																<span>{{ number_format($assigneeFees[$index], 0, ',', '.') }} IDR</span>
-															</div>
-															<div class="progress">
-																<div class="progress-bar bg-primary" role="progressbar"
-																	style="width: {{ ($assigneeFees[$index] / max($assigneeFees)) * 100 }}%;"
-																	aria-valuenow="{{ $assigneeFees[$index] }}" aria-valuemin="0"
-																	aria-valuemax="{{ max($assigneeFees) }}">
-																</div>
-															</div>
-														</div>
-													@endforeach
-
-												</div>
-											</div>
+										<!-- <div class="col-md-6">
 											<div class="card mt-3">
 												<div class="card-header">
 													<h5>Total SPK per Assignee</h5>
@@ -181,7 +157,42 @@
 													@endforeach
 												</div>
 											</div>
+										</div> -->
+										<div class="col-md-6">
+											<div class="card mt-3">
+												<div class="card-header">
+													<h5>Total SPK per Assignee & Team Member</h5>
+												</div>
+												<div class="card-body">
+													@php
+														$totalSPK = array_sum(array_values($totalSPKByAssignee));
+													@endphp
+
+													@foreach ($totalSPKByAssignee as $assignee => $count)
+														@if(!empty($assignee)) {{-- Cek jika assignee tidak kosong --}}
+															<div class="mb-3">
+																<div class="d-flex justify-content-between">
+																	<span>{{ $assignee }}</span>
+																	<span>{{ $count }} SPK</span>
+																</div>
+																<div class="progress">
+																	<div 
+																		class="progress-bar bg-primary" 
+																		role="progressbar" 
+																		style="width: {{ ($totalSPK > 0) ? ($count / $totalSPK) * 100 : 0 }}%;" 
+																		aria-valuenow="{{ $count }}" 
+																		aria-valuemin="0" 
+																		aria-valuemax="{{ $totalSPK }}">
+																		{{ round(($totalSPK > 0) ? ($count / $totalSPK) * 100 : 0, 2) }}%
+																	</div>
+																</div>
+															</div>
+														@endif
+													@endforeach
+												</div>
+											</div>
 										</div>
+
 									</div>
 
 								</div>
@@ -233,7 +244,7 @@
 
 
 	<!-- chart spk priority -->
-	<script>
+	<!-- <script>
     	document.addEventListener("DOMContentLoaded", function () {
 			var ctx = document.getElementById('priorityBarChart').getContext('2d');
 
@@ -305,7 +316,81 @@
 				options: priorityOptions
 			});
 		});
+	</script> -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var ctx = document.getElementById('priorityBarChart').getContext('2d');
+
+			// Data untuk bar chart
+			var priorityData = {
+				labels: @json($assigneeLabels), // Gunakan label yang valid
+				datasets: [
+					{
+						label: 'Major Projects',
+						data: @json($majorChartData),
+						backgroundColor: 'rgba(255, 99, 132, 0.6)',
+						borderColor: 'rgba(255, 99, 132, 1)',
+						borderWidth: 1
+					},
+					{
+						label: 'Minor Projects',
+						data: @json($minorChartData),
+						backgroundColor: 'rgba(54, 162, 235, 0.6)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1
+					}
+				]
+			};
+
+			// Opsi untuk bar chart
+			var priorityOptions = {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: true,
+						position: 'top',
+					},
+					tooltip: {
+						callbacks: {
+							label: function (tooltipItem) {
+								return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+							}
+						}
+					}
+				},
+				scales: {
+					x: {
+						title: {
+							display: true,
+							text: 'Assignees',
+						}
+					},
+					y: {
+						beginAtZero: true,
+						title: {
+							display: true,
+							text: 'Number of Projects',
+						},
+						ticks: {
+							stepSize: 1,
+							callback: function(value) {
+								return Math.floor(value);
+							}
+						}
+					}
+				}
+			};
+
+			// Buat chart
+			new Chart(ctx, {
+				type: 'bar',
+				data: priorityData,
+				options: priorityOptions
+			});
+		});
 	</script>
+
 
 	<!-- horizontal chart total spk -->
 	<script>

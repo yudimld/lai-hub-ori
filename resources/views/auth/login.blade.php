@@ -6,6 +6,7 @@
     <title>Login - LAI.HUB</title>
     <link rel="stylesheet" href="{{ asset('login/css/style.css') }}">
     <link rel="icon" href="{{ asset('atlantis/img/icon/lai.ico') }}" type="image/x-icon"/>
+    
 </head>
 <body>
     <div class="login-container">
@@ -37,7 +38,7 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-4">                 
-                    <x-primary-button class="ms-3">
+                    <x-primary-button class="ms-3 bg-blue-500 hover:bg-blue-600 text-white">
                         {{ __('Log in') }}
                     </x-primary-button>
                 </div>
@@ -67,6 +68,23 @@
                 toggleText.textContent = 'Hide';
             }
         }
+    </script>
+
+    <script>
+        document.getElementById('password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('login-button');
+            
+            if (password.trim() !== '') {
+                loginButton.classList.remove('btn-disabled');
+                loginButton.classList.add('btn-blue');
+                loginButton.disabled = false;
+            } else {
+                loginButton.classList.remove('btn-blue');
+                loginButton.classList.add('btn-disabled');
+                loginButton.disabled = true;
+            }
+        });
     </script>
 </body>
 </html>

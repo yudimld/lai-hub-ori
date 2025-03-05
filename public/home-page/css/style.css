@@ -148,7 +148,7 @@ body::before {
     object-fit: contain; 
 }
 
-#plant-button, #supplychain-button, #warehouse-button, #delivery-button, #salesmarketing-button {
+#plant-button, #supplychain-button, #warehouse-button, #delivery-button, #salesmarketing-button, #qhse-button {
     all: unset;
     padding: 10px 15px;
     font-size: 20px;
@@ -163,7 +163,7 @@ body::before {
     margin-left: 2px; 
 }
 
-#mes-button, #cmms-button {
+#mes-button, #cmms-button, #procurement-button {
     all: unset;
     padding: 10px 15px;
     font-size: 20px;

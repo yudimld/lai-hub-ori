@@ -27,6 +27,100 @@ use App\Models\User;
 class EdcController extends Controller
 {
 
+    // public function dashboard()
+    // {
+    //     session(['active_menu' => 'edc']);
+    
+    //     try {
+    //         // Data status SPK
+    //         $rawData = Edc::getAggregatedStatusCounts();
+    //         $statusData = [];
+    //         foreach ($rawData as $item) {
+    //             $statusData[$item->_id] = $item->count ?? 0;
+    //         }
+    //         $openCount = $statusData['Open'] ?? 0;
+    //         $assignCount = $statusData['Assigned'] ?? 0;
+    //         $requestToCloseCount = $statusData['Request to Close'] ?? 0;
+    //         $closedCount = $statusData['Closed'] ?? 0;
+    
+    //         // Data prioritas dan assignee
+    //         $priorityData = Edc::getPriorityCountsByAssignee();
+    //         $priorityData = iterator_to_array($priorityData);
+
+    
+    //         $assignees = [];
+    //         $majorData = [];
+    //         $minorData = [];
+    //         $totalSPKByAssignee = [];
+    //         foreach ($priorityData as $item) {
+    //             $assignee = $item->_id['assignee'] ?? 'Unknown';
+    //             $priority = $item->_id['priority'] ?? 'Unknown';
+    //             $count = $item['count'] ?? 0;
+    
+    //             if ($assignee === 'Unknown') {
+    //                 continue; // Skip data dengan assignee Unknown
+    //             }
+    
+    //             if (!in_array($assignee, $assignees)) {
+    //                 $assignees[] = $assignee;
+    //                 $majorData[$assignee] = 0;
+    //                 $minorData[$assignee] = 0;
+    //             }
+    
+    //             if ($priority === 'major') {
+    //                 $majorData[$assignee] += $count;
+    //             } elseif ($priority === 'minor') {
+    //                 $minorData[$assignee] += $count;
+    //             }
+    
+    //             $totalSPKByAssignee[$assignee] = ($totalSPKByAssignee[$assignee] ?? 0) + $count;
+    //         }
+    
+    //         // Format data untuk chart prioritas
+    //         $majorChartData = [];
+    //         $minorChartData = [];
+    //         foreach ($assignees as $assignee) {
+    //             $majorChartData[] = $majorData[$assignee] ?? 0;
+    //             $minorChartData[] = $minorData[$assignee] ?? 0;
+    //         }
+    
+    //         // Data total fee berdasarkan assignee (dengan pembagian)
+    //         $adjustedAmountOfFeeData = Edc::getAdjustedAmountOfFeeByAssignee();
+    //         $assigneeNames = [];
+    //         $assigneeFees = [];
+    //         $totalFees = 0; // Tambahkan inisialisasi $totalFees
+
+    //         foreach ($adjustedAmountOfFeeData as $item) {
+    //             $assignee = $item->_id ?? 'Unknown';
+    //             if ($assignee === 'Unknown') {
+    //                 continue; // Skip data dengan assignee Unknown
+    //             }
+
+    //             $fee = $item->total_fee ?? 0;
+    //             $assigneeNames[] = $assignee;
+    //             $assigneeFees[] = $fee;
+    //             $totalFees += $fee; // Hitung total fees
+    //         }
+
+    //         // Pastikan $totalFees dikirimkan ke view jika digunakan
+    //         return view('edc.dashboard', compact(
+    //             'openCount',
+    //             'assignCount',
+    //             'requestToCloseCount',
+    //             'closedCount',
+    //             'assignees',
+    //             'majorChartData',
+    //             'minorChartData',
+    //             'totalSPKByAssignee',
+    //             'assigneeNames',
+    //             'assigneeFees',
+    //             'totalFees' // Kirimkan variabel $totalFees ke view
+    //         ));
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
     public function dashboard()
     {
         session(['active_menu' => 'edc']);
@@ -43,65 +137,93 @@ class EdcController extends Controller
             $requestToCloseCount = $statusData['Request to Close'] ?? 0;
             $closedCount = $statusData['Closed'] ?? 0;
     
-            // Data prioritas dan assignee
-            $priorityData = Edc::getPriorityCountsByAssignee();
-            $priorityData = iterator_to_array($priorityData);
+            // Ambil data SPK beserta team_members dari database
+            $spkData = Edc::getSPKWithTeamMembers();
+            $spkData = iterator_to_array($spkData);
     
             $assignees = [];
             $majorData = [];
             $minorData = [];
             $totalSPKByAssignee = [];
-            foreach ($priorityData as $item) {
-                $assignee = $item->_id['assignee'] ?? 'Unknown';
-                $priority = $item->_id['priority'] ?? 'Unknown';
-                $count = $item['count'] ?? 0;
+            $assigneeLabels = []; // Tambahkan untuk label baru
     
-                if ($assignee === 'Unknown') {
-                    continue; // Skip data dengan assignee Unknown
+            foreach ($spkData as $item) {
+                $assignee = $item['assignee'] ?? null;
+                $teamMembers = $item['team_members'] ?? [];
+                $priority = $item['priority'] ?? 'Unknown';
+    
+                if (empty($assignee)) {
+                    continue; // Skip data dengan assignee kosong/null
                 }
     
+                // Inisialisasi data assignee
                 if (!in_array($assignee, $assignees)) {
                     $assignees[] = $assignee;
                     $majorData[$assignee] = 0;
                     $minorData[$assignee] = 0;
                 }
     
-                if ($priority === 'major') {
-                    $majorData[$assignee] += $count;
-                } elseif ($priority === 'minor') {
-                    $minorData[$assignee] += $count;
+                // Hitung SPK untuk assignee
+                $totalSPKByAssignee[$assignee] = ($totalSPKByAssignee[$assignee] ?? 0) + 1;
+    
+                // Hitung SPK untuk team members
+                foreach ($teamMembers as $member) {
+                    if (!empty($member)) { // Pastikan team member tidak kosong
+                        $totalSPKByAssignee[$member] = ($totalSPKByAssignee[$member] ?? 0) + 1;
+                    }
                 }
     
-                $totalSPKByAssignee[$assignee] = ($totalSPKByAssignee[$assignee] ?? 0) + $count;
+                // Hitung data prioritas
+                if ($priority === 'major') {
+                    $majorData[$assignee]++;
+                    foreach ($teamMembers as $member) {
+                        if (!empty($member)) {
+                            $majorData[$member] = ($majorData[$member] ?? 0) + 1;
+                        }
+                    }
+                } elseif ($priority === 'minor') {
+                    $minorData[$assignee]++;
+                    foreach ($teamMembers as $member) {
+                        if (!empty($member)) {
+                            $minorData[$member] = ($minorData[$member] ?? 0) + 1;
+                        }
+                    }
+                }
             }
     
             // Format data untuk chart prioritas
             $majorChartData = [];
             $minorChartData = [];
-            foreach ($assignees as $assignee) {
-                $majorChartData[] = $majorData[$assignee] ?? 0;
-                $minorChartData[] = $minorData[$assignee] ?? 0;
+    
+            foreach ($totalSPKByAssignee as $assignee => $count) {
+                if (!empty($assignee)) { // Pastikan hanya nama yang valid
+                    $majorChartData[] = $majorData[$assignee] ?? 0;
+                    $minorChartData[] = $minorData[$assignee] ?? 0;
+    
+                    // Ambil kata pertama dari nama assignee
+                    $firstWord = explode(' ', $assignee)[0];
+                    $assigneeLabels[] = $firstWord;
+                }
             }
     
             // Data total fee berdasarkan assignee (dengan pembagian)
             $adjustedAmountOfFeeData = Edc::getAdjustedAmountOfFeeByAssignee();
             $assigneeNames = [];
             $assigneeFees = [];
-            $totalFees = 0; // Tambahkan inisialisasi $totalFees
-
+            $totalFees = 0;
+    
             foreach ($adjustedAmountOfFeeData as $item) {
-                $assignee = $item->_id ?? 'Unknown';
-                if ($assignee === 'Unknown') {
-                    continue; // Skip data dengan assignee Unknown
+                $assignee = $item->_id ?? null;
+                if (empty($assignee)) {
+                    continue; // Skip jika assignee kosong
                 }
-
+    
                 $fee = $item->total_fee ?? 0;
                 $assigneeNames[] = $assignee;
                 $assigneeFees[] = $fee;
-                $totalFees += $fee; // Hitung total fees
+                $totalFees += $fee;
             }
-
-            // Pastikan $totalFees dikirimkan ke view jika digunakan
+    
             return view('edc.dashboard', compact(
                 'openCount',
                 'assignCount',
@@ -113,13 +235,13 @@ class EdcController extends Controller
                 'totalSPKByAssignee',
                 'assigneeNames',
                 'assigneeFees',
-                'totalFees' // Kirimkan variabel $totalFees ke view
+                'totalFees',
+                'assigneeLabels' // Kirimkan label baru ke view
             ));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    
     
     // tabel open
     public function getUnassignedSpkData(Request $request)
@@ -133,63 +255,6 @@ class EdcController extends Controller
     }
     
     // submit assign
-    // public function assignSpkAction(Request $request, $id)
-    // {
-    //     $validated = $request->validate([
-    //         'assignee'     => 'required|string|max:255',
-    //         'category'     => 'required|string',
-    //         'priority'     => 'required|string',
-    //         'startDate'    => 'required|date',
-    //         'deadlineDate' => 'required|date|after_or_equal:startDate',
-    //         'jenisBiaya'   => 'required|string|max:255',
-    //         'jenisSpk'     => 'required|string|in:Plant,Non-Plant',
-    //         'teamMembers'  => 'nullable|array|max:10', // Validasi anggota tim sebagai array, maksimal 10 anggota
-    //         'teamMembers.*'=> 'nullable|string|max:255', // Validasi setiap anggota tim
-    //     ]);
-
-    //     // Transformasi Team Members ke huruf kapital di awal kata
-    //     $validated['teamMembers'] = array_map(function ($member) {
-    //         return ucwords(strtolower($member)); // Huruf kapital di awal setiap kata
-    //     }, $validated['teamMembers'] ?? []);
-    
-    //     $result = Edc::assignSpk($id, [
-    //         'assignee'       => $validated['assignee'],
-    //         'category'       => $validated['category'],
-    //         'priority'       => $validated['priority'],
-    //         'start_date'     => $validated['startDate'],
-    //         'deadline_date'  => $validated['deadlineDate'],
-    //         'jenis_biaya'    => $validated['jenisBiaya'],
-    //         'jenis_spk'      => $validated['jenisSpk'],
-    //         'team_members'   => $validated['teamMembers'] ?? [],
-    //         'status'         => 'Assigned',
-    //         'updatedAt'      => now(),
-    //     ]);
-    
-    //     if ($result->getModifiedCount() > 0) {
-    //         $spk = Edc::find($id);
-    
-    //         // Ambil email pembuat SPK
-    //         $creator = User::where('id_card', $spk->createdBy)->first();
-    
-    //         if ($creator) {
-    //             try {
-    //                 $spkNumber = (string) $spk->spkNumber;
-    //                 $message = (string) "No. SPK {$spkNumber} telah di-assign oleh tim EDC. Tunggu update perkembangan project Anda.";
-    
-    //                 // Kirim email
-    //                 \Mail::to($creator->email)->send(
-    //                     new \App\Mail\Edc\AssignSPKMail($spkNumber, $message)
-    //                 );
-    //             } catch (\Exception $e) {
-    //                 return response()->json(['status' => 'error', 'message' => 'SPK updated, but failed to send email.'], 500);
-    //             }
-    //         }
-    
-    //         return response()->json(['status' => 'success', 'message' => 'SPK updated successfully and email notification sent.']);
-    //     }
-    
-    //     return response()->json(['status' => 'error', 'message' => 'No document was updated.'], 500);
-    // }
     public function assignSpkAction(Request $request, $id)
     {
         \Log::info('Request Data:', $request->all());
@@ -333,17 +398,65 @@ class EdcController extends Controller
     }
     
     // tabel list spk
+    // public function listSpk(Request $request)
+    // {
+    //     session(['active_menu' => 'edc']);
+        
+    //     // Ambil data SPK dari database tanpa filter
+    //     $spkList = Edc::getAllSpks();
+
+    //     // Menampilkan tampilan awal
+    //     return view('edc.list-spk', ['spkList' => $spkList]);
+    // }
     public function listSpk(Request $request)
     {
         session(['active_menu' => 'edc']);
         
         // Ambil data SPK dari database tanpa filter
         $spkList = Edc::getAllSpks();
-        // dd($spkList); // Periksa apakah field 'progress' ada dan berisi nilai yang valid
-
-        // Menampilkan tampilan awal
+    
+        // Looping untuk menambahkan department berdasarkan id_card
+        foreach ($spkList as &$spk) {
+            // Pastikan $spk adalah array atau objek, dan akses menggunakan cara yang sesuai
+            if (is_array($spk)) {
+                $createdBy = isset($spk['createdBy']) ? $spk['createdBy'] : null;
+            } elseif (is_object($spk)) {
+                $createdBy = isset($spk->createdBy) ? $spk->createdBy : null;
+            } else {
+                $createdBy = null;
+            }
+            
+            if ($createdBy) {
+                // Cari user berdasarkan id_card
+                $user = User::where('id_card', $createdBy)->first();
+    
+                if (!$user) {
+                    Log::error("User not found for SPK ID: " . $spk['id']);
+                }
+    
+                $department = $user ? $user->department : 'No Department';
+                Log::info("Department for SPK ID " . $spk['id'] . ": " . $department);
+    
+                // Menambahkan department ke dalam SPK untuk ditampilkan
+                if (is_array($spk)) {
+                    $spk['department'] = $department;
+                } elseif (is_object($spk)) {
+                    $spk->department = $department;
+                }
+            } else {
+                // Jika createdBy tidak ada, berikan nilai default
+                if (is_array($spk)) {
+                    $spk['department'] = 'No Department';
+                } elseif (is_object($spk)) {
+                    $spk->department = 'No Department';
+                }
+            }
+        }
+        
+        // Menampilkan tampilan dengan spkList yang sudah diperbarui
         return view('edc.list-spk', ['spkList' => $spkList]);
     }
+    
     
     public function filterSpk(Request $request)
     {
@@ -401,16 +514,107 @@ class EdcController extends Controller
     }
     
     // form generate spknumber
+    // public function createSpk()
+    // {
+    //     session(['active_menu' => 'edc']);
+    //     return view('edc.create-spk');
+    // }
     public function createSpk()
     {
-        $spkNumber = Edc::generateSpkNumber();
-
+        // Ambil ID Card pengguna yang sedang login
+        $userId = Auth::user()->id_card ?? 'guest';
+    
+        // Ambil bulan dan tahun saat ini dalam format YYMM
+        $yearMonth = now()->format('ym');  // Format '2503' untuk Maret 2025
+    
+        // Cari SPK terakhir yang ada dengan bulan yang sama
+        $lastSpk = Edc::where('spkNumber', 'like', "%-{$yearMonth}-%")  // Cari berdasarkan bulan (tanpa ID pengguna)
+            ->orderBy('spkNumber', 'desc')  // Urutkan berdasarkan nomor SPK
+            ->first();
+    
+        // Tentukan nomor urut untuk SPK
+        if ($lastSpk) {
+            // Ambil nomor urut terakhir dan tambahkan 1
+            $lastNumber = substr($lastSpk->spkNumber, -5);  // Ambil nomor urut dari format SPK
+            $newIncrement = str_pad((int)$lastNumber + 1, 5, '0', STR_PAD_LEFT);  // Format 5 digit
+        } else {
+            // Jika belum ada, mulai dari 1
+            $newIncrement = str_pad(1, 5, '0', STR_PAD_LEFT);  // Format 5 digit
+        }
+    
+        // Gabungkan ID Card, bulan-tahun dan nomor urut untuk membuat nomor SPK
+        $spkNumber = "{$userId}-{$yearMonth}-{$newIncrement}";
+    
+        // Kirim data SPK Number ke view
         session(['active_menu' => 'edc']);
         return view('edc.create-spk', compact('spkNumber'));
     }
+    
     // menyimpan data
+    // public function storeSpk(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'spkNumber'          => 'required|string|max:50',
+    //         'requestDate'        => 'required|date',
+    //         'expectedFinishDate' => 'required|date|after_or_equal:requestDate',
+    //         'subject'            => 'required|string|max:255',
+    //         'deskripsi'          => 'required|string|max:1000',
+    //         'reason'             => 'required|string|max:1000',
+    //         'attachments.*'      => 'required|file|max:3072|mimes:jpg,jpeg,bmp,png,xls,xlsx,doc,docx,pdf,txt,ppt,pptx.zip',
+    //     ]);
+    
+    //     // Simpan attachments
+    //     $attachments = [];
+    //     if ($request->hasFile('attachments')) {
+    //         foreach ($request->file('attachments') as $file) {
+    //             $path = $file->store('attachments', 'public');
+    //             $attachments[] = [
+    //                 'originalName' => $file->getClientOriginalName(),
+    //                 'path' => $path,
+    //             ];
+    //         }
+    //     }
+    
+    //     try {
+    //         // Simpan SPK ke database
+    //         $spk = Edc::create([
+    //             'spkNumber'          => $validated['spkNumber'],
+    //             'requestDate'        => $validated['requestDate'],
+    //             'expectedFinishDate' => $validated['expectedFinishDate'],
+    //             'subject'            => $validated['subject'],
+    //             'deskripsi'          => $validated['deskripsi'],
+    //             'reason'             => $validated['reason'],
+    //             'createdBy'   => Auth::user()->id_card ?? 'guest',
+    //             'status'      => 'Open',
+    //             'attachments' => $attachments,
+    //             'createdAt'   => now(),
+    //         ]);
+    
+    //         if (!$spk) {
+    //             return redirect()->route('edc.list-spk')->with('error', 'Failed to save SPK.');
+    //         }
+    
+    //         // Ambil email dari manager dan staff
+    //         $recipients = User::whereIn('role', ['manager_edc', 'staff_edc'])->pluck('email')->toArray();
+    
+    //         if (!empty($recipients)) {
+    //             // Kirim email ke semua recipients
+    //             \Mail::to($recipients)->send(
+    //                 new \App\Mail\Edc\CreateSPKMail(
+    //                     $spk->spkNumber,
+    //                     "SPK dengan nomor {$spk->spkNumber} telah dibuat dan menunggu persetujuan."
+    //                 )
+    //             );
+    //         }
+    
+    //         return redirect()->route('edc.list-spk')->with('success', 'SPK created and notification sent.');
+    //     } catch (\Exception $e) {
+    //         return redirect()->route('edc.list-spk')->with('error', 'Failed to create SPK.');
+    //     }
+    // }
     public function storeSpk(Request $request)
     {
+        // Validasi request
         $validated = $request->validate([
             'spkNumber'          => 'required|string|max:50',
             'requestDate'        => 'required|date',
@@ -418,10 +622,10 @@ class EdcController extends Controller
             'subject'            => 'required|string|max:255',
             'deskripsi'          => 'required|string|max:1000',
             'reason'             => 'required|string|max:1000',
-            'attachments.*'      => 'required|file|max:3072|mimes:jpg,jpeg,bmp,png,xls,xlsx,doc,docx,pdf,txt,ppt,pptx',
+            'attachments.*'      => 'nullable|file|max:3072|mimes:jpg,jpeg,bmp,png,xls,xlsx,doc,docx,pdf,txt,ppt,pptx',
         ]);
     
-        // Simpan attachments
+        // Simpan attachments jika ada
         $attachments = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -434,25 +638,49 @@ class EdcController extends Controller
         }
     
         try {
+            // Ambil ID Card pengguna yang sedang login
+            $userId = Auth::user()->id_card ?? 'guest';
+    
+            // Ambil bulan dan tahun saat ini dalam format YYMM (tanpa tanda hubung)
+            $yearMonth = now()->format('ym');  // Format '2503' untuk Maret 2025
+    
+            // Cari SPK terakhir yang ada dengan bulan yang sama
+            $lastSpk = Edc::where('spkNumber', 'like', "%{$yearMonth}%")
+                ->orderBy('spkNumber', 'desc')  // Pastikan diurutkan berdasarkan nomor SPK
+                ->first();
+    
+            // Tentukan nomor urut untuk SPK
+            if ($lastSpk) {
+                // Ambil nomor urut terakhir dan tambahkan 1
+                $lastNumber = substr($lastSpk->spkNumber, -5);  // Ambil nomor urut dari format SPK
+                $newIncrement = str_pad((int)$lastNumber + 1, 5, '0', STR_PAD_LEFT);  // Format 5 digit
+            } else {
+                // Jika belum ada, mulai dari 1
+                $newIncrement = str_pad(1, 5, '0', STR_PAD_LEFT);  // Format 5 digit
+            }
+    
+            // Gabungkan ID Card, bulan-tahun dan nomor urut untuk membuat nomor SPK
+            $spkNumber = "{$userId}-{$yearMonth}-{$newIncrement}";
+    
             // Simpan SPK ke database
             $spk = Edc::create([
-                'spkNumber'          => $validated['spkNumber'],
+                'spkNumber'          => $spkNumber,  // SPK number yang baru di-generate
                 'requestDate'        => $validated['requestDate'],
                 'expectedFinishDate' => $validated['expectedFinishDate'],
                 'subject'            => $validated['subject'],
                 'deskripsi'          => $validated['deskripsi'],
                 'reason'             => $validated['reason'],
-                'createdBy'   => Auth::user()->id_card ?? 'guest',
-                'status'      => 'Open',
-                'attachments' => $attachments,
-                'createdAt'   => now(),
+                'createdBy'          => $userId,
+                'status'             => 'Open',  // Status default 'Open'
+                'attachments'        => $attachments,
+                'createdAt'          => now(),
             ]);
     
             if (!$spk) {
                 return redirect()->route('edc.list-spk')->with('error', 'Failed to save SPK.');
             }
     
-            // Ambil email dari manager dan staff
+            // Kirim email notifikasi ke manager dan staff
             $recipients = User::whereIn('role', ['manager_edc', 'staff_edc'])->pluck('email')->toArray();
     
             if (!empty($recipients)) {
@@ -465,6 +693,7 @@ class EdcController extends Controller
                 );
             }
     
+            // Kembalikan response setelah berhasil
             return redirect()->route('edc.list-spk')->with('success', 'SPK created and notification sent.');
         } catch (\Exception $e) {
             return redirect()->route('edc.list-spk')->with('error', 'Failed to create SPK.');

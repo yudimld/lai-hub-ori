@@ -27,7 +27,7 @@
     .table > thead > tr > th, .table > tbody > tr > td {
     text-align: center; /* Center-align content */
     vertical-align: middle; /* Vertically center content */
-    padding: 8px; /* Adjust padding for better readability */
+    padding: 4px; /* Adjust padding for better readability */
     white-space: nowrap; /* Prevent text wrapping in cells */
     }
 
@@ -142,6 +142,7 @@
                                                     <th>Detail</th>
                                                     <th>Status</th>
                                                     <th style="width: 150px;">Progress</th>
+                                                    <th>Department</th>
                                                     <th>Updated Data</th>
                                                     <th>SPK Number</th>
                                                     <th>Request Date</th>
@@ -160,6 +161,28 @@
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
+                                            <tfoot>
+                                                <th>Detail</th>
+                                                <th>Status</th>
+                                                <th style="width: 150px;">Progress</th>
+                                                <th>Department</th>
+                                                <th>Updated Data</th>
+                                                <th>SPK Number</th>
+                                                <th>Request Date</th>
+                                                <th>Subject</th>
+                                                <th>Created By</th>
+                                                <th>Assignee</th>
+                                                <th>Team Members</th>
+                                                <th>Priority</th>
+                                                <th>Category</th>
+                                                <th>Expected Finish Date</th>
+                                                <th>Reason</th>
+                                                <th>Start Date</th>
+                                                <th>Deadline Date</th>
+                                                <th>Cost</th>
+                                                <th>SPK type</th>
+                                                <th>Actions</th>
+                                            </tfoot>
                                             <tbody id="tableSpkBody">
                                                 @if (!empty($spkList))
                                                     @foreach ($spkList as $spk)
@@ -218,14 +241,15 @@
                                                                         {{ $spk['persentase'] ?? 0 }}%
                                                                     </span>
                                                                 </div>
-                                                            </td> 
+                                                            </td>
+                                                            <td style="text-align: left;">{{ $spk['department'] }}</td> 
                                                             <td>{{ $spk['updated_at'] }}</td>
                                                             <td>{{ $spk['spkNumber'] }}</td>
                                                             <td>{{ $spk['requestDate'] }}</td>
-                                                            <td>{{ $spk['subject'] }}</td>
+                                                            <td style="text-align: left;">{{ $spk['subject'] }}</td>
                                                             <td>{{ $spk['createdBy'] }}</td>
                                                             <td>{{ $spk['assignee'] }}</td>
-                                                            <td>
+                                                            <td style="text-align: left;">
                                                                 @if (!empty($spk['teamMembers']) && count($spk['teamMembers']) > 0)
                                                                     <ul>
                                                                         @foreach ($spk['teamMembers'] as $member)
@@ -239,7 +263,7 @@
                                                             <td>{{ $spk['priority'] }}</td>
                                                             <td>{{ $spk['category'] }}</td>
                                                             <td>{{ $spk['expectedFinishDate'] }}</td>
-                                                            <td>{{ $spk['reason'] }}</td>
+                                                            <td style="text-align: left; white-space: pre-line;">{{ $spk['reason'] }}</td>
                                                             <td>{{ $spk['start_date'] }}</td>
                                                             <td>{{ $spk['deadline_date'] }}</td>
                                                             <td>{{ $spk['jenis_biaya'] }}</td>
@@ -397,7 +421,7 @@
 
                                                     <!-- Modal Footer -->
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-round" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-secondary btn-round" data-bs-dismiss="modal">Cancel</button>
                                                         <button id="closeButton" 
                                                                 class="btn btn-primary btn-success btn-round" 
                                                                 type="submit"
@@ -522,7 +546,65 @@
                     emptyTable: "No data available in table",
                     zeroRecords: "No matching records found",
                 },
+                initComplete: function () {
+    var api = this.api();
+
+    // Tentukan indeks kolom untuk Status dan Department (sesuaikan dengan tabel Anda)
+    var statusColumnIndex = 1;     // Misalnya, kolom pertama adalah Status
+    var departmentColumnIndex = 3; // Misalnya, kolom ke-6 adalah Department
+
+    // Fungsi untuk menambahkan filter dropdown tanpa duplikasi
+    function addFilter(columnIndex, placeholder, predefinedOptions) {
+        var column = api.column(columnIndex);
+        var select = $('<select class="form-control"><option value="">' + placeholder + '</option></select>')
+            .appendTo($(column.footer()).empty()) // Tempatkan dropdown di footer kolom
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                // Jika ada nilai yang dipilih
+                if (val) {
+                    // Pencarian berdasarkan status yang dipilih (menggunakan metode case-insensitive)
+                    column.search(val, true, false).draw();
+                } else {
+                    // Jika tidak ada filter yang dipilih, tampilkan semua data
+                    column.search('').draw();
+                }
             });
+
+        // Gunakan Set untuk memastikan tidak ada nilai duplikasi di luar opsi yang sudah ditentukan
+        var uniqueValues = new Set();
+        
+        // Tambahkan predefinedOptions untuk Status
+        if (predefinedOptions && Array.isArray(predefinedOptions)) {
+            predefinedOptions.forEach(function (status) {
+                if (!uniqueValues.has(status)) {
+                    uniqueValues.add(status);
+                    select.append('<option value="' + status + '">' + status + '</option>');
+                }
+            });
+        } else {
+            // Jika tidak ada predefinedOptions, ambil dari data kolom seperti biasa
+            column.data().unique().sort().each(function (d) {
+                var cleanValue = (d || "").trim(); // Hapus spasi sebelum & sesudah teks
+                if (cleanValue && !uniqueValues.has(cleanValue)) { // Pastikan nilai unik
+                    uniqueValues.add(cleanValue);
+                    select.append('<option value="' + cleanValue + '">' + cleanValue + '</option>');
+                }
+            });
+        }
+    }
+
+    // Tentukan daftar status yang telah ditentukan untuk dropdown Status
+    var statusOptions = ["Open", "Assigned", "Request to Close", "Closed"];
+
+    // Tambahkan dropdown hanya untuk Status dan Department
+    addFilter(statusColumnIndex, "Filter Status", statusOptions); // Gunakan daftar status yang sudah ditentukan
+    addFilter(departmentColumnIndex, "Filter Department");       // Tidak ada predefined untuk Department
+}
+
+
+            });
+            
 
             // Event saat tombol show details ditekan
             $(document).on('click', '.show-details-button', function () {
@@ -671,6 +753,7 @@
             });
         });
     </script>
+
 
 
     <!-- js detail modal -->

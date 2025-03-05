@@ -139,8 +139,14 @@
                                                                         <label for="assignee" class="form-label">Assignee</label>
                                                                         <select id="assignee" name="assignee" class="form-control">
                                                                             <option value="-" selected></option>
+                                                                            <option value="Danan Dwiyaksa">Danan Dwiyaksa</option>
+                                                                            <option value="Frastio Oktaviano Amchory">Frastio Oktaviano Amchory</option>
                                                                             <option value="Yudi Mulyadi">Yudi Mulyadi</option>
                                                                             <option value="Danan Dwiyaksa">Danan Dwiyaksa</option>
+                                                                            <option value="Ahmad Afif Wildan">Ahmad Afif Wildan</option>
+                                                                            <option value="Billy Kurniawan">Billy Kurniawan</option>
+                                                                            <option value="Muhammad Shahdan">Muhammad Shahdan</option>
+                                                                            <option value="Luthfi Rangga Putra">Luthfi Rangga Putra</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -151,7 +157,16 @@
                                                                         <label class="form-label">Team Members</label>
                                                                         <div id="teamMembersContainer">
                                                                             <div class="d-flex mb-2">
-                                                                                <input type="text" name="teamMembers[]" class="form-control" placeholder="Enter team member name">
+                                                                                <select name="teamMembers[]" class="form-control">
+                                                                                    <option value="-" selected>Select a Team Member</option>
+                                                                                    <option value="Danan Dwiyaksa">Danan Dwiyaksa</option>
+                                                                                    <option value="Frastio Oktaviano Amchory">Frastio Oktaviano Amchory</option>
+                                                                                    <option value="Yudi Mulyadi">Yudi Mulyadi</option>
+                                                                                    <option value="Ahmad Afif Wildan">Ahmad Afif Wildan</option>
+                                                                                    <option value="Billy Kurniawan">Billy Kurniawan</option>
+                                                                                    <option value="Muhammad Shahdan">Muhammad Shahdan</option>
+                                                                                    <option value="Luthfi Rangga Putra">Luthfi Rangga Putra</option>
+                                                                                </select>
                                                                                 <button type="button" class="btn btn-danger btn-sm remove-member-btn ms-2" style="display: none;">
                                                                                     <i class="fa fa-times"></i>
                                                                                 </button>
@@ -162,6 +177,7 @@
                                                                         </button>
                                                                     </div>
                                                                 </div>
+
 
 
                                                                 <!-- Category and Priority -->
@@ -1121,7 +1137,7 @@
     </script>
 
     <!-- js tambah/hapus input anggota tim  -->
-    <script>
+    <!-- <script>
         $(document).ready(function () {
             const maxMembers = 10; // Maksimal anggota tim
             const container = $('#teamMembersContainer');
@@ -1159,7 +1175,61 @@
             });
         });
 
+    </script> -->
+    <!-- js tambah/hapus input anggota tim -->
+    <script>
+        $(document).ready(function () {
+            const maxMembers = 10; // Maksimal anggota tim
+            const container = $('#teamMembersContainer');
+            const addMemberButton = $('#addMemberButton');
+
+            // Template dropdown anggota tim
+            const teamMemberOptions = `
+                <option value="-" selected>Select a Team Member</option>
+                <option value="Danan Dwiyaksa">Danan Dwiyaksa</option>
+                <option value="Frastio Oktaviano Amchory">Frastio Oktaviano Amchory</option>
+                <option value="Yudi Mulyadi">Yudi Mulyadi</option>
+                <option value="Ahmad Afif Wildan">Ahmad Afif Wildan</option>
+                <option value="Billy Kurniawan">Billy Kurniawan</option>
+                <option value="Muhammad Shahdan">Muhammad Shahdan</option>
+                <option value="Luthfi Rangga Putra">Luthfi Rangga Putra</option>
+            `;
+
+            // Tambahkan anggota tim baru
+            addMemberButton.on('click', function () {
+                const currentCount = container.children().length;
+
+                if (currentCount < maxMembers) {
+                    const newMember = $(`
+                        <div class="d-flex mb-2">
+                            <select name="teamMembers[]" class="form-control">
+                                ${teamMemberOptions}
+                            </select>
+                            <button type="button" class="btn btn-danger btn-sm remove-member-btn ms-2">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    `);
+
+                    container.append(newMember);
+                } else {
+                    alert('Maximum of 10 team members allowed.');
+                }
+            });
+
+            // Hapus anggota tim
+            container.on('click', '.remove-member-btn', function () {
+                $(this).parent().remove();
+            });
+
+            // Tampilkan tombol "Remove" jika ada lebih dari satu anggota tim
+            container.on('DOMSubtreeModified', function () {
+                const memberCount = container.children().length;
+                container.find('.remove-member-btn').toggle(memberCount > 1);
+            });
+        });
     </script>
+
 
 </body>
 </html>

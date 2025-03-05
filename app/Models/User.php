@@ -32,8 +32,8 @@ class User extends Model implements AuthenticatableContract
         'password',
         'is_admin',
         'id_card',
-        'role', // Tambahkan atribut role
-        'permissions', // Tambahkan atribut permissions
+        'role', 
+        'permissions',
         'department',
         'company',
     ];

@@ -54,7 +54,31 @@ Route::middleware('auth')->group(function () {
         Route::get('/powder-plant', [GrafanaController::class, 'powderPlant'])->name('powder-plant');
 
     });
-    
+
+    Route::get('/finance-dashboard', function () {
+        return redirect('http://budget.lautan-luas.com:8301/');
+    })->name('finance.dashboard');    
+
+    // Menu Procurement
+    Route::prefix('procurement')->name('procurement.')->middleware('auth')->group(function () {
+        Route::middleware('check.role:spv_procurement,manager_procurement')->group(function () {
+            Route::get('/dashboard', fn() => redirect('http://madam.lautan-luas.com/'))->name('dashboard');
+            Route::get('/kpi', fn() => redirect('http://147.93.104.113:8030/'))->name('kpi');
+        });
+    });
+
+
+    Route::get('/exim', function () {
+        return redirect('http://impac.lautan-luas.com/');
+    })->name('exim');
+
+    Route::get('/reports', function () {
+        return redirect('http://hsemreport.lautan-luas.com/');
+    })->name('reports');
+
+    Route::get('/monitoring', function () {
+        return redirect('http://delivery.lautan-luas.com:8201/');
+    })->name('monitoring');
 
     // Grouping untuk Sales Marketing CSR
     Route::prefix('salesmarketing/csr')->name('csr.')->middleware('check.role:manager_csr,spv_csr,staff_csr,staff_edc,manager_edc')->group(function () {
@@ -164,15 +188,17 @@ Route::middleware('auth')->group(function () {
 
     // Menu EDC
     Route::prefix('edc')->name('edc.')->group(function () {
+            Route::get('/list-spk', [EdcController::class, 'listSpk'])->name('list-spk'); // Akses untuk manager_edc & staff_edc
+            Route::get('/filter-spk', [EdcController::class, 'filterSpk'])->name('filter-spk');
+            Route::get('/create-spk', [EdcController::class, 'createSpk'])->name('create-spk'); // Akses untuk manager_edc & staff_edc
+            Route::post('/store-spk', [EdcController::class, 'storeSpk'])->name('store'); // Akses untuk manager_edc & staff_edc
+
         // Rute untuk manager_edc dan staff_edc
         Route::middleware('check.role:manager_edc,staff_edc')->group(function () {
             Route::get('/', [EdcController::class, 'dashboard'])->name('dashboard');
             Route::get('/assign-spk', [EdcController::class, 'assignSpk'])->name('assign-spk');
             Route::post('/assign-spk/{id}', [EdcController::class, 'assignSpkAction'])->name('assign-spk-action');
-            Route::get('/list-spk', [EdcController::class, 'listSpk'])->name('list-spk'); // Akses untuk manager_edc & staff_edc
-            Route::get('/filter-spk', [EdcController::class, 'filterSpk'])->name('filter-spk');
-            Route::get('/create-spk', [EdcController::class, 'createSpk'])->name('create-spk'); // Akses untuk manager_edc & staff_edc
-            Route::post('/store-spk', [EdcController::class, 'storeSpk'])->name('store'); // Akses untuk manager_edc & staff_edc
+            
             Route::post('/request-close/{id}', [EdcController::class, 'requestCloseSpk'])->name('request-close');
             Route::post('/spk/reject-to-rejected/{id}', [EdcController::class, 'rejectToRejected'])->name('reject-to-rejected');
             Route::get('/unassigned-spk', [EdcController::class, 'getUnassignedSpkData'])->name('unassigned-spk');

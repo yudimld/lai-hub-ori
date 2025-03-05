@@ -16,7 +16,7 @@
     <div class="header">
         <div class="logo">
             <img src="{{ asset('home-page/images/lai.png') }}" alt="LAI Logo">
-            <span>LAI PORTAL</span>
+            <span>LAI HUB</span>
         </div>
         <div class="actions">
             <button class="profile d-flex align-items-center" id="userInfoButton" data-toggle="modal" data-target="#changePasswordModal">
@@ -106,8 +106,18 @@
                 </button>
 
                 <!-- Tombol Sales Marketing -->
+                <button id="qhse-button" class="hidden">
+                    QHSE
+                </button>
+
+                <!-- Tombol Sales Marketing -->
                 <button id="salesmarketing-button" class="hidden">
                     Sales Marketing
+                </button>
+
+                <!-- Tombol Procurement & Exim -->
+                <button id="procurement-button" class="hidden">
+                    Procurement Exim
                 </button>
 
                 <!-- Search Bar -->
@@ -134,7 +144,7 @@
                 <img src="{{ asset('home-page/images/r&d.png') }}" alt="R&D">
                 <span>R&D</span>
             </div>
-            <div class="card" data-name="qhse">
+            <div class="card" id="qhse" data-name="qhse">
                 <img src="{{ asset('home-page/images/qhse.png') }}" alt="QHSE">
                 <span>QHSE</span>
             </div>
@@ -146,10 +156,12 @@
                 <img src="{{ asset('home-page/images/internalaudit.png') }}" alt="Internal Audit">
                 <span>Internal Audit</span>
             </div>
-            <div class="card" data-name="finance">
-                <img src="{{ asset('home-page/images/finance.png') }}" alt="Finance">
-                <span>Finance</span>
-            </div>
+            <a href="{{ route('finance.dashboard') }}" style="text-decoration: none;">
+                <div class="card" data-name="finance">
+                    <img src="{{ asset('home-page/images/finance.png') }}" alt="Finance">
+                    <span>Finance</span>
+                </div>
+            </a>
             <div class="card" data-name="it">
                 <img src="{{ asset('home-page/images/it.png') }}" alt="IT">
                 <span>IT</span>
@@ -167,6 +179,10 @@
             <div class="card" id="supplychain" data-name="supplychain">
                 <img src="{{ asset('home-page/images/supplychain.png') }}" alt="Supply Chain">
                 <span>Supply Chain</span>
+            </div>
+            <div class="card" id="procurement" data-name="procurement">
+                <img src="{{ asset('home-page/images/procurement.png') }}" alt="Procurement">
+                <span>Procurement & exim</span>
             </div>
         </div>
     </div>
@@ -191,14 +207,17 @@
         const supplyChainButton = document.getElementById('supplychain-button');
         const warehouseButton = document.getElementById('warehouse-button');
         const deliveryButton = document.getElementById('delivery-button');
+        const qhseButton = document.getElementById('qhse-button');
         const salesMarketingButton = document.getElementById('salesmarketing-button');
+        const procurementButton = document.getElementById('procurement-button');
+
         const gridContainer = document.getElementById('grid-container');
         const searchBar = document.getElementById('search-bar');
         const initialGridHTML = gridContainer.innerHTML; // Simpan HTML awal untuk kembali ke homepage
  
         // Fungsi untuk menyembunyikan semua tombol
         function hideAllButtons() {
-            const allButtons = [homeButton, plantButton, mesButton, cmmsButton, supplyChainButton, warehouseButton, deliveryButton, salesMarketingButton];
+            const allButtons = [homeButton, plantButton, mesButton, cmmsButton, supplyChainButton, warehouseButton, deliveryButton, qhseButton, salesMarketingButton, procurementButton];
             allButtons.forEach(button => button.classList.add('hidden'));
         }
 
@@ -271,31 +290,31 @@
 
         // Event listener untuk card "MES"
         document.addEventListener('click', (event) => {
-        if (event.target.closest('#mes-card')) {
-            hideAllButtons();
-            showButtons(homeButton, mesButton);
+            if (event.target.closest('#mes-card')) {
+                hideAllButtons();
+                showButtons(homeButton, mesButton);
 
-            gridContainer.innerHTML = `
-                <div class="card" data-name="mesdashboard" id="mesdashboard-card">
-                    <img src="/home-page/images/dashboard.png" alt="Dashboard">
-                    <span>Dashboard</span>
-                </div>
-                
-                <div class="card" data-name="spk">
-                    <img src="{{ asset('home-page/images/spk.png') }}" alt="SPK">
-                    <span>SPK</span>
-                </div>
-                <a href="{{ route('mes-menu.batchmanagement.planning') }}" style="text-decoration: none;">
-                    <div class="card" data-name="batch">
-                        <img src="/home-page/images/batchmanagement.png" alt="Batch Management">
-                        <span>Batch Management</span>
+                gridContainer.innerHTML = `
+                    <div class="card" data-name="mesdashboard" id="mesdashboard-card">
+                        <img src="/home-page/images/dashboard.png" alt="Dashboard">
+                        <span>Dashboard</span>
                     </div>
-                </a>
+                    
+                    <div class="card" data-name="spk">
+                        <img src="{{ asset('home-page/images/spk.png') }}" alt="SPK">
+                        <span>SPK</span>
+                    </div>
+                    <a href="{{ route('mes-menu.batchmanagement.planning') }}" style="text-decoration: none;">
+                        <div class="card" data-name="batch">
+                            <img src="/home-page/images/batchmanagement.png" alt="Batch Management">
+                            <span>Batch Management</span>
+                        </div>
+                    </a>
 
-            `;
-            applyCardStyles(gridContainer);
-            performSearch();
-        }
+                `;
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
         });
 
         // Event listener untuk card "CMMS"
@@ -335,7 +354,7 @@
                         <img src="/home-page/images/liquid.png" alt="Liquid">
                         <span>Liquid</span>
                     </div>
-                    <a href="{{ route('monitoring.powder-plant') }}" style="text-decoration: none;">
+                    <a href="http://108.137.148.210:3001/public-dashboards/5fb514ae54064e5792f1de53add2873a?orgId=1&refresh=5s" style="text-decoration: none;">
                         <div class="card" id="powder-card" data-name="powder">
                             <img src="/home-page/images/powder.png" alt="Powder">
                             <span>Powder</span>
@@ -363,7 +382,7 @@
                         <img src="/home-page/images/liquid.png" alt="Liquid">
                         <span>Liquid</span>
                     </div>
-                    <a href="{{ route('cmms-menu.dashboard.powder') }}" style="text-decoration: none;">
+                    <a href="http://108.137.148.210:3001/public-dashboards/767d39d5255d487492100ab5f09cf616" style="text-decoration: none;">
                         <div class="card" id="cmms-powder-card" data-name="powder">
                             <img src="/home-page/images/powder.png" alt="Powder">
                             <span>Powder</span>
@@ -471,16 +490,41 @@
                         <img src="/home-page/images/dashboard.png" alt="Dashboard">
                         <span>Dashboard</span>
                     </div>
-                    <div class="card" data-name="monitoring">
-                        <img src="/home-page/images/monitoring.png" alt="Monitoring">
-                        <span>Monitoring</span>
-                    </div>
+                    <a href="{{ route('monitoring') }}" style="text-decoration: none;">
+                        <div class="card" data-name="monitoring">
+                            <img src="{{ asset('home-page/images/monitoring.png') }}" alt="Monitoring">
+                            <span>Monitoring</span>
+                        </div>
+                    </a>
                     <a href="{{ route('delivery.spk') }}" style="text-decoration: none;">
                         <div class="card" data-name="eticket">
                             <img src="/home-page/images/eticket.png" alt="SPK">
                             <span>SPK</span>
                         </div>
                     </a>
+                `;
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
+        });
+
+        // Event listener untuk card "QHSE"
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('#qhse')) {
+                hideAllButtons();
+                showButtons(homeButton, qhseButton);
+
+                gridContainer.innerHTML = `
+                    <a href="{{ route('reports') }}" style="text-decoration: none;">
+                        <div class="card" id="reports-card" data-name="reports">
+                            <img src="{{ asset('home-page/images/reports.png') }}" alt="Reports">
+                            <span>HSE Reports</span>
+                        </div>
+                    </a>
+                    <div class="card" id="permit-card" data-name="permit">
+                        <img src="/home-page/images/permit.png" alt="permit">
+                        <span>E-permit</span>
+                    </div>
                 `;
                 applyCardStyles(gridContainer);
                 performSearch();
@@ -533,6 +577,55 @@
             `;
             applyCardStyles(gridContainer);
             performSearch();
+        });
+
+        // Event listener untuk card "Procurement & Exim"
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('#procurement')) {
+                hideAllButtons();
+                showButtons(homeButton, procurementButton);
+
+                gridContainer.innerHTML = `
+                    <div class="card" id="procurement-card" data-name="procurement">
+                        <img src="/home-page/images/procurement.png" alt="Procurement">
+                        <span>Procurement</span>
+                    </div>
+                    <a href="{{ route('exim') }}" style="text-decoration: none;">
+                        <div class="card" id="exim-card" data-name="exim">
+                            <img src="{{ asset('home-page/images/exim.png') }}" alt="Exim">
+                            <span>Exim</span>
+                        </div>
+                    </a>
+                `;
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
+        });
+
+        // Event listener untuk card "Procurement"
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('#procurement-card')) {
+                hideAllButtons();
+                showButtons(homeButton, procurementButton);
+
+                gridContainer.innerHTML = `
+                    <a href="{{ route('procurement.kpi') }}">                    
+                        <div class="card" data-name="dashboard">
+                            <img src="/home-page/images/dashboard.png" alt="Dashboard">
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('procurement.dashboard') }}" style="text-decoration: none;">
+                        <div class="card" id="data-management" data-name="data-management">
+                            <img src="{{ asset('home-page/images/monitoring.png') }}" alt="Data Management">
+                            <span>Data Management</span>
+                        </div>
+                    </a>
+                `;
+                applyCardStyles(gridContainer);
+                performSearch();
+            }
         });
 
         // Event listener untuk tombol Home

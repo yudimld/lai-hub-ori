@@ -41,6 +41,7 @@ class Edc extends Model
         'reason',
         'persentase',
         'team_members',
+        'department',
         
     ];
 
@@ -135,6 +136,22 @@ class Edc extends Model
             ]);
         });
     }
+
+    public static function getSPKWithTeamMembers()
+    {
+        return DB::connection('mongodb')->table('edc')->raw(function ($collection) {
+            return $collection->aggregate([
+                [
+                    '$project' => [
+                        'assignee' => 1,
+                        'team_members' => 1,
+                        'priority' => 1
+                    ]
+                ]
+            ]);
+        });
+    }
+
 
     public static function getAggregatedStatusCounts()
     {
@@ -266,7 +283,11 @@ class Edc extends Model
                         $teamMembers = $spk->team_members;
                     }
                 }
-    
+
+                // Ambil data department dari pengguna yang membuat SPK
+                $user = User::find($spk->createdBy); // Mengambil pengguna yang membuat SPK
+                $department = $user ? $user->department : 'No Department'; // Mengambil department dari pengguna
+        
                 return [
                     'id'                  => isset($spk->id) && $spk->id instanceof \MongoDB\BSON\ObjectId ? (string) $spk->id : null,
                     'spkNumber'           => $spk->spkNumber ?? '-',
@@ -288,6 +309,7 @@ class Edc extends Model
                     'teamMembers'         => $teamMembers, // Pastikan teamMembers didefinisikan
                     'persentase'          => $persentase,
                     'updated_at'          => isset($spk->updated_at) ? date('Y-m-d H:i:s', strtotime($spk->updated_at)) : '-',
+                    'department'          => $department,
 
                 ];
             })->toArray();
@@ -344,57 +366,56 @@ class Edc extends Model
         return redirect()->route('list-spk')->with('success', 'SPK successfully created.');
     }
 
-    public static function generateSpkNumber()
-    {
-        $idCard = Auth::user()->id_card ?? abort(403, 'User does not have a valid ID card');
-        $currentDate = date('ym'); // Format YYMM
+    // public static function generateSpkNumber()
+    // {
+    //     $idCard = Auth::user()->id_card ?? abort(403, 'User does not have a valid ID card');
+    //     $currentDate = date('ym'); // Format YYMM
     
-        logger()->info("Generating Global SPK Number for ID Card: {$idCard}, Date: {$currentDate}");
+    //     logger()->info("Generating Global SPK Number for ID Card: {$idCard}, Date: {$currentDate}");
     
-        // Regex global mencocokkan berdasarkan tanggal (tanpa id_card)
-        $regex = new \MongoDB\BSON\Regex("-{$currentDate}-", 'i');
+    //     // Regex global mencocokkan berdasarkan tanggal (tanpa id_card)
+    //     $regex = new \MongoDB\BSON\Regex("-{$currentDate}-", 'i');
     
-        try {
-            // Query MongoDB untuk menemukan nomor SPK terakhir secara global
-            $lastSpk = DB::connection('mongodb')->getMongoClient()
-                ->selectCollection('lai-hub', 'edc')
-                ->find(
-                    ['spkNumber' => $regex],
-                    [
-                        'sort' => ['created_at' => -1],
-                        'projection' => ['spkNumber' => 1],
-                        'limit' => 1
-                    ]
-                )->toArray();
+    //     try {
+    //         // Query MongoDB untuk menemukan nomor SPK terakhir secara global
+    //         $lastSpk = DB::connection('mongodb')->getMongoClient()
+    //             ->selectCollection('lai-hub', 'edc')
+    //             ->find(
+    //                 ['spkNumber' => $regex],
+    //                 [
+    //                     'sort' => ['created_at' => -1],
+    //                     'projection' => ['spkNumber' => 1],
+    //                     'limit' => 1
+    //                 ]
+    //             )->toArray();
     
-            $lastSpk = $lastSpk[0] ?? null; // Ambil dokumen pertama jika ada
-            logger()->info("Last Global SPK Found", ['result' => $lastSpk]);
-        } catch (\Exception $e) {
-            logger()->error("MongoDB Query Error", ['error' => $e->getMessage()]);
-            abort(500, 'Database query failed.');
-        }
+    //         $lastSpk = $lastSpk[0] ?? null; // Ambil dokumen pertama jika ada
+    //         logger()->info("Last Global SPK Found", ['result' => $lastSpk]);
+    //     } catch (\Exception $e) {
+    //         logger()->error("MongoDB Query Error", ['error' => $e->getMessage()]);
+    //         abort(500, 'Database query failed.');
+    //     }
     
-        // Ambil angka increment terakhir
-        $lastIncrement = 0;
-        if ($lastSpk && isset($lastSpk['spkNumber'])) {
-            $parts = explode('-', $lastSpk['spkNumber']);
-            if (count($parts) === 3 && is_numeric($parts[2])) {
-                $lastIncrement = (int) $parts[2];
-            }
-        }
+    //     // Ambil angka increment terakhir
+    //     $lastIncrement = 0;
+    //     if ($lastSpk && isset($lastSpk['spkNumber'])) {
+    //         $parts = explode('-', $lastSpk['spkNumber']);
+    //         if (count($parts) === 3 && is_numeric($parts[2])) {
+    //             $lastIncrement = (int) $parts[2];
+    //         }
+    //     }
     
-        // Tambahkan increment untuk nomor baru
-        $newIncrement = $lastIncrement + 1;
-        $formattedIncrement = str_pad($newIncrement, 5, '0', STR_PAD_LEFT);
+    //     // Tambahkan increment untuk nomor baru
+    //     $newIncrement = $lastIncrement + 1;
+    //     $formattedIncrement = str_pad($newIncrement, 5, '0', STR_PAD_LEFT);
     
-        // Bangun nomor SPK baru dengan ID Card
-        $spkNumber = "{$idCard}-{$currentDate}-{$formattedIncrement}";
-        logger()->info("Generated Global SPK Number", ['spk_number' => $spkNumber]);
+    //     // Bangun nomor SPK baru dengan ID Card
+    //     $spkNumber = "{$idCard}-{$currentDate}-{$formattedIncrement}";
+    //     logger()->info("Generated Global SPK Number", ['spk_number' => $spkNumber]);
     
-        return $spkNumber;
-    }
-    
-    
+    //     return $spkNumber;
+    // }
+
     // Fungsi untuk memperbarui status
     public static function updateStatus($id, $status)
     {
@@ -416,6 +437,13 @@ class Edc extends Model
             return false;
         }
     }
+
+    // Model Edc
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'createdBy');
+    }
+
     
 
 
